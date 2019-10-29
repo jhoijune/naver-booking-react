@@ -1,0 +1,93 @@
+.titleText .container {
+  position: relative;
+  width: 100vw;
+  max-width: 414px;
+  max-width: var(--breakpoint-width);
+  height: 100vw;
+  max-height: 414px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.titleText .topSection {
+  flex: 3;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titleText .topSection > span {
+  display: inline-block;
+  font-size: 12px;
+  color: #c0c0c0;
+  background-color: #000;
+  padding: 5px 10px;
+  border-radius: 45%;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.titleText .topSection span.bright {
+  color: #fff;
+  color: var(--text-bright-color);
+  background-color: transparent;
+}
+
+.titleText .middleSection {
+  flex: 4;
+  display: flex;
+  align-items: center;
+}
+
+.titleText .leftSection {
+  flex: 1;
+  font-size: 35px;
+  line-height: 80px;
+  color: #fff;
+  color: var(--text-bright-color);
+  text-align: center;
+}
+
+.titleText .leftSection i:hover {
+  cursor: pointer;
+}
+
+.titleText .centerSection {
+  flex: 8;
+}
+
+.titleText .rightSection {
+  flex: 1;
+  font-size: 35px;
+  line-height: 80px;
+  color: #fff;
+  color: var(--text-bright-color);
+  text-align: center;
+}
+
+.titleText .rightSection i:hover {
+  cursor: pointer;
+}
+
+.titleText .bottomSection {
+  flex: 3;
+}
+
+.titleText h1 {
+  font-family: 'Nanum Gothic Bold';
+  font-size: 35px;
+  line-height: 80px;
+  /*text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;*/
+  padding: 0;
+  margin: 0;
+  color: #fff;
+  color: var(--text-bright-color);
+  text-align: center;
+}
+
+@media (min-width: 414px) {
+  .titleText .container {
+    margin: 0 auto;
+  }
+}

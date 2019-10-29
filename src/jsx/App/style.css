@@ -1,0 +1,60 @@
+@charset "UTF-8";
+
+:root {
+  --main-color: #1ec800;
+  --grey-color: #e9ecef;
+  --text-bright-color: #fff;
+  --text-dark-color: #000;
+  --text-grey-color: #808080;
+  --text-highlight-color: #f00;
+  --breakpoint-width: 414px;
+}
+
+@font-face {
+  font-family: 'Nanum Gothic Regular';
+  src: url(../font/NanumGothicRegular.woff);
+}
+
+@font-face {
+  font-family: 'Nanum Gothic Bold';
+  src: url(../font/NanumGothicBold.woff);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Nanum Gothic Regular', '맑은 고딕', 'Apple SD Gothic Neo',
+    sans-serif;
+  font-size: 14px;
+}
+
+ul,
+ol,
+h1,
+h2,
+h3,
+p,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+#content {
+  max-width: 414px;
+  max-width: var(--breakpoint-width);
+}
+
+@media (min-width: 414px) {
+  #content {
+    margin: 0 auto;
+  }
+}
