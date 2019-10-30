@@ -2,32 +2,46 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const ImageSlider = (props) => {
+import './style.css';
+
+const ImageSlider = React.forwardRef((props,ref) => {
+  const {degree,transitionTime,images,imageWidth,isPromotion} = props;
   return (
     <section className="ImageSlider">
-    <div className="container">
+    <div className={`container ${isPromotion ? 'promotion' : 'detail'}`}>
       <ul 
-      ref={imageList}
-      style={
-        {transform: `translateX(-${imageWidth * degree})`, transitionDuration: `${scrollDuration}s`}
-      }>
+      ref={ref}
+      style={{transform: `translateX(-${imageWidth * degree}px)`, transitionDuration: `${transitionTime}s`}}>
       {
         images.map((value,index) => {
-          <li key={index}>
-            <Link to={`detail?productID=${value.productID}`}>
-            <img src={value.prodcutImageUrl} alt=""/>
-            </Link>
-          </li>
+          if (value.productImageUrl) {
+            return (
+              <li key={index}>
+                <Link to={`detail?productId=${value.productId}`}>
+                  <img src={value.productImageUrl} alt="promotionImage"/>
+                </Link>
+              </li>
+            )
+          }
+          return (
+            <li key={index}>
+              <img src={value.saveFileName} alt="itemImage"/>
+            </li>
+          )
         });
       }
       </ul>
     </div>
   </section>
   );
-};
+}); 
 
 ImageSlider.propTypes = {
-  isAuto: PropTypes.bool.isRequired,
-};
+  degree: PropTypes.number.isRequired,
+  transitionTime: PropTypes.number.isRequired,
+  images: PropTypes.array.isRequired,
+  imageWidth: PropTypes.number.isRequired,
+  isPromotion: PropTypes.bool.isRequired,
+}
 
 export default ImageSlider;

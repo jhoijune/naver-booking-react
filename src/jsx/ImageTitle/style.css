@@ -1,8 +1,11 @@
-.titleText .container {
+.ImageTitle .container {
   position: relative;
+  width: auto;
+  /*
   width: 100vw;
   max-width: 414px;
   max-width: var(--breakpoint-width);
+  */
   height: 100vw;
   max-height: 414px;
   display: flex;
@@ -10,7 +13,7 @@
   z-index: 2;
 }
 
-.titleText .topSection {
+.ImageTitle .topSection {
   flex: 3;
   text-align: center;
   display: flex;
@@ -18,7 +21,7 @@
   justify-content: center;
 }
 
-.titleText .topSection > span {
+.ImageTitle .topSection > span {
   display: inline-block;
   font-size: 12px;
   color: #c0c0c0;
@@ -28,19 +31,19 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-.titleText .topSection span.bright {
+.ImageTitle .topSection span.bright {
   color: #fff;
   color: var(--text-bright-color);
   background-color: transparent;
 }
 
-.titleText .middleSection {
+.ImageTitle .middleSection {
   flex: 4;
   display: flex;
   align-items: center;
 }
 
-.titleText .leftSection {
+.ImageTitle .leftSection {
   flex: 1;
   font-size: 35px;
   line-height: 80px;
@@ -49,15 +52,15 @@
   text-align: center;
 }
 
-.titleText .leftSection i:hover {
+.ImageTitle .leftSection i:hover {
   cursor: pointer;
 }
 
-.titleText .centerSection {
+.ImageTitle .centerSection {
   flex: 8;
 }
 
-.titleText .rightSection {
+.ImageTitle .rightSection {
   flex: 1;
   font-size: 35px;
   line-height: 80px;
@@ -66,15 +69,15 @@
   text-align: center;
 }
 
-.titleText .rightSection i:hover {
+.ImageTitle .rightSection i:hover {
   cursor: pointer;
 }
 
-.titleText .bottomSection {
+.ImageTitle .bottomSection {
   flex: 3;
 }
 
-.titleText h1 {
+.ImageTitle h1 {
   font-family: 'Nanum Gothic Bold';
   font-size: 35px;
   line-height: 80px;
@@ -87,7 +90,7 @@
 }
 
 @media (min-width: 414px) {
-  .titleText .container {
-    margin: 0 auto;
+  .ImageTitle .container {
+    /**/
   }
 }

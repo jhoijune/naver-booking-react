@@ -1,0 +1,5 @@
+ol.TicketInfoList {
+  margin: 0 10px;
+  background-color: #fff;
+  background-color: var(--text-bright-color);
+}

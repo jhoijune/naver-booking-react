@@ -1,0 +1,54 @@
+.LoginForm .container {
+  width: auto;
+  background-color: #e9ecef;
+  background-color: var(--grey-color);
+  border: 1px solid #000;
+}
+
+.LoginForm .headerBox {
+  margin: 0 20px;
+  border: 1px solid #c0c0c0;
+}
+
+.LoginForm h1 {
+  line-height: 30px;
+  font-size: 16px;
+  font-family: 'Nanum Gothic Bold';
+}
+
+.LoginForm p {
+  font-size: 16px;
+  padding: 10px 0 10px 20px;
+}
+
+.LoginForm input[type='text'] {
+  margin-left: 20px;
+  padding-left: 10px;
+  font-family: 'Nanum Gothic Regular';
+  font-size: 16px;
+  width: 364px;
+  height: 40px;
+}
+
+.LoginForm input[type='submit'] {
+  background-color: #fff;
+  background-color: var(--text-bright-color);
+  font-family: 'Nanum Gothic Regular';
+  font-size: 16px;
+  color: #1ec800;
+  color: var(--main-color);
+  padding: 0;
+  margin: 20px 0 50px 20px;
+  border-style: solid;
+  border-color: #1ec800;
+  border-color: var(--main-color);
+  border-width: 1px;
+  height: 40px;
+  width: 378px;
+}
+
+@media (min-width: 414px) {
+  .LoginForm .container {
+    /**/
+  }
+}

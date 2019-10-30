@@ -4,22 +4,23 @@ import axios from 'axios';
 
 import ImageController from '../ImageController';
 
-// 스크롤 속도 (delay: 이름 바꿔야 할듯) 1초
-// 화면 전환 간격 (setInterval) 2초
+// 스크롤 시간(transitionTime) default 1초  위에서 물려받는것
+// 상태로 사용하는 스크롤 시간 (transitionDuration)
+// 화면 전환 간격 (timeInterval) 2초
 
 const PromotionImage = (props) => {
-  const { delay, timeInterval, duration } = props;
+  const { timeInterval, transitionTime } = props;
   const [degree, setDegree] = useState(0);
-  const [images, setImages] = useState([]);
   const [scrollable, setScrollable] = useState(true);
-  const [scrollDuration, setScrollDuration] = useState(delay);
+  const [transitionDuration, setTransitionDuration] = useState(transitionTime);
+  let images; // 안되면 상태로
 
   useEffect(async () => {
     const {
       data: { items },
     } = await axios.get('/api/promotions');
     items.push(items[0]); // 처음과 마지막을 동일한 이미지를 두어서 스크롤을 매끄럽게 함
-    setImages(items);
+    images = items;
   }, []);
 
   useEffect(() => {
@@ -27,13 +28,13 @@ const PromotionImage = (props) => {
       if (scrollable) {
         // 아마 고쳐야 될꺼임
         if (degree === images.length - 1) {
-          setScrollDuration(0);
+          setTransitionDuration(0);
           setDegree(0);
-          setScrollDuration(delay);
+          setTransitionDuration(transitionTime);
         }
         setDegree(degree + 1);
       }
-    }, 2000);
+    }, timeInterval);
     return clearInterval(autoScroll);
   }, []);
 
@@ -57,8 +58,24 @@ const PromotionImage = (props) => {
     return window.removeEventListener('resize', pauseScroll);
   }, []);
 
-  // props와 state 다 물려줘야 함
-  return <ImageController props />;
+  return (
+    <ImageController
+      degree={degree}
+      transitionTime={transitionDuration}
+      images={images}
+      resizeEnd={resizeEnd}
+    />
+  );
+};
+
+PromotionImage.defaultProps = {
+  transitionTime: 2,
+  timeInterval: 1,
+};
+
+PromotionImage.propTypes = {
+  transitionTime: PropTypes.number,
+  timeInterval: PropTypes.number,
 };
 
 export default PromotionImage;

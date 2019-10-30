@@ -11,10 +11,14 @@ const DetailContainer = (props) => {
   let datas;
 
   useEffect(async () => {
-    const paths = pathname.split('/');
-    const itemId = paths[paths.length - 1];
-    const { data } = await axios.get(`/api/products/${itemId}`);
-    datas = data;
+    try {
+      const paths = pathname.split('/');
+      const itemId = paths[paths.length - 1];
+      const { data } = await axios.get(`/api/products/${itemId}`);
+      datas = data;
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   return (

@@ -2,19 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const ImageTitle = (props) => {
-  const { presentLocation, imageCount, title, leftScroll, rightScroll } = props;
+  const { degree, imageLen, title, leftScroll, rightScroll } = props;
   return (
     <section className="ImageTitle">
       <div className="container">
         <div className="topSection">
           <span className="counting">
-            <span className="bright">{presentLocation}</span>
-            {` / ${imageCount}`}
+            <span className="bright">{degree + 1}</span>
+            {` / ${imageLen}`}
           </span>
         </div>
         <div className="middleSection">
           <div className="leftSection">
-            {imageCount > 1 ? (
+            {imageLen > 1 ? (
               <i className="fn fn-backward2" onClick={leftScroll} />
             ) : (
               ''
@@ -24,7 +24,7 @@ const ImageTitle = (props) => {
             <h1>{title}</h1>
           </div>
           <div className="rightSection">
-            {imageCount > 1 ? (
+            {imageLen > 1 ? (
               <i className="fn fn-forward2" onClick={rightScroll} />
             ) : (
               ''
@@ -38,8 +38,8 @@ const ImageTitle = (props) => {
 };
 
 ImageTitle.propTypes = {
-  presentLocation: PropTypes.number.isRequired,
-  imageCount: PropTypes.number.isRequired,
+  degree: PropTypes.number.isRequired,
+  imageLen: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   leftScroll: PropTypes.func.isRequired,
   rightScroll: PropTypes.func.isRequired,

@@ -1,0 +1,10 @@
+.ReservationBreakdown {
+  background-color: #e9ecef;
+  background-color: var(--grey-color);
+}
+
+@media (min-width: 414px) {
+  .ReservationBreakdown {
+    /**/
+  }
+}
