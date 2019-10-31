@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import TicketHead from '../TicketHead';
-import TicketInfo from '../TicketInfoList';
+import TicketInfoList from '../TicketInfoList';
 
 const Ticket = (props) => {
   const { infos, dispatch, name, actionType, isGreen } = props;

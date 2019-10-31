@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
+import { ModalContext } from '../Layout';
 import ReservationBreakdown from '../ReservationBreakdown';
 import ReservationCount from '../ReservationCount';
 
@@ -26,6 +27,8 @@ const reservationReducer = (state, action) => {
         canceled: action.data.canceled.length,
         canceledLen: action.data.canceled.length,
       };
+    case 'confirmCancel':
+      return;
     case 'cancel':
       axios.put(`/api/reservations/${id}`).then(({ status }) => {
         if (status === 400) {
@@ -98,22 +101,7 @@ ReservationContainer.propTypes = {
 export default ReservationContainer;
 
 /*
- {
-      "reservationInfoId": 16,
-      "reservationDate": "2019.08.19.(월)",
-      "description": "99% 디자인 엑스포",
-      "reservationName": "임의영",
-      "reservationTel": "010-1111-1111",
-      "placeName": "코엑스 Hall B",
-      "cancelFlag": 0,
-      "productId": 4,
-      "totalPrice": "3000",
-      "priceInfo": [
-        {
-          "price": 3000,
-          "priceTypeName": "A",
-          "count": 1
-        }
-      ]
-    }
+ReservationContainer → ReservationCount
+                                          → ReservationBreakdown → Ticket → TicketHead
+                                                                                                              → TicketInfoList → TicketInfo
 */

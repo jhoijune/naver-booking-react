@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './style.css';
 
-const Footer = props => {
+const Footer = (props) => {
   const { top } = props;
   return (
     <footer className="Footer">
       <div className="container">
-        {(isTopNeed => {
+        {((isTopNeed) => {
           if (isTopNeed) {
             return (
               <a href="#">
