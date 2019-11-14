@@ -1,0 +1,35 @@
+.ReviewContainer .container {
+  padding: 10px;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.ReviewContainer aside p {
+  padding: 15px 0 5px 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+@media (min-width: 414px) {
+  .ReviewContainer .container {
+  }
+}
+
+/*
+.CommentContainer a {
+  display: block;
+  font-family: inherit;
+  color: #000;
+  color: var(--text-dark-color);
+  font-size: 14px;
+  text-align: center;
+  width: 100vw;
+  max-width: 412px;
+  line-height: 40px;
+  background-color: #f3f5f6;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
+}
+*/

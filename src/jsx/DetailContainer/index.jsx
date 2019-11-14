@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const DetailContainer = (props) => {
-  const {
-    location: { pathname },
-  } = props;
+import DetailImage from '../DetailImage';
+import ProductDesc from '../ProductDesc';
+import EventInfo from '../EventInfo';
+import ButtonBunch from '../ButtonBunch';
+import ReviewContainer from '../ReviewContainer';
+import ProductInfo from '../ProductInfo';
 
-  let datas;
+const DetailContainer = () => {
+  const { displayInfoId } = useParams();
+
+  let productData;
 
   useEffect(async () => {
     try {
-      const paths = pathname.split('/');
-      const itemId = paths[paths.length - 1];
-      const { data } = await axios.get(`/api/products/${itemId}`);
-      datas = data;
+      productData = (await axios.get(`/api/products/${displayInfoId}`)).data;
     } catch (error) {
       console.error(error);
     }
@@ -23,19 +24,33 @@ const DetailContainer = (props) => {
 
   return (
     <div>
-      <DetailImage images={datas.productImages} />
-      <ItemDescription />
-      <EventDescription />
-      <DecoratedLink />
-      <Review />
-      <ItemDetailInfo />
+      <DetailImage
+        images={productData.productImages}
+        title={productData.displayInfo.productDescription}
+      />
+      <ProductDesc text={productData.displayInfo.productContent} />
+      <EventInfo productPrices={productData.productPrices} />
+      <ButtonBunch
+        notes={[
+          {
+            fontColor: '#fff',
+            backgroundColor: '#1ec800',
+            click: `/reserve/${displayInfoId}`,
+            children: '<i class="fn fn-nbooking-calender2"></i> 예매하기',
+          },
+        ]}
+      />
+      <ReviewContainer
+        displayInfoId={displayInfoId}
+        reviews={productData.comments}
+        averageScore={productData.averageScore}
+      />
+      <ProductInfo
+        displayInfo={productData.displayInfo}
+        locationImgSrc={productData.displayInfoImage.saveFileName}
+      />
     </div>
   );
-};
-
-DetailContainer.defaultProps = {};
-DetailContainer.propTypes = {
-  location: PropTypes.object.isRequired,
 };
 
 export default DetailContainer;

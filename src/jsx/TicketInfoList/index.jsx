@@ -4,18 +4,11 @@ import PropTypes from 'prop-types';
 import TicketInfo from '../TicketInfo';
 
 const TicketInfoList = (props) => {
-  const { infos, dispatch, actionType } = props;
+  const { infos, actions } = props;
   return (
     <ol className="TicketInfoList">
       {infos.map((value, index) => {
-        return (
-          <TicketInfo
-            key={index}
-            info={value}
-            dispatch={dispatch}
-            actionType={actionType}
-          />
-        );
+        return <TicketInfo key={index} info={value} actions={actions} />;
       })}
     </ol>
   );
@@ -23,8 +16,7 @@ const TicketInfoList = (props) => {
 
 TicketInfoList.propTypes = {
   infos: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  actionType: PropTypes.array,
+  actions: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
 export default TicketInfoList;

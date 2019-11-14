@@ -1,0 +1,76 @@
+.Review {
+  padding: 14px 0px;
+  border-bottom-color: #fccece;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.Review .top {
+  display: flex;
+}
+
+.Review .top .left {
+  flex: 7;
+}
+
+.Review .top .right {
+  text-align: right;
+  flex: 3;
+}
+
+.Review .right img {
+  display: none;
+  width: auto;
+}
+
+.Review .right img:hover {
+  transform: scale(2);
+}
+
+.Review .bottom {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.Review p {
+  margin: 0;
+  padding: 0 0 10px 0;
+}
+
+.Review span {
+  display: inline-block;
+}
+
+.Review .score {
+  font-weight: bold;
+  padding-right: 0.75em;
+}
+
+.Review .email {
+  padding: 0 0.75em;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 0 1px;
+  opacity: 0.8;
+}
+
+.Review .visitDate {
+  padding-left: 0.75em;
+  opacity: 0.5;
+}
+
+.Review .edit {
+  cursor: pointer;
+  opacity: 0.5;
+  padding-right: 0.75em;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 0 1px 0 0;
+}
+
+.Review .delete {
+  cursor: pointer;
+  padding-left: 0.75em;
+  opacity: 0.5;
+}

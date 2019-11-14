@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { withRouter } from 'react-router';
+import { useLocation } from 'react-router';
 import PropTypes from 'prop-types';
 
 import './style.css';
@@ -10,18 +10,12 @@ import './style.css';
 */
 
 const NavBar = (props) => {
-  const {
-    isMain,
-    isTransparent,
-    isLogoutable,
-    location: { pathname },
-  } = props;
+  const { isMain, isTransparent, isLogoutable } = props;
+  const { pathname } = useLocation();
   return (
     <nav className="NavBar">
       {((main) => {
-        const paths = pathname.split('/');
         if (main) {
-          const srcCorrection = '../'.repeat(paths.length - 1);
           return (
             <div
               className={`container ${
@@ -29,10 +23,7 @@ const NavBar = (props) => {
               }`}
             >
               <Link to="/">
-                <img
-                  src={`${srcCorrection}images/icon/icon.png`}
-                  alt="naver icon"
-                />
+                <img src="/images/icon/icon.png" alt="naver icon" />
               </Link>
               <Link to="/">
                 <h2>{isLogoutable ? '로그아웃' : '예약확인'}</h2>
@@ -40,6 +31,7 @@ const NavBar = (props) => {
             </div>
           );
         }
+        const paths = pathname.split('/');
         const itemId = paths[paths.length - 1];
         return (
           <div className="container">
@@ -63,7 +55,6 @@ NavBar.propTypes = {
   isMain: PropTypes.bool,
   isTransparent: PropTypes.bool,
   isLogoutable: PropTypes.bool,
-  location: PropTypes.object,
 };
 
 NavBar.defaultProps = {
@@ -72,4 +63,4 @@ NavBar.defaultProps = {
   isLogoutable: false,
 };
 
-export default withRouter(NavBar);
+export default NavBar;

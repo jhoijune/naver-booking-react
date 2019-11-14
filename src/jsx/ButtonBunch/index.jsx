@@ -37,8 +37,9 @@ const ButtonBunch = (props) => {
             fontColor={value.fontColor}
             backgroundColor={value.backgroundColor}
             click={value.click}
-            text={value.text}
-          />
+          >
+            {value.children}
+          </Button>
         );
       })}
     </div>
@@ -51,7 +52,14 @@ ButtonBunch.defaultProps = {
 };
 
 ButtonBunch.propTypes = {
-  notes: PropTypes.array.isRequired,
+  notes: PropTypes.arrayOf(
+    PropTypes.shape({
+      fontColor: PropTypes.string,
+      backgroundColor: PropTypes.string,
+      click: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+      children: PropTypes.node,
+    }),
+  ).isRequired,
   margin: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
   padding: PropTypes.oneOfType([PropTypes.number, PropTypes.array]),
 };

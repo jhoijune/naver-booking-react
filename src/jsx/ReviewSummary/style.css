@@ -1,0 +1,76 @@
+.ReviewSummary {
+  padding-bottom: 14px;
+  border-bottom-color: #c0c0c0;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.ReviewSummary h2 {
+  font-family: 'Nanum Gothic Bold';
+  font-size: 16px;
+  padding-bottom: 10px;
+}
+
+.ReviewSummary .getStar {
+  color: #f00;
+}
+
+.ReviewSummary .ratioStar:before {
+  content: '\EAA3';
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: initial;
+}
+
+.ReviewSummary .notGetStar {
+  color: #e6e6e6;
+}
+
+.ReviewSummary .summaryContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ReviewSummary .summaryContainer span {
+  display: inline-block;
+}
+
+.ReviewSummary .starCount {
+  padding-right: 0.5em;
+}
+
+.ReviewSummary .averageScore {
+  padding-right: 0.5em;
+  font-weight: bold;
+}
+
+.ReviewSummary .maxScore {
+  opacity: 0.5;
+  font-weight: bold;
+}
+
+.ReviewSummary .commentCount {
+  color: #1ec800;
+  color: var(--main-color);
+  padding-right: 0.3em;
+}
+
+.ReviewSummary .enrollText {
+  opacity: 0.5;
+}
+
+/*
+.comment .commentSummary .ratioStar:before {
+  background: linear-gradient(
+    to Right,
+    #f00 #{Math.round(ratioStar * 100)}%,
+    #e6e6e6 #{Math.round((1-ratioStar) * 100)}%
+  );
+  content: '\EAA3';
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: initial;
+}
+*/

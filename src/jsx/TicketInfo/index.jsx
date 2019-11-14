@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { priceTypeMapper, transformMoneyUnit } from '../../js/common';
 
 import './style.css';
+import { ActionContext } from '../ReservationContainer';
+import ButtonBunch from '../ButtonBunch';
 
 const TicketInfo = (props) => {
   const {
@@ -18,9 +19,9 @@ const TicketInfo = (props) => {
       totalPrice,
       productId,
     },
-    dispatch,
-    actionType,
+    actions,
   } = props;
+  const { confirmCancelReservation } = useContext(ActionContext);
   const reservationSummary = priceInfo
     .reduce((accum, current) => {
       `${accum}    ${priceTypeMapper[current.priceTypeName]} ${
@@ -28,33 +29,22 @@ const TicketInfo = (props) => {
       } 매,`;
     }, '')
     .slice(0, -1);
-  const functionalButton = (dispatch, actionType) => {
-    // 안될것 같음
-    const componentArr = [];
-    actionType.forEach((action) => {
-      switch (action) {
-        case 'cancel':
-          componentArr.push(
-            <button
-              onClick={() =>
-                // 모달로 취소창을 띄워야 함
-                dispatch({ type: 'cancel', id: reservationInfoId })}
-            >
-              취소
-            </button>,
-          );
-          break;
-        case 'writeReview':
-          componentArr.push(
-            <Link to={`reviewwrite/${productId}`}>예매자 리뷰 남기기</Link>,
-          );
-          break;
-        default:
-          break;
+
+  const createButton = (actions) => {
+    const notes = actions.map((value) => {
+      if (value === 'cancel') {
+        return { click: confirmCancelReservation(productId), children: '취소' };
+      }
+      if (value === 'reviewWrite') {
+        return {
+          click: `/reviewwrite/${productId}`,
+          children: '예매자 리뷰 남기기',
+        };
       }
     });
-    return <div>{componentArr.map((component) => component)}</div>;
+    return <ButtonBunch notes={notes} />;
   };
+
   return (
     <li className="TicketInfo">
       <div className="topSection">
@@ -90,15 +80,27 @@ const TicketInfo = (props) => {
         <p>결제 금액</p>
         <p>{`${transformMoneyUnit(totalPrice)} 원`}</p>
       </div>
-      {functionalButton(dispatch, actionType)}
+      {createButton(actions)}
     </li>
   );
 };
 
 TicketInfo.propTypes = {
-  info: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  actionType: PropTypes.array,
+  info: PropTypes.shape({
+    reservationInfoId: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+    reservationDate: PropTypes.string.isRequired,
+    reservationName: PropTypes.string.isRequired,
+    reservationTel: PropTypes.string.isRequired,
+    placeName: PropTypes.string.isRequired,
+    totalPrice: PropTypes.number.isRequired,
+    productId: PropTypes.number.isRequired,
+    priceInfo: PropTypes.shape({
+      priceTypeName: PropTypes.string.isRequired,
+      count: PropTypes.number.isRequired,
+    }),
+  }).isRequired,
+  actions: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 };
 
 export default TicketInfo;

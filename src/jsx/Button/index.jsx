@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import './style.css';
 
 const Button = (props) => {
-  const { fontColor, backgroundColor, click, text } = props;
+  const { fontColor, backgroundColor, click, children } = props;
   return typeof click === 'function' ? (
     <button
       className="Button"
       onClick={click}
       style={{ backgroundColor, color: fontColor }}
     >
-      {text}
+      {children}
     </button>
   ) : (
     <Link
@@ -20,7 +20,7 @@ const Button = (props) => {
       to={click}
       style={{ backgroundColor, color: fontColor }}
     >
-      {text}
+      {children}
     </Link>
   );
 };
@@ -34,9 +34,10 @@ Button.propTypes = {
   fontColor: PropTypes.string,
   backgroundColor: PropTypes.string,
   click: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
-  text: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
+export default Button;
 /*
  * 네이버 배경 초록색: #1ec800 글자색 #fff;
  */

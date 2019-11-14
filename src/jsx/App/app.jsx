@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { withRouter } from 'react-router';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import './style.css';
@@ -10,8 +9,11 @@ import LoginForm from '../LoginForm';
 import Footer from '../Footer';
 import NavBar from '../NavBar';
 import DetailContainer from '../DetailContainer';
+import ReserveContainer from '../ReserveContainer';
 import ReservationContainer from '../ReservationContainer';
 import PromotionImage from '../PromotionImage';
+import ReviewEdit from '../ReviewEdit';
+import ReviewProvider from '../ReviewProvider';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -19,7 +21,7 @@ ReactDOM.render(
       <Switch>
         <Route path="/detail/:displayInfoId">
           <NavBar isTransparent />
-          {/* <DetailContainer/> 미완성 */}
+          <DetailContainer />
           <Footer />
         </Route>
         <Route path="/detail">{/* redirect 시켜야 함 */}</Route>
@@ -36,18 +38,21 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/reserve/:displayInfoId">
+          {/* 완성됨 */}
           <NavBar isMain={false} />
-          {/* container */}
+          <ReserveContainer />
           <Footer />
         </Route>
         <Route path="/review/:displayInfoId">
+          {/* 완성됨 */}
           <NavBar isMain={false} />
-          {/* reviewForm */}
+          <ReviewProvider />
           <Footer />
         </Route>
         <Route path="/reviewwrite/:productId">
           <NavBar isMain={false} />
-          {/*reviewwirteform */}
+          {/* reviewEdit가 미완 */}
+          <ReviewEdit />
           <Footer />
         </Route>
         <Route exact path="/">

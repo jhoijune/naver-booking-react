@@ -1,96 +1,93 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import { ModalContext } from '../Layout';
-import ReservationBreakdown from '../ReservationBreakdown';
+import Ticket from '../Ticket';
 import ReservationCount from '../ReservationCount';
 
-const initialState = {
-  toUsed: [],
-  toUsedLen: 0,
-  used: [],
-  usedLen: 0,
-  canceled: [],
-  canceledLen: 0,
-};
-
-const reservationReducer = (state, action) => {
-  switch (action.type) {
-    case 'initialiaztion':
-      return {
-        toUsed: action.data.toUsed,
-        toUsedLen: action.data.toUsed.length,
-        used: action.data.used,
-        usedLen: action.data.used.length,
-        canceled: action.data.canceled.length,
-        canceledLen: action.data.canceled.length,
-      };
-    case 'confirmCancel':
-      return;
-    case 'cancel':
-      axios.put(`/api/reservations/${id}`).then(({ status }) => {
-        if (status === 400) {
-          alert('잘못된 요청입니다'); // 모달로
-        } else if (status === 201) {
-          alert('예약이 취소되었습니다'); // 모달로 확인 버튼누르면 작동하게 비동기로
-          const { toUsed, canceled } = state; // 오류나면 배열 복사해야 됨
-          const toDeleteIndex = toUsed.findIndex(
-            (value) => value.reservationInfoId === action.id,
-          );
-          const canceledItem = toUsed.splice(toDeleteIndex, 1);
-          const toInsertIndex = canceled.findIndex(
-            (value) => value.reservationInfoId > action.id,
-          );
-          if (toInsertIndex === -1) {
-            canceled.push(canceledItem);
-          } else {
-            canceled.splice(toInsertIndex, 0, canceledItem);
-          }
-          return {
-            toUsedLen: state.toUsedLen - 1,
-            canceledLen: state.canceledLen + 1,
-            toUsed,
-            canceled,
-          };
-        }
-      });
-    default:
-      throw new Error('Undefined action was used');
-  }
-};
+const ActionContext = React.createContext({
+  confirmCancelReservation: () => {},
+});
 
 const ReservationContainer = (props) => {
   const { emailId } = props;
-  const [state, dispatch] = useReducer(reservationReducer, initialState);
-  /*
   const [toUsed, setToUsed] = useState([]);
   const [toUsedLen, setToUsedLen] = useState(0);
-  const [used, setUsed] = useState([]);
-  const [usedLen, setUsedLen] = useState(0);
   const [canceled, setCanceled] = useState([]);
   const [canceledLen, setCanceledLen] = useState(0);
-  */
+  const { alertModal, confirmModal } = useContext(ModalContext);
+  let used;
+  let usedLen;
 
   useEffect(async () => {
     try {
       const { data } = await axios.get(`/api/reservations/${emailId}`);
-      dispatch({ type: 'initialization', data });
+      setToUsed(data.toUsed);
+      setToUsedLen(data.toUsed.length);
+      setCanceled(data.canceled);
+      setCanceledLen(data.canceled.length);
+      used = data.used;
+      usedLen = data.used.length;
     } catch (error) {
       console.error(error);
     }
   }, []);
-  const { toUsedLen, usedLen, canceledLen } = state;
+
+  const cancelReservation = async (id) => {
+    const { status } = await axios.put(`/api/reservation/${id}`);
+    if (status === 400) {
+      alertModal('잘못된 요청입니다');
+    } else if (status === 201) {
+      // 오류나면 배열 복사해야함
+      const toDeleteIndex = toUsed.findIndex(
+        (value) => value.reservationInfoId === id,
+      );
+      const canceledItem = toUsed.splice(toDeleteIndex, 1);
+      const toInsertIndex = canceled.findIndex(
+        (value) => value.reservationInfoId > id,
+      );
+      if (toInsertIndex === -1) {
+        canceled.push(canceledItem);
+      } else {
+        canceled.splice(toInsertIndex, 0, canceledItem);
+      }
+      setToUsed(toUsed);
+      setToUsedLen(toUsedLen - 1);
+      setCanceled(canceled);
+      setCanceledLen(canceledLen + 1);
+      alertModal('예약이 취소되었습니다');
+    }
+  };
+
+  const confirmCancelReservation = (id) => {
+    return () => {
+      confirmModal(
+        '한번 취소하시면 다시 되돌릴 수 없습니다. 그래도 하시겠습니까?',
+        () => {
+          cancelReservation(id);
+        },
+      );
+    };
+  };
+
   return (
-    <div className="ReservationContainer">
-      <ReservationCount
-        toUsedLen={toUsedLen}
-        usedLen={usedLen}
-        canceledLen={canceledLen}
-      />
-      <ReservationBreakdown state={state} dispatch={dispatch} />
-    </div>
+    <ActionContext.Provider value={{ confirmCancelReservation }}>
+      <div className="ReservationContainer">
+        <ReservationCount
+          toUsedLen={toUsedLen}
+          usedLen={usedLen}
+          canceledLen={canceledLen}
+        />
+        <Ticket infos={toUsed} actions="cancel" isGreen>
+          예약 확정
+        </Ticket>
+        <Ticket infos={used} actions="writeReview">
+          이용 완료
+        </Ticket>
+        <Ticket infos={canceled}>취소된 예약</Ticket>
+      </div>
+    </ActionContext.Provider>
   );
 };
 
@@ -99,9 +96,10 @@ ReservationContainer.propTypes = {
 };
 
 export default ReservationContainer;
+export { ActionContext };
 
 /*
 ReservationContainer → ReservationCount
-                                          → ReservationBreakdown → Ticket → TicketHead
-                                                                                                              → TicketInfoList → TicketInfo
+                                          → Ticket → TicketHead
+                                                            → TicketInfoList → TicketInfo
 */

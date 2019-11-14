@@ -1,0 +1,28 @@
+.ReserveForm {
+  width: 100vw;
+  max-width: 414px;
+  max-width: var(--breakpoint-width);
+}
+
+.ReserveForm button[type='submit'] {
+  width: 394px;
+  margin: 0 10px 10px 10px;
+  font-size: 16px;
+  font-family: 'Nanum Gothic Bold';
+  background-color: #d1d1d1;
+  border-style: none;
+  line-height: 40px;
+  color: #fff;
+  color: var(--text-bright-color);
+  padding: 0;
+  transition: background-color 1s;
+}
+
+.ReserveForm button[type='submit'] i {
+  vertical-align: middle;
+}
+
+@media (min-width: 414px) {
+  .ReserveForm {
+  }
+}

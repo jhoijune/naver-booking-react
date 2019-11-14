@@ -34,18 +34,9 @@
   transition-property: transform;
 }
 
-.ImageSlider img {
-  width: 100vw;
-  height: 100vw;
-}
-
 @media (min-width: 414px) {
   .ImageSlider ul {
     width: 414px;
-  }
-  .ImageSlider img {
-    width: 414px;
-    height: 414px;
   }
 
   .promotion .container {

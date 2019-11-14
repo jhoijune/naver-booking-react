@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
+// 잘잘하게 쪼갤수 있을 것 같음
+
 const ReservationCount = (props) => {
   const { toUsedLen, usedLen, canceledLen } = props;
   return (

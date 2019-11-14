@@ -1,0 +1,67 @@
+.ReserverInfo {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.ReserverInfo i {
+  color: #1ec800;
+  color: var(--main-color);
+}
+
+.ReserverInfo .reserverHeader {
+  display: flex;
+  justify-content: space-between;
+  border-bottom-color: #e9ecef;
+  border-bottom-color: var(--grey-color);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  padding: 10px 20px;
+}
+
+.ReserverInfo .reserverHeader h2 {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  font-family: 'Nanum Gothic Bold';
+}
+
+.ReserverInfo .reserverHeader p {
+  color: #989898;
+  margin: 0;
+}
+
+.ReserverInfo .tableContainer {
+  display: table;
+}
+
+.ReserverInfo .tableRow {
+  display: table-row;
+}
+
+.ReserverInfo .tableRow h2 {
+  display: table-cell;
+  font-size: 16px;
+  padding: 10px 20px;
+}
+
+.ReserverInfo .tableRow p {
+  display: table-cell;
+  font-size: 16px;
+  padding: 5px 20px;
+}
+
+.ReserverInfo input {
+  font-size: 16px;
+  font-family: 'Nanum Gothic Regular';
+  width: 250px;
+}
+
+.ReserverInfo .tableRow p:first-child {
+  font-family: 'Nanum Gothic Bold';
+  color: #666;
+}
+
+.ReserverInfo .alertMessage {
+  font-family: 'Nanum Gothic Bold';
+  color: #f00;
+}

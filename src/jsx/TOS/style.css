@@ -1,0 +1,84 @@
+.TOS {
+  width: 100%;
+  border-top-color: #e9ecef;
+  border-top-color: var(--grey-color);
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.TOS > p {
+  background-color: #e9ecef;
+  background-color: var(--grey-color);
+  padding: 10px 20px;
+  margin: 0 20px 20px 20px;
+}
+
+.TOS .allAgreement {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-bottom-color: #e9ecef;
+  border-bottom-color: var(--grey-color);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.TOS .allAgreement input[name='TOSCheck'] {
+  display: none;
+}
+
+.TOS .allAgreement input[name='TOSCheck'] + label {
+  font-size: 16px;
+  font-family: 'Nanum Gothic Bold';
+  cursor: pointer;
+}
+
+.TOS .allAgreement input[name='TOSCheck'] + label:before {
+  cursor: pointer;
+  content: '';
+  overflow: hidden;
+  display: inline-block;
+  color: transparent;
+  vertical-align: middle;
+  background-image: url(../images/img/spr_book2.png);
+  background-size: 330px 400px;
+  width: 26px !important;
+  height: 26px !important;
+  background-position: -47px -273px;
+}
+
+.reserveSection
+  .TOS
+  .allAgreement
+  input[name='TOSCheck']:checked
+  + label:before {
+  background-position: -75px -273px;
+  background-color: transparent;
+}
+
+.TOS .allAgreement p {
+  margin: 0;
+  padding: 0;
+  color: #989898;
+  line-height: 25px;
+}
+
+.TOS .agreement {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  padding: 0 20px 20px 20px;
+}
+
+.TOS .agreement p {
+  padding: 0;
+  margin: 0;
+}
+
+.TOS .agreement p:nth-child(2) {
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}

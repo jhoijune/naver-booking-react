@@ -41,8 +41,8 @@ ImageTitle.propTypes = {
   degree: PropTypes.number.isRequired,
   imageLen: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  leftScroll: PropTypes.func.isRequired,
-  rightScroll: PropTypes.func.isRequired,
+  leftScroll: PropTypes.func,
+  rightScroll: PropTypes.func,
 };
 
 export default ImageTitle;

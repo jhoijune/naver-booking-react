@@ -1,0 +1,18 @@
+.ProductDesc {
+  width: 100vw;
+  max-width: 412px;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+}
+
+.productDescription p {
+  margin: 0;
+  line-height: 20px;
+  padding: 20px;
+}
+
+@media (min-width: 414px) {
+  .ProductDesc {
+  }
+}
