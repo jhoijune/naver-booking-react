@@ -1,32 +1,34 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+import './style.css';
 
 const TabUI = (props) => {
+  const { labels, selected, handleClick } = props;
+
   return (
     <nav className="TabUI">
-      <ul>{}</ul>
+      <ul>
+        {labels.map((label, index) => {
+          return (
+            <li
+              key={index}
+              className={index === selected ? 'selected' : 'unselected'}
+              onClick={handleClick(index)}
+            >
+              {label}
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 };
 
-export default TabUI;
+TabUI.propTypes = {
+  labels: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
+  selected: PropTypes.number.isRequired,
+  handleClick: PropTypes.func.isRequired,
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-  function changeInfo(event) {
-    if (event.target.className === 'unselected') {
-      selectedInfo.setAttribute('class', 'unselected');
-      infoList[selectedInfo.getAttribute('id')].style.display = 'none';
-      selectedInfo = event.target;
-      selectedInfo.setAttribute('class', 'selected');
-      infoList[selectedInfo.getAttribute('id')].style.display = 'block';
-    }
-  }
-  const tabUI = document.querySelector('.detailDescription ul');
-  let selectedInfo = tabUI.querySelector('.selected');
-  const infoList = {
-    productInfo: document.querySelector(
-      '.detailDescription article.productInfo',
-    ),
-    locInfo: document.querySelector('.detailDescription article.locInfo'),
-  };
-  tabUI.addEventListener('click', changeInfo);
-});
+export default TabUI;

@@ -18,7 +18,7 @@ const ProductDesc = (props) => {
       const textDetail = trimmedText.slice(limit);
       textObj = { simple: textSimple, detail: textDetail };
     } else {
-      textObj = { simple: text, detail: '' };
+      textObj = { simple: trimmedText, detail: '' };
     }
   }, []);
 

@@ -1,0 +1,76 @@
+.ProductInfo {
+  width: 100vw;
+  max-width: 412px;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
+  overflow: hidden;
+}
+
+.ProductInfo .productDetail h2 {
+  font-family: 'Nanum Gothic Bold';
+  padding-left: 7px;
+  margin: 14px 0px 14px 0px;
+  font-size: 16px;
+}
+
+.ProductInfo .productDetail p {
+  margin: 0;
+  line-height: 20px;
+  padding: 0 20px 0px 20px;
+}
+
+.ProductInfo .directions img {
+  padding: 20px 10px 10px 10px;
+  width: auto;
+  height: auto;
+  max-width: 393px;
+}
+.ProductInfo .directions h2 {
+  font-family: 'Nanum Gothic Bold';
+  font-size: 16px;
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+.ProductInfo .directions .locText {
+  display: table;
+  padding: 10px 0 0 10px;
+}
+.ProductInfo .directions .tableRow {
+  display: table-row;
+  margin: 10px 0;
+}
+.ProductInfo .directions p {
+  display: table-cell;
+}
+.ProductInfo .directions p.icon {
+  padding: 0 6px 0 0;
+}
+.ProductInfo .directions p.text {
+  padding: 0 0 6px 0;
+}
+.ProductInfo .directions span.greyText {
+  color: #808080;
+  color: var(--text-grey-color);
+}
+.ProductInfo .directions .buttonContainer {
+  padding: 20px;
+}
+.ProductInfo .buttonContainer button {
+  width: 50%;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 40px;
+  background-color: #f3f5f6;
+  border-color: #c0c0c0;
+  border-style: solid;
+  border-width: 1px;
+}
+.ProductInfo .buttonContainer button.navigation {
+  border-left-style: none;
+}
+
+@media (min-width: 414px) {
+  .ProductInfo {
+  }
+}

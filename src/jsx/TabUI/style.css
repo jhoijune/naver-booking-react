@@ -1,0 +1,29 @@
+.TabUI {
+  width: auto;
+}
+
+.TabUI ul {
+  display: flex;
+  text-align: center;
+  justify-content: space-between;
+}
+
+.TabUI li {
+  font-family: 'Nanum Gothic Bold';
+  font-size: 15px;
+  flex: 1;
+  padding: 7.5px 0px;
+}
+
+.TabUI li:hover {
+  cursor: pointer;
+}
+
+.TabUI .selected {
+  color: #1ec800;
+  color: var(--main-color);
+  border-bottom-color: #1ec800;
+  border-bottom-color: var(--main-color);
+  border-bottom-style: solid;
+  border-bottom-width: 0.25rem;
+}
