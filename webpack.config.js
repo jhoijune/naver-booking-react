@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: { main: path.join(__dirname, 'src', 'jsx', 'App', 'App.jsx') },
+  entry: { main: path.join(__dirname, 'src', 'jsx', 'App', 'app.jsx') },
   output: {
     path: path.join(__dirname, 'public'),
     filename: '[name].[contenthash].js',
@@ -36,7 +36,9 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['**/*', '!font*', '!images*'],
+    }),
     new MiniCssExtractPlugin({ filename: 'style.css' }),
     new HtmlWebpackPlugin({
       template: 'src/html/index.html',

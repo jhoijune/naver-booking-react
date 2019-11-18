@@ -41,7 +41,7 @@
   display: inline-block;
   color: transparent;
   vertical-align: middle;
-  background-image: url(../images/img/spr_book2.png);
+  background-image: url(/images/img/spr_book2.png);
   background-size: 330px 400px;
   width: 26px !important;
   height: 26px !important;

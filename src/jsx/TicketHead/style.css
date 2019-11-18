@@ -35,25 +35,25 @@
 }
 
 .TicketHead.green .ticketLeft {
-  background-image: url(../images/img/bg_card2_hl.png);
+  background-image: url('/images/img/bg_card2_hl.png');
 }
 
 .TicketHead.green .ticketRight {
-  background-image: url(../images/img/bg_card2_hr.png);
+  background-image: url('/images/img/bg_card2_hr.png');
 }
 
 .TicketHead.grey .ticketLeft {
-  background-image: url(../images/img/bg_card3_hl.png);
+  background-image: url('/images/img/bg_card3_hl.png');
 }
 
 .TicketHead.grey .ticketRight {
-  background-image: url(../images/img/bg_card3_hr.png);
+  background-image: url('/images/img/bg_card3_hr.png');
 }
 
 .TicketHead.green .ticketMiddle {
-  background-image: url(../images/img/bg_card2_hm.gif);
+  background-image: url('/images/img/bg_card2_hm.gif');
 }
 
 .TicketHead.grey .ticketMiddle {
-  background-image: url(../images/img/bg_.ticket3_hm.gif);
+  background-image: url('/images/img/bg_.ticket3_hm.gif');
 }

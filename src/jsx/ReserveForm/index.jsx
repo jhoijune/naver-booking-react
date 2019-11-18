@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import './style.css';
 import { ModalContext } from '../Layout';
 import InputTicket from '../InputTicket';
-import ReserverInfo from '../ReserverlInfo';
+import ReserverInfo from '../ReserverInfo';
 import TOS from '../TOS';
 
 const initialState = (length) => {

@@ -14,6 +14,7 @@ import ReservationContainer from '../ReservationContainer';
 import PromotionImage from '../PromotionImage';
 import ReviewEdit from '../ReviewEdit';
 import ReviewProvider from '../ReviewProvider';
+import MainContainer from '../MainContainer';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -58,7 +59,7 @@ ReactDOM.render(
         <Route exact path="/">
           <NavBar />
           <PromotionImage />
-          {/* 상품 목록 컨테이너 */}
+          <MainContainer />
           <Footer />
         </Route>
         <Route path="/">

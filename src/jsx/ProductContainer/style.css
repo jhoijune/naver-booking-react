@@ -1,0 +1,9 @@
+.ProductContainer.left {
+  flex: 1;
+  margin: 10px 6px 3px 6px;
+}
+
+.ProductContainer.right {
+  flex: 1;
+  margin: 10px 6px 3px 0px;
+}

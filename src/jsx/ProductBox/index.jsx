@@ -46,7 +46,7 @@ const ProductBox = (props) => {
   };
 
   return (
-    <article>
+    <article className="ProductBox">
       <Link to={`/detail/${displayInfoId}`}>
         <div
           className="photo"
