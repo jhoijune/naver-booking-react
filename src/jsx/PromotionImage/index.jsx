@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
@@ -13,14 +13,21 @@ const PromotionImage = (props) => {
   const [degree, setDegree] = useState(0);
   const [scrollable, setScrollable] = useState(true);
   const [transitionDuration, setTransitionDuration] = useState(transitionTime);
-  let images; // 안되면 상태로
+  const [images, setImages] = useState([]);
 
-  useEffect(async () => {
-    const {
-      data: { items },
-    } = await axios.get('/api/promotions');
-    items.push(items[0]); // 처음과 마지막을 동일한 이미지를 두어서 스크롤을 매끄럽게 함
-    images = items;
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const {
+          data: { items },
+        } = await axios.get('/api/promotions');
+        items.push(items[0]); // 처음과 마지막을 동일한 이미지를 두어서 스크롤을 매끄럽게 함
+        setImages(items);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchImages();
   }, []);
 
   useEffect(() => {
@@ -53,7 +60,7 @@ const PromotionImage = (props) => {
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.addEventListener('resize', pauseScroll);
     return window.removeEventListener('resize', pauseScroll);
   }, []);

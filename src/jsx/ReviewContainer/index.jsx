@@ -28,7 +28,7 @@ const ReviewContainer = (props) => {
         accum + Number(current.score);
       }) / reviews.length;
     setAverageScore(modifiedAverageScore);
-  }, reviews);
+  }, [reviews]);
 
   const displayStar = (score, maxScore = 5) => {
     // averageScore에 맞게 별점을 리턴하는 함수

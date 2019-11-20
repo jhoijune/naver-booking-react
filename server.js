@@ -5,12 +5,16 @@ import path from 'path';
 import session from 'express-session';
 import flash from 'connect-flash';
 import passport from 'passport';
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
 import { config } from 'dotenv';
 
 import apiRouter from './routes/api';
 import authRouter from './routes/auth';
 import passportConfig from './passport';
 import { sequelize } from './models';
+import webpackConfig from './webpack.config';
 
 config();
 
@@ -18,6 +22,15 @@ const app = express();
 sequelize.sync();
 passportConfig(passport);
 
+const compiler = webpack(webpackConfig);
+
+app.use(
+  webpackDevMiddleware(compiler, {
+    noInfo: true,
+    publicPath: webpackConfig.output.publicPath,
+  }),
+);
+app.use(webpackHotMiddleware(compiler));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('port', process.env.PORT || 8001);

@@ -23,7 +23,7 @@ const TabController = (props) => {
   return (
     <div className="TabController">
       <TabUI labels={labels} selected={selected} handleClick={handleClick} />
-      <TabView view={views} selected={selected} />
+      <TabView views={views} selected={selected} />
     </div>
   );
 };

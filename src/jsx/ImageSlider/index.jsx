@@ -6,6 +6,14 @@ import './style.css';
 import MainImage from '../MainImage';
 
 const ImageSlider = React.forwardRef((props, ref) => {
+  /* init
+   *  degree: 0
+   * transitionTime: 2
+   *  images: []
+   *  imageWidth: 0
+   * isPromotion: true
+   */
+
   const { degree, transitionTime, images, imageWidth, isPromotion } = props;
   return (
     <section className="ImageSlider">
@@ -18,7 +26,7 @@ const ImageSlider = React.forwardRef((props, ref) => {
           }}
         >
           {images.map((value, index) => {
-            if (isPromotion) {
+            if (value && isPromotion) {
               return (
                 <li key={index}>
                   <Link to={`detail?productId=${value.productId}`}>
@@ -27,11 +35,13 @@ const ImageSlider = React.forwardRef((props, ref) => {
                 </li>
               );
             }
-            return (
-              <li key={index}>
-                <MainImage src={value.saveFileName} alt="itemImage" />
-              </li>
-            );
+            if (value) {
+              return (
+                <li key={index}>
+                  <MainImage src={value.saveFileName} alt="itemImage" />
+                </li>
+              );
+            }
           })}
         </ul>
       </div>

@@ -17,21 +17,32 @@ const MainContainer = (props) => {
   const viewsArr = Array(6).fill(null);
   const labels = ['전체', '전시', '뮤지컬', '콘서트', '클래식', '연극'];
 
-  useEffect(async () => {
-    const {
-      data: { items },
-    } = await axios.get('/api/products');
-    categoryProducts[0] = items;
-    viewsArr[0] = items
-      .slice(basisCount)
-      .map((value) => <ProductBox itemInfo={value} />);
-    showingCount += basisCount;
-    setProductCount(items.length);
-    const copiedViews = [...views];
-    copiedViews[0] = (
-      <MainView productCount={productCount} products={viewsArr[0]} />
-    );
-    setViews(copiedViews);
+  useEffect(() => {
+    document.title = '네이버 예약';
+  }, []);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const {
+          data: { items },
+        } = await axios.get('/api/products');
+        categoryProducts[0] = items;
+        viewsArr[0] = items
+          .slice(basisCount)
+          .map((value) => <ProductBox itemInfo={value} />);
+        showingCount += basisCount;
+        setProductCount(items.length);
+        const copiedViews = [...views];
+        copiedViews[0] = (
+          <MainView productCount={productCount} products={viewsArr[0]} />
+        );
+        setViews(copiedViews);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProducts();
   }, []);
 
   const showMoreProduct = () => {
@@ -125,7 +136,7 @@ const MainContainer = (props) => {
       showingCount = basisCount;
       setViews(copiedViews);
     }
-  }, selectedCategory);
+  }, [selectedCategory]);
 
   return (
     <div className="MainContainer">
@@ -134,16 +145,7 @@ const MainContainer = (props) => {
         views={views}
         alram={setSelectedCategory}
       />
-      <p
-        className="more"
-        onClick={showMoreProduct}
-        style={{
-          display:
-            categoryProducts[selectedCategory].length > showingCount
-              ? 'block'
-              : 'none',
-        }}
-      >
+      <p className="more" onClick={showMoreProduct}>
         더보기
       </p>
     </div>

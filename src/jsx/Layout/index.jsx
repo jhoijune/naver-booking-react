@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../Modal';
 import ButtonBunch from '../ButtonBunch';
 
-const ModalContext = React.createContext({
+const ModalContext = createContext({
   setIsModal: () => {},
   setModalChildren: () => {},
   alertModal: () => {},
@@ -12,9 +12,9 @@ const ModalContext = React.createContext({
 });
 
 const Layout = (props) => {
+  const { children } = props;
   const [isModal, setIsModal] = useState(false);
   const [modalChildren, setModalChildren] = useState('');
-  const { children } = props;
 
   const alertModal = (text) => {
     setModalChildren(
@@ -64,15 +64,20 @@ const Layout = (props) => {
     if (!isModal) {
       setModalChildren('');
     }
-  }, isModal);
+  }, [isModal]);
 
   return (
-    <ModalContext.provider
-      value={{ setIsModal, setModalChildren, alertModal, confirmModal }}
+    <ModalContext.Provider
+      value={{
+        setIsModal,
+        setModalChildren,
+        alertModal,
+        confirmModal,
+      }}
     >
       {children}
       {isModal ? <Modal>{modalChildren}</Modal> : ''}
-    </ModalContext.provider>
+    </ModalContext.Provider>
   );
 };
 

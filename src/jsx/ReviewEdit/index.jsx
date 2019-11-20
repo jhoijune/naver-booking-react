@@ -47,7 +47,7 @@ const ReviewEdit = (props) => {
         backgroundImage: '',
       });
     }
-  }, imageSrc);
+  }, [imageSrc]);
 
   const handleSubmit = async (event) => {
     // return을 좀 정의해서 submit이 됐는가를 알아야함

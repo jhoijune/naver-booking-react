@@ -9,7 +9,11 @@ const ReviewProvider = () => {
   let productData;
 
   useEffect(async () => {
-    productData = (await axios.get(`/api/products/${displayInfoId}`)).data;
+    try {
+      productData = (await axios.get(`/api/products/${displayInfoId}`)).data;
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   return (

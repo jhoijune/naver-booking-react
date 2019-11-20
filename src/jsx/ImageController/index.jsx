@@ -24,10 +24,10 @@ const ImageController = (props) => {
   };
 
   useEffect(() => {
-    setImageWidth(imageList.current.firstElementChild.clientWidth);
+    setImageWidth(imageList.current.firstElementChild.clientWidth); // 처음엔 0으로 됨
     window.addEventListener('resize', getImageWidth);
     return window.removeEventListener('resize', getImageWidth);
-  }, []);
+  }, [images]);
 
   return title ? (
     <div>

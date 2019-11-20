@@ -107,30 +107,34 @@ const ReserveForm = (props) => {
   const history = useHistory();
 
   const handleSubmit = async () => {
-    const reservationInfo = {
-      displayInfoId,
-      productId,
-      prices: [],
-      reservationEmail: state.email,
-      reservationName: state.name,
-      reservationTelephone: state.telephone,
-      reservationYearMonthDay: reservationDate,
-    };
-    for (let index = 0, len = productPrices.length; index < len; index++) {
-      reservationInfo.prices.push({
-        count: Number(state.tickets[index]),
-        productPriceId: productPrices[index].productPriceID,
-      });
-    }
-    const { status, statusText } = await axios.post(
-      '/api/reservations',
-      reservationInfo,
-    );
-    if (status === 400) {
-      alertModal(statusText);
-    } else if (status === 201) {
-      alertModal('예매가 성공적으로 승인되었습니다');
-      history.push(`/detail/${displayInfoId}`);
+    try {
+      const reservationInfo = {
+        displayInfoId,
+        productId,
+        prices: [],
+        reservationEmail: state.email,
+        reservationName: state.name,
+        reservationTelephone: state.telephone,
+        reservationYearMonthDay: reservationDate,
+      };
+      for (let index = 0, len = productPrices.length; index < len; index++) {
+        reservationInfo.prices.push({
+          count: Number(state.tickets[index]),
+          productPriceId: productPrices[index].productPriceID,
+        });
+      }
+      const { status, statusText } = await axios.post(
+        '/api/reservations',
+        reservationInfo,
+      );
+      if (status === 400) {
+        alertModal(statusText);
+      } else if (status === 201) {
+        alertModal('예매가 성공적으로 승인되었습니다');
+        history.push(`/detail/${displayInfoId}`);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -170,8 +174,7 @@ const ReserveForm = (props) => {
           style={{
             backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
           }}
-          onClick={confirmSubmit}
-        >
+          onClick={confirmSubmit}>
           <i className="spr_book ico_naver_s" />
           예약하기
         </button>
