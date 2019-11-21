@@ -14,40 +14,58 @@ const ImageSlider = React.forwardRef((props, ref) => {
    * isPromotion: true
    */
 
-  const { degree, transitionTime, images, imageWidth, isPromotion } = props;
+  const {
+    degree,
+    transitionTime,
+    images,
+    imageWidth,
+    isPromotion,
+    handleTransitionEnd,
+    handleMouseOver,
+    handleMouseOut,
+  } = props;
   return (
-    <section className="ImageSlider">
-      <div className={`container ${isPromotion ? 'promotion' : 'detail'}`}>
-        <ul
-          ref={ref}
-          style={{
-            transform: `translateX(-${imageWidth * degree}px)`,
-            transitionDuration: `${transitionTime}s`,
-          }}
-        >
-          {images.map((value, index) => {
-            if (value && isPromotion) {
-              return (
-                <li key={index}>
-                  <Link to={`detail?productId=${value.productId}`}>
-                    <MainImage src={value.saveFileName} alt="promotionImage" />
-                  </Link>
-                </li>
-              );
-            }
-            if (value) {
-              return (
-                <li key={index}>
-                  <MainImage src={value.saveFileName} alt="itemImage" />
-                </li>
-              );
-            }
-          })}
-        </ul>
-      </div>
+    <section
+      className={`ImageSlider ${isPromotion ? 'promotion' : 'detail'}`}
+      onTransitionEnd={handleTransitionEnd}
+      onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+    >
+      <ul
+        ref={ref}
+        style={{
+          transform: `translateX(-${imageWidth * degree}px)`,
+          transitionDuration: `${transitionTime}s`,
+        }}
+      >
+        {images.map((value, index) => {
+          if (value && isPromotion) {
+            return (
+              <li key={index}>
+                <Link to={`detail?productId=${value.productId}`}>
+                  <MainImage src={value.saveFileName} alt="promotionImage" />
+                </Link>
+              </li>
+            );
+          }
+          if (value) {
+            return (
+              <li key={index}>
+                <MainImage src={value.saveFileName} alt="itemImage" />
+              </li>
+            );
+          }
+        })}
+      </ul>
     </section>
   );
 });
+
+ImageSlider.defaultProps = {
+  handleTransitionEnd: () => {},
+  handleMouseOver: () => {},
+  handleMouseOut: () => {},
+};
 
 ImageSlider.propTypes = {
   degree: PropTypes.number.isRequired,
@@ -60,6 +78,9 @@ ImageSlider.propTypes = {
   ).isRequired,
   imageWidth: PropTypes.number.isRequired,
   isPromotion: PropTypes.bool.isRequired,
+  handleTransitionEnd: PropTypes.func,
+  handleMouseOver: PropTypes.func,
+  handleMouseOut: PropTypes.func,
 };
 
 export default ImageSlider;

@@ -13,8 +13,9 @@ const MainContainer = (props) => {
   const [views, setViews] = useState(Array(6).fill(null)); // [<MainView/>,<MainView/>]
 
   let showingCount = 0;
+  let isFetched = false;
   const categoryProducts = Array(6).fill(null);
-  const viewsArr = Array(6).fill(null);
+  const viewsArr = Array(6).fill(null); // [[<ProductBox/>],[<ProductBox/>]];
   const labels = ['전체', '전시', '뮤지컬', '콘서트', '클래식', '연극'];
 
   useEffect(() => {
@@ -33,11 +34,12 @@ const MainContainer = (props) => {
           .map((value) => <ProductBox itemInfo={value} />);
         showingCount += basisCount;
         setProductCount(items.length);
-        const copiedViews = [...views];
-        copiedViews[0] = (
+        const modifiedViews = [...views];
+        modifiedViews[0] = (
           <MainView productCount={productCount} products={viewsArr[0]} />
         );
-        setViews(copiedViews);
+        setViews(modifiedViews);
+        isFetched = true;
       } catch (error) {
         console.error(error);
       }
@@ -94,47 +96,48 @@ const MainContainer = (props) => {
     // 카테고리 바뀌었을 때 view바꾸는 과정
     // 1. 최초 과정
     // 2. 최초 아닐 때
-
-    if (!categoryProducts[selectedCategory]) {
-      // 1.최초 과정
-      // selectedCategory에  상품정보를 넣고
-      // views에 MainView를 생성함
-      const specificProducts = [];
-      const [allProducts] = categoryProducts;
-      allProducts.forEach((value) => {
-        if (value.categoryId === selectedCategory) {
-          specificProducts.push(value);
-        }
-      });
-      categoryProducts[selectedCategory] = specificProducts;
-      setProductCount(specificProducts.length);
-      // views에 MainView를 생성함
-      viewsArr[selectedCategory] = specificProducts
-        .slice(basisCount)
-        .map((value) => <ProductBox itemInfo={value} />);
-      const copiedViews = [...views];
-      copiedViews[selectedCategory] = (
-        <MainView
-          productCount={productCount}
-          products={viewsArr[selectedCategory]}
-        />
-      );
-      showingCount = basisCount;
-      setViews(copiedViews);
-    }
-    if (viewsArr[selectedCategory].length >= basisCount) {
-      // length는 임시 판별 MainView만 있어서 안에 갯수 파악해야 됨
-      // 2. basisCount랑 일치할 때
-      setProductCount(categoryProducts[selectedCategory].length);
-      const copiedViews = [...views];
-      copiedViews[selectedCategory] = (
-        <MainView
-          productCount={productCount}
-          products={viewsArr[selectedCategory].slice(basisCount)}
-        />
-      );
-      showingCount = basisCount;
-      setViews(copiedViews);
+    if (isFetched) {
+      if (!categoryProducts[selectedCategory]) {
+        // 1.최초 과정
+        // selectedCategory에  상품정보를 넣고
+        // views에 MainView를 생성함
+        const specificProducts = [];
+        const [allProducts] = categoryProducts;
+        allProducts.forEach((value) => {
+          if (value.categoryId === selectedCategory) {
+            specificProducts.push(value);
+          }
+        });
+        categoryProducts[selectedCategory] = specificProducts;
+        setProductCount(specificProducts.length);
+        // views에 MainView를 생성함
+        viewsArr[selectedCategory] = specificProducts
+          .slice(basisCount)
+          .map((value) => <ProductBox itemInfo={value} />);
+        const copiedViews = [...views];
+        copiedViews[selectedCategory] = (
+          <MainView
+            productCount={productCount}
+            products={viewsArr[selectedCategory]}
+          />
+        );
+        showingCount = basisCount;
+        setViews(copiedViews);
+      }
+      if (viewsArr[selectedCategory].length >= basisCount) {
+        // length는 임시 판별 MainView만 있어서 안에 갯수 파악해야 됨
+        // 2. basisCount랑 일치할 때
+        setProductCount(categoryProducts[selectedCategory].length);
+        const copiedViews = [...views];
+        copiedViews[selectedCategory] = (
+          <MainView
+            productCount={productCount}
+            products={viewsArr[selectedCategory].slice(basisCount)}
+          />
+        );
+        showingCount = basisCount;
+        setViews(copiedViews);
+      }
     }
   }, [selectedCategory]);
 

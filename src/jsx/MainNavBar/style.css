@@ -1,0 +1,51 @@
+.MainNavBar.fixed {
+  width: 100vw;
+  max-width: 414px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+  position: fixed;
+  background-color: #1ec800;
+  background-color: var(--main-color);
+  z-index: 1;
+}
+
+.MainNavBar.transparent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  top: 0;
+  position: absolute;
+  background-color: transparent;
+  z-index: 3;
+}
+
+.MainNavBar img {
+  display: inline-block;
+  width: 17.5vw;
+  padding: 2.5vw;
+}
+
+.MainNavBar h2 {
+  font-family: 'Nanum Gothic Bold';
+  font-size: 4.35vw;
+  padding-right: 2.5vw;
+  margin: 0px;
+  color: #fff;
+  color: var(--text-bright-color);
+}
+
+@media (min-width: 414px) {
+  .MainNavBar {
+    /*left: calc(calc(100% - 414px) / 2);*/
+  }
+  .MainNavBar img {
+    width: 72.45px;
+    padding: 10.35px;
+  }
+  .MainNavBar h2 {
+    font-size: 18px;
+    padding-right: 10.35px;
+  }
+}

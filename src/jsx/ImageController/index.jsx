@@ -5,6 +5,7 @@ import ImageSlider from '../ImageSlider';
 import ImageTitle from '../ImageTitle';
 
 const ImageController = (props) => {
+  // 재설계하거나 파기할 것임
   const {
     degree,
     transitionTime,
@@ -24,7 +25,11 @@ const ImageController = (props) => {
   };
 
   useEffect(() => {
-    setImageWidth(imageList.current.firstElementChild.clientWidth); // 처음엔 0으로 됨
+    setImageWidth(
+      (imageList.current.firstElementChild &&
+        imageList.current.firstElementChild.clientWidth) ||
+        0,
+    ); // 처음엔 0으로 됨
     window.addEventListener('resize', getImageWidth);
     return window.removeEventListener('resize', getImageWidth);
   }, [images]);

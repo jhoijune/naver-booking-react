@@ -14,24 +14,22 @@ const ProductBox = (props) => {
       placeName,
       productContent,
     },
+    textLimit,
   } = props;
   const [isFold, setIsFold] = useState(true);
   const [isIconShowing, setIsIconShowing] = useState(false);
   const detailText = useRef(null);
 
   let textObj;
-
-  useEffect(() => {
-    let trimmedText = productContent.trim();
-    trimmedText = trimmedText.replace('\n', '');
-    if (trimmedText.length > limit) {
-      const textSimple = trimmedText.slice(0, limit);
-      const textDetail = trimmedText.slice(limit);
-      textObj = { simple: textSimple, detail: textDetail };
-    } else {
-      textObj = { simple: trimmedText, detail: '' };
-    }
-  }, []);
+  let trimmedText = productContent.trim();
+  trimmedText = trimmedText.replace('\n', '');
+  if (trimmedText.length > textLimit) {
+    const textSimple = trimmedText.slice(0, textLimit);
+    const textDetail = trimmedText.slice(textLimit);
+    textObj = { simple: textSimple, detail: textDetail };
+  } else {
+    textObj = { simple: trimmedText, detail: '' };
+  }
 
   const showAndHide = (event) => {
     event.preventDefault();
@@ -103,6 +101,10 @@ const ProductBox = (props) => {
 };
 
 ProductBox.propTypes = {
+  textLimit: 100,
+};
+
+ProductBox.propTypes = {
   itemInfo: PropTypes.shape({
     displayInfoId: PropTypes.number.isRequired,
     productImageUrl: PropTypes.string.isRequired,
@@ -110,6 +112,7 @@ ProductBox.propTypes = {
     placeName: PropTypes.string.isRequired,
     productContent: PropTypes.string.isRequired,
   }).isRequired,
+  textLimit: PropTypes.number,
 };
 
 export default ProductBox;

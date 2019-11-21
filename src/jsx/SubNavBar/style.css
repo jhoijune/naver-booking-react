@@ -1,0 +1,29 @@
+.SubNavBar {
+  padding: 20px 10px;
+  width: auto;
+  display: flex;
+  font-size: 18px;
+}
+
+.SubNavBar h1 {
+  font-size: 18px;
+  font-family: 'Nanum Gothic Bold';
+  margin: 0;
+  padding: 0;
+}
+
+.SubNavBar .backward {
+  flex: 1;
+}
+
+.SubNavBar .backward i {
+  font-size: 20px;
+}
+
+.SubNavBar .titleName {
+  flex: 8;
+}
+
+.SubNavBar .empty {
+  flex: 1;
+}
