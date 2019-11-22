@@ -20,6 +20,8 @@
 }
 
 .ProductBox .head {
+  color: var(--text-dark-color);
+  color: #000;
   border-bottom-color: #e9ecef;
   border-bottom-color: var(--grey-color);
   border-bottom-style: solid;

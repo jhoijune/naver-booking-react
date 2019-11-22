@@ -18,6 +18,7 @@ const ProductBox = (props) => {
   } = props;
   const [isFold, setIsFold] = useState(true);
   const [isIconShowing, setIsIconShowing] = useState(false);
+  // const [textObj, setTextObj] = useState({ simple: '', detail: '' });
   const detailText = useRef(null);
 
   let textObj;
@@ -33,7 +34,6 @@ const ProductBox = (props) => {
 
   const showAndHide = (event) => {
     event.preventDefault();
-    event.stopimmediate;
     if (isFold) {
       setIsFold(false);
       $(detailText.current).slideDown(100);
@@ -63,22 +63,19 @@ const ProductBox = (props) => {
           }}
           onMouseOut={() => {
             setIsIconShowing(false);
-          }}
-        >
+          }}>
           {textObj.detail ? (
             <p>
               {textObj.simple}
               <span
                 className="dots"
-                style={{ display: isFold ? 'inline' : 'none' }}
-              >
+                style={{ display: isFold ? 'inline' : 'none' }}>
                 ...
               </span>
               <span
                 className="moreDesc"
                 ref={detailText}
-                style={{ display: 'none' }}
-              >
+                style={{ display: 'none' }}>
                 {textObj.detail}
               </span>
               <div className="helping">
@@ -100,7 +97,7 @@ const ProductBox = (props) => {
   );
 };
 
-ProductBox.propTypes = {
+ProductBox.defaultProps = {
   textLimit: 100,
 };
 

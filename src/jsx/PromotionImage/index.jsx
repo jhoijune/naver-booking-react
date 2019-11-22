@@ -10,7 +10,7 @@ import ImageController from '../ImageController';
 // 화면 전환 간격 (timeInterval) 2초
 
 const PromotionImage = (props) => {
-  // 리사이즈시 width가 안바뀜
+  // 갑자기 degree가 계속 증가하는 버그가 있음
   const { timeInterval, transitionTime } = props;
   const [degree, setDegree] = useState(0);
   const [scrollable, setScrollable] = useState(true);
@@ -51,7 +51,7 @@ const PromotionImage = (props) => {
   }, [images]);
 
   const handleTransitionEnd = () => {
-    if (degree === images.length - 1) {
+    if (degree >= images.length - 1) {
       setDegree(0);
       setTransitionDuration(0);
     }

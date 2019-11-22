@@ -2,20 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
+import './style.css';
 import MainView from '../MainView';
 import TabController from '../TabController';
 import ProductBox from '../ProductBox';
+import TotalCount from '../TotalCount';
 
 const MainContainer = (props) => {
   const { basisCount } = props;
   const [selectedCategory, setSelectedCategory] = useState(0); // 현재 선택된 카테고리 id
   const [productCount, setProductCount] = useState(0); //  카테고리의 제품 개수
   const [views, setViews] = useState(Array(6).fill(null)); // [<MainView/>,<MainView/>]
+  const [viewsArr, setViewsArr] = useState(Array(6).fill(null)); // [[<ProductBox/>],[<ProductBox/>]];
+  const [categoryProducts, setCategoryProducts] = useState(Array(6).fill(null));
+  const [showingCount, setShowingCount] = useState(0);
+  const [isFetched, setIsFetched] = useState(false);
 
-  let showingCount = 0;
-  let isFetched = false;
-  const categoryProducts = Array(6).fill(null);
-  const viewsArr = Array(6).fill(null); // [[<ProductBox/>],[<ProductBox/>]];
   const labels = ['전체', '전시', '뮤지컬', '콘서트', '클래식', '연극'];
 
   useEffect(() => {
@@ -28,18 +30,20 @@ const MainContainer = (props) => {
         const {
           data: { items },
         } = await axios.get('/api/products');
-        categoryProducts[0] = items;
-        viewsArr[0] = items
-          .slice(basisCount)
-          .map((value) => <ProductBox itemInfo={value} />);
-        showingCount += basisCount;
-        setProductCount(items.length);
+        const modifiedCategory = [...categoryProducts];
+        modifiedCategory[0] = items;
+        const modifiedViewsArr = [...viewsArr];
+        modifiedViewsArr[0] = items
+          .slice(0, basisCount)
+          .map((info) => <ProductBox itemInfo={info} />);
         const modifiedViews = [...views];
-        modifiedViews[0] = (
-          <MainView productCount={productCount} products={viewsArr[0]} />
-        );
+        modifiedViews[0] = <MainView products={modifiedViewsArr[0]} />;
+        setCategoryProducts(modifiedCategory);
+        setViewsArr(modifiedViewsArr);
+        setShowingCount(showingCount + basisCount);
+        setProductCount(items.length);
         setViews(modifiedViews);
-        isFetched = true;
+        setIsFetched(true);
       } catch (error) {
         console.error(error);
       }
@@ -62,10 +66,9 @@ const MainContainer = (props) => {
           products={viewsArr[selectedCategory].slice(finalInd)}
         />
       );
-      showingCount = finalInd;
+      setShowingCount(finalInd);
       setViews(copiedViews);
-    }
-    if (
+    } else if (
       categoryProducts[selectedCategory].length >
       viewsArr[selectedCategory].length
     ) {
@@ -75,20 +78,21 @@ const MainContainer = (props) => {
         productsLen >= viewsLen + basisCount
           ? viewsLen + basisCount
           : productsLen;
+      const modifiedViewsArr = [...viewsArr];
       categoryProducts[selectedCategory]
         .slice(viewsLen, finalInd)
-        .forEach((value) => {
-          viewsArr[selectedCategory].push(<ProductBox itemInfo={value} />);
+        .forEach((info) => {
+          modifiedViewsArr[selectedCategory].push(
+            <ProductBox itemInfo={info} />,
+          );
         });
-      const copiedViews = [...views];
-      copiedViews[selectedCategory] = (
-        <MainView
-          productCount={productCount}
-          products={viewsArr[selectedCategory]}
-        />
+      const modifiedViews = [...views];
+      modifiedViews[selectedCategory] = (
+        <MainView products={modifiedViewsArr[selectedCategory]} />
       );
-      showingCount = finalInd;
-      setViews(copiedViews);
+      setShowingCount(finalInd);
+      setViewsArr(modifiedViewsArr);
+      setViews(modifiedViews);
     }
   };
 
@@ -108,49 +112,60 @@ const MainContainer = (props) => {
             specificProducts.push(value);
           }
         });
-        categoryProducts[selectedCategory] = specificProducts;
-        setProductCount(specificProducts.length);
+        const modifiedCategory = [...categoryProducts];
+        modifiedCategory[selectedCategory] = specificProducts;
         // views에 MainView를 생성함
-        viewsArr[selectedCategory] = specificProducts
-          .slice(basisCount)
+        const modifiedViewsArr = [...viewsArr];
+        modifiedViewsArr[selectedCategory] = specificProducts
+          .slice(0, basisCount)
           .map((value) => <ProductBox itemInfo={value} />);
-        const copiedViews = [...views];
-        copiedViews[selectedCategory] = (
-          <MainView
-            productCount={productCount}
-            products={viewsArr[selectedCategory]}
-          />
+        const modifiedViews = [...views];
+        modifiedViews[selectedCategory] = (
+          <MainView products={modifiedViewsArr[selectedCategory]} />
         );
-        showingCount = basisCount;
-        setViews(copiedViews);
-      }
-      if (viewsArr[selectedCategory].length >= basisCount) {
+        setCategoryProducts(modifiedCategory);
+        setProductCount(specificProducts.length);
+        setViewsArr(modifiedViewsArr);
+        setViews(modifiedViews);
+        setShowingCount(basisCount);
+      } else if (viewsArr[selectedCategory].length >= basisCount) {
         // length는 임시 판별 MainView만 있어서 안에 갯수 파악해야 됨
         // 2. basisCount랑 일치할 때
-        setProductCount(categoryProducts[selectedCategory].length);
         const copiedViews = [...views];
         copiedViews[selectedCategory] = (
           <MainView
-            productCount={productCount}
-            products={viewsArr[selectedCategory].slice(basisCount)}
+            products={viewsArr[selectedCategory].slice(0, basisCount)}
           />
         );
-        showingCount = basisCount;
+        setProductCount(categoryProducts[selectedCategory].length);
+        setShowingCount(basisCount);
         setViews(copiedViews);
       }
     }
   }, [selectedCategory]);
+
+  const isMoreShowing = () =>
+    ((categoryProducts[selectedCategory] &&
+      categoryProducts[selectedCategory].length) ||
+      0) > showingCount;
 
   return (
     <div className="MainContainer">
       <TabController
         labels={labels}
         views={views}
-        alram={setSelectedCategory}
+        alarm={setSelectedCategory}
+        top={<TotalCount productCount={productCount} />}
+        bottom={
+          isMoreShowing() ? (
+            <p className="more" onClick={showMoreProduct}>
+              더보기
+            </p>
+          ) : (
+            ''
+          )
+        }
       />
-      <p className="more" onClick={showMoreProduct}>
-        더보기
-      </p>
     </div>
   );
 };

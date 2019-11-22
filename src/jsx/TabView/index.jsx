@@ -1,18 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const TabView = (props) => {
-  const { views, selected } = props;
+import './style.css';
+
+const TabView = React.forwardRef((props, ref) => {
+  const { views, style } = props;
   return (
-    <div className="TabView">
-      {views.find((value, index) => index === selected)}
-    </div>
+    <section ref={ref} className="TabView">
+      <ul style={style}>
+        {views.map((view, index) => {
+          return <li key={index}>{view}</li>;
+        })}
+      </ul>
+    </section>
   );
-};
+});
 
 TabView.propTypes = {
   views: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
-  selected: PropTypes.number.isRequired,
+  style: PropTypes.shape({
+    transform: PropTypes.string,
+    height: PropTypes.string,
+  }).isRequired,
 };
 
 export default TabView;

@@ -1,25 +1,9 @@
-.totalCount p {
-  text-align: center;
-  color: #808080;
-  color: var(--text-grey-color);
-  margin: 10px 0px 0px 0px;
-  padding: 0px 0px 10px 0px;
-}
-
-.totalCount p strong {
-  color: #f00;
-  color: var(--text-highlight-color);
-}
-
 .MainView {
-  max-width: 414px;
+  width: auto;
   display: flex;
   background-color: #e9ecef;
   background-color: var(--grey-color);
 }
 
 @media (min-width: 414px) {
-  .MainView {
-    margin: 0 auto;
-  }
 }

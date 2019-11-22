@@ -1,0 +1,16 @@
+.TotalCount {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
+}
+
+.TotalCount p {
+  text-align: center;
+  color: #808080;
+  color: var(--text-grey-color);
+  padding: 10px 0px 10px 0px;
+}
+
+.TotalCount p strong {
+  color: #f00;
+  color: var(--text-highlight-color);
+}

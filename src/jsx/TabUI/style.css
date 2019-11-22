@@ -1,8 +1,11 @@
 .TabUI {
   width: auto;
+  background-color: var(--text-bright-color);
+  background-color: #fff;
 }
 
 .TabUI ul {
+  position: relative;
   display: flex;
   text-align: center;
   justify-content: space-between;
@@ -19,11 +22,19 @@
   cursor: pointer;
 }
 
-.TabUI .selected {
+.TabUI li.active {
   color: #1ec800;
   color: var(--main-color);
-  border-bottom-color: #1ec800;
-  border-bottom-color: var(--main-color);
-  border-bottom-style: solid;
-  border-bottom-width: 0.25rem;
+}
+
+.TabUI .indicator {
+  background-color: #1ec800;
+  background-color: var(--main-color);
+  height: 0.25rem;
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  -webkit-transition: all 0.1s linear;
+  -o-transition: all 0.1s linear;
+  transition: all 0.1s linear;
 }

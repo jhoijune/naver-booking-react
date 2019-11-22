@@ -1,0 +1,13 @@
+.TabView {
+  width: auto;
+  overflow: hidden;
+}
+
+.TabView ul {
+  display: flex;
+  transition-duration: 0.5s;
+}
+
+.TabView li {
+  width: auto;
+}

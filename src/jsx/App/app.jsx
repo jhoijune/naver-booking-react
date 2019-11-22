@@ -30,7 +30,7 @@ ReactDOM.render(
           {/* 완성됨 */}
           <Header />
           <LoginForm />
-          <Footer top={false} />
+          <Footer />
         </Route>
         <Route path="/myreservation">
           {/* 완성 됨 */}

@@ -20,6 +20,20 @@
   src: url('/font/NanumGothicBold.woff');
 }
 
+@font-face {
+  font-family: 'Naver Icons';
+  src: url('/font/Naver-Icons.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Naver booking Icons';
+  src: url('/font/Naver-booking-Icons.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
 body {
   background-color: #d4dadf;
   margin: 0;
