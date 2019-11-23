@@ -6,14 +6,10 @@ import SubNavBar from '../SubNavBar';
 
 const NavBar = (props) => {
   const { name, isTransparent, isLogoutable } = props;
-  return (
-    <nav className="NavBar">
-      {name ? (
-        <SubNavBar name={name} />
-      ) : (
-        <MainNavBar isTransparent={isTransparent} isLogoutable={isLogoutable} />
-      )}
-    </nav>
+  return name ? (
+    <SubNavBar name={name} />
+  ) : (
+    <MainNavBar isTransparent={isTransparent} isLogoutable={isLogoutable} />
   );
 };
 

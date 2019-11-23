@@ -1,6 +1,9 @@
-.MainNavBar.fixed {
+.MainNavBar {
   width: 100vw;
   max-width: 414px;
+}
+
+.MainNavBar.fixed {
   display: flex;
   justify-content: space-between;
   align-items: center;

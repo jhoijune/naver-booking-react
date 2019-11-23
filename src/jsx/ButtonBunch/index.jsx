@@ -32,12 +32,7 @@ const ButtonBunch = (props) => {
     >
       {notes.map((value, index) => {
         return (
-          <Button
-            key={index}
-            fontColor={value.fontColor}
-            backgroundColor={value.backgroundColor}
-            click={value.click}
-          >
+          <Button key={index} style={value.style} click={value.click}>
             {value.children}
           </Button>
         );

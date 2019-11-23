@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
@@ -8,32 +9,42 @@ import ButtonBunch from '../ButtonBunch';
 const ProductDesc = (props) => {
   const { text, limit } = props;
   const [isFold, setIsFold] = useState(true);
+  const [textObj, setTextObj] = useState({ simple: '', detail: '' });
 
-  let textObj;
   useEffect(() => {
     let trimmedText = text.trim();
     trimmedText = trimmedText.replace('\n', '');
     if (trimmedText.length > limit) {
       const textSimple = trimmedText.slice(0, limit);
       const textDetail = trimmedText.slice(limit);
-      textObj = { simple: textSimple, detail: textDetail };
+      setTextObj({ simple: textSimple, detail: textDetail });
     } else {
-      textObj = { simple: trimmedText, detail: '' };
+      setTextObj({ simple: trimmedText, detail: '' });
     }
-  }, []);
+  }, [text]);
 
   const showMoreDesc = () => {
     if (isFold) {
       $('.ProductDesc .moreDesc').slideDown();
       setIsFold(false);
     } else {
-      $('.productDesc .moreDesc').slideUp();
+      $('.ProductDesc .moreDesc').slideUp();
       setIsFold(true);
     }
   };
 
-  const openText = '펼쳐보기 <i class="fn fn-down2"></i>';
-  const foldText = '접기 <i class="fn fn-up2"></i>';
+  const openText = (
+    <span>
+      {'펼쳐보기 '}
+      <i className="fn fn-down2" />
+    </span>
+  );
+  const foldText = (
+    <span>
+      {'접기 '}
+      <i className="fn fn-up2" />
+    </span>
+  );
 
   return (
     <section className="ProductDesc">
@@ -55,7 +66,11 @@ const ProductDesc = (props) => {
         <ButtonBunch
           notes={[
             {
-              backgroundColor: '#f3f5f6',
+              style: {
+                backgroundColor: '#f3f5f6',
+                border: 'none',
+                borderTop: '1px solid #ccc',
+              },
               click: showMoreDesc,
               children: isFold ? openText : foldText,
             },
@@ -69,11 +84,12 @@ const ProductDesc = (props) => {
 };
 
 ProductDesc.defaultProps = {
+  text: '',
   limit: 100,
 };
 
 ProductDesc.propTypes = {
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
   limit: PropTypes.number,
 };
 

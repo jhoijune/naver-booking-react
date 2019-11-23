@@ -12,9 +12,13 @@ const TabController = (props) => {
     left: 0,
     width: 0,
   });
-  const [viewStyle, setViewStyle] = useState({});
+  const [viewStyle, setViewStyle] = useState({
+    transitionDuration: '0.5s',
+  });
   const uiRef = useRef(null);
   const viewRef = useRef(null);
+  const selectedRef = useRef(selected);
+  selectedRef.current = selected;
 
   const handleClick = (index) => {
     if (alarm) {
@@ -28,21 +32,40 @@ const TabController = (props) => {
     };
   };
 
-  useEffect(() => {
-    // resize시 깨짐 처리
-    const selectedLi = uiRef.current.children[selected + 1];
+  const reviseIndicator = () => {
+    const selectedLi = uiRef.current.children[selectedRef.current + 1];
     setIndicatorStyle({
       left: selectedLi.offsetLeft,
       width: selectedLi.offsetWidth,
     });
-  }, [selected]);
+  };
+
+  const reviseViewWidth = () => {
+    const width = viewRef.current.offsetWidth;
+    setViewStyle({
+      ...viewStyle,
+      transitionDuration: '0s',
+      transform: `translate(-${width * selectedRef.current}px)`,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', reviseIndicator);
+    window.addEventListener('resize', reviseViewWidth);
+    return () => {
+      window.removeEventListener('resize', reviseIndicator);
+      window.removeEventListener('resize', reviseViewWidth);
+    };
+  }, []);
+
+  useEffect(reviseIndicator, [selected]);
 
   useEffect(() => {
     const width = viewRef.current.offsetWidth;
-    const degree = views.slice(0, selected + 1).filter((value) => value).length;
     setViewStyle({
       ...viewStyle,
-      transform: `translate(-${width * degree}px)`,
+      transitionDuration: '0.5s',
+      transform: `translate(-${width * selected}px)`,
     });
   }, [selected]);
 
@@ -79,7 +102,7 @@ TabController.defaultProps = {
 
 TabController.propTypes = {
   labels: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
-  views: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
+  views: PropTypes.arrayOf(PropTypes.node).isRequired,
   alarm: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   top: PropTypes.node,
   bottom: PropTypes.node,

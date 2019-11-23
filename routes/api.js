@@ -64,6 +64,7 @@ router.get('/products', confirmAPIRequest, async (req, res) => {
 
 router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
   try {
+    console.log('들어옴');
     const subquery = `select product_id from display_info WHERE id=${req.params.displayInfoId}`;
     const productId = (await sequelize.query(subquery))[0][0].product_id;
     const result = {};
@@ -86,7 +87,7 @@ router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
       'reservation_user_comment_image.id as imageId,modify_date as modifyDate,reservation_info_id as reservationInfoId,' +
       'reservation_user_comment_id as reservationUserCommentId,save_file_name as saveFileName FROM reservation_user_comment_image ' +
       'INNER JOIN file_info ON reservation_user_comment_image.file_id = file_info.id';
-    for (comment of comments) {
+    for (const comment of comments) {
       comment.reservationDate = moment(comment.reservationDate).format(
         'YYYY.MM.DD.(ddd)',
       );
@@ -684,7 +685,16 @@ router.get('/promotions', confirmAPIRequest, async (req, res, next) => {
       'from promotion INNER JOIN product_image ON promotion.product_id = product_image.product_id ' +
       'INNER JOIN file_info ON product_image.file_id = file_info.id ' +
       "WHERE product_image.type = 'ma'";
-    const results = (await sequelize.query(query))[0];
+    const [results] = await sequelize.query(query);
+    for (const result of results) {
+      const { id } = await DisplayInfo.findOne({
+        attributes: ['id'],
+        where: {
+          product_id: result.productId,
+        },
+      });
+      result.displayInfoId = id;
+    }
     res.json({ items: results });
   } catch (err) {
     console.error(err);

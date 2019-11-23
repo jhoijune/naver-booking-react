@@ -1,5 +1,6 @@
 .MainView {
-  width: auto;
+  width: 100vw;
+  max-width: 414px;
   display: flex;
   background-color: #e9ecef;
   background-color: var(--grey-color);

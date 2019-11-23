@@ -5,34 +5,32 @@ import { Link } from 'react-router-dom';
 import './style.css';
 
 const Button = (props) => {
-  const { fontColor, backgroundColor, click, children } = props;
+  const { style, click, children } = props;
+  const createStyle = () => {
+    return {
+      color: '#000',
+      backgroundColor: '#f4f4f4',
+      ...style,
+    };
+  };
+
   return typeof click === 'function' ? (
-    <button
-      className="Button"
-      onClick={click}
-      style={{ backgroundColor, color: fontColor }}
-    >
+    <button className="Button" onClick={click} style={createStyle()}>
       {children}
     </button>
   ) : (
-    <Link
-      className="Button"
-      to={click}
-      style={{ backgroundColor, color: fontColor }}
-    >
+    <Link className="Button" to={click} style={style}>
       {children}
     </Link>
   );
 };
 
 Button.defaultProps = {
-  fontColor: '#000',
-  backgroundColor: '#f4f4f4',
+  style: {},
 };
 
 Button.propTypes = {
-  fontColor: PropTypes.string,
-  backgroundColor: PropTypes.string,
+  style: PropTypes.object,
   click: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   children: PropTypes.node.isRequired,
 };

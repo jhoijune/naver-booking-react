@@ -22,7 +22,7 @@ const Footer = () => {
       {isRiseable ? (
         <a href="#">
           <i className="fn fn-up1" />
-          TOP
+          {' TOP'}
         </a>
       ) : (
         ''

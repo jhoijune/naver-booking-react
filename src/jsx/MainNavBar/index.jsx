@@ -9,15 +9,13 @@ import './style.css';
 const MainNavBar = (props) => {
   const { isTransparent, isLogoutable } = props;
   return (
-    <nav className="MainNavBar">
-      <div className={`MainNavBar ${isTransparent ? 'transparent' : 'fixed'}`}>
-        <Link to="/">
-          <img src="/images/icon/icon.png" alt="naver icon" />
-        </Link>
-        <Link to="/">
-          <h2>{isLogoutable ? '로그아웃' : '예약확인'}</h2>
-        </Link>
-      </div>
+    <nav className={`MainNavBar ${isTransparent ? 'transparent' : 'fixed'}`}>
+      <Link to="/">
+        <img src="/images/icon/icon.png" alt="naver icon" />
+      </Link>
+      <Link to="/">
+        <h2>{isLogoutable ? '로그아웃' : '예약확인'}</h2>
+      </Link>
     </nav>
   );
 };

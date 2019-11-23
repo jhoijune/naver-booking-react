@@ -31,4 +31,12 @@ const validImageType = (image) => {
   return result;
 };
 
-export { transformMoneyUnit, priceTypeMapper, validImageType };
+const resizeEnd = (func) => {
+  let timer;
+  return (event) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(func, 100, event);
+  };
+};
+
+export { transformMoneyUnit, priceTypeMapper, validImageType, resizeEnd };

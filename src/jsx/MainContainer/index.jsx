@@ -12,7 +12,7 @@ const MainContainer = (props) => {
   const { basisCount } = props;
   const [selectedCategory, setSelectedCategory] = useState(0); // 현재 선택된 카테고리 id
   const [productCount, setProductCount] = useState(0); //  카테고리의 제품 개수
-  const [views, setViews] = useState(Array(6).fill(null)); // [<MainView/>,<MainView/>]
+  const [views, setViews] = useState(Array(6).fill(<MainView />)); // [<MainView/>,<MainView/>]
   const [viewsArr, setViewsArr] = useState(Array(6).fill(null)); // [[<ProductBox/>],[<ProductBox/>]];
   const [categoryProducts, setCategoryProducts] = useState(Array(6).fill(null));
   const [showingCount, setShowingCount] = useState(0);
@@ -53,27 +53,24 @@ const MainContainer = (props) => {
 
   const showMoreProduct = () => {
     const viewsLen = viewsArr[selectedCategory].length;
+    const productsLen = categoryProducts[selectedCategory].length;
     if (viewsLen >= showingCount + basisCount || viewsLen > showingCount) {
-      // 보여주기만 하면 됨
+      // viewsArr에 있던 기존 것을 사용할 때
       const finalInd =
         viewsLen >= showingCount + basisCount
           ? showingCount + basisCount
           : viewsLen;
-      const copiedViews = [...views];
-      copiedViews[selectedCategory] = (
+      const modifiedViews = [...views];
+      modifiedViews[selectedCategory] = (
         <MainView
           productCount={productCount}
-          products={viewsArr[selectedCategory].slice(finalInd)}
+          products={viewsArr[selectedCategory].slice(0, finalInd)}
         />
       );
       setShowingCount(finalInd);
-      setViews(copiedViews);
-    } else if (
-      categoryProducts[selectedCategory].length >
-      viewsArr[selectedCategory].length
-    ) {
-      // 넣은뒤 보여줌
-      const productsLen = categoryProducts[selectedCategory].length;
+      setViews(modifiedViews);
+    } else if (productsLen > viewsLen) {
+      // viewsArr에 채워서 사용할 때
       const finalInd =
         productsLen >= viewsLen + basisCount
           ? viewsLen + basisCount

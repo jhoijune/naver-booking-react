@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import ImageSlider from '../ImageSlider';
-import ImageController from '../ImageController';
+import { resizeEnd } from '../../js/common';
 
 // 스크롤 시간(transitionTime) default 1초  위에서 물려받는것
 // 상태로 사용하는 스크롤 시간 (transitionDuration)
@@ -63,14 +63,6 @@ const PromotionImage = (props) => {
 
   const handleMouseOut = () => {
     setScrollable(true);
-  };
-
-  const resizeEnd = (func) => {
-    let timer;
-    return (event) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(func, 100, event);
-    };
   };
 
   const startScroll = () => {

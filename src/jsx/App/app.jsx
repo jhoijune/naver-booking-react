@@ -25,7 +25,6 @@ ReactDOM.render(
           <DetailContainer />
           <Footer />
         </Route>
-        <Route path="/detail">{/* redirect 시켜야 함 */}</Route>
         <Route path="/bookinglogin">
           {/* 완성됨 */}
           <Header />

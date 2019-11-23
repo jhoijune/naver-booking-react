@@ -182,7 +182,7 @@ const ReviewEdit = (props) => {
           <ButtonBunch
             notes={[
               {
-                backgroundColor: '#1EC800',
+                style: { backgroundColor: '#1EC800' },
                 click: () => {
                   confirmModal('리뷰를 등록 하시겠습니까?', handleSubmit);
                 },
@@ -194,7 +194,7 @@ const ReviewEdit = (props) => {
           <ButtonBunch
             notes={[
               {
-                backgroundColor: '#1EC800',
+                style: { backgroundColor: '#1EC800' },
                 click: () => {
                   confirmEdit(handleSubmit, score, comment, imageSrc);
                 },

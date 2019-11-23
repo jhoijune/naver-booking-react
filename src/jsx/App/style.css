@@ -64,6 +64,7 @@ a {
 }
 
 #content {
+  width: 100vw;
   max-width: 414px;
   max-width: var(--breakpoint-width);
 }

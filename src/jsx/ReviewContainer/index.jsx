@@ -23,11 +23,13 @@ const ReviewContainer = (props) => {
 
   useEffect(() => {
     // reviews가 달라졌을 때 averageScore바꾸는 effect
-    const modifiedAverageScore =
-      reviews.reduce((accum, current) => {
-        accum + Number(current.score);
-      }) / reviews.length;
-    setAverageScore(modifiedAverageScore);
+    if (reviews.length !== 0) {
+      const modifiedAverageScore =
+        reviews.reduce((accum, current) => {
+          accum + Number(current.score);
+        }) / reviews.length;
+      setAverageScore(modifiedAverageScore);
+    }
   }, [reviews]);
 
   const displayStar = (score, maxScore = 5) => {
@@ -147,7 +149,7 @@ const ReviewContainer = (props) => {
   return (
     <section className="CommentContainer">
       <ReviewSummary
-        averageScore={averageScore || '0'}
+        averageScore={averageScore}
         reviewCount={reviews.length}
         displayStar={displayStar}
       />
@@ -171,7 +173,7 @@ const ReviewContainer = (props) => {
         <ButtonBunch
           notes={[
             {
-              backgroundColor: '#E9ECEF',
+              style: { backgroundColor: '#E9ECEF' },
               click: `/review/${displayInfoId}`,
               children: (
                 <span>
@@ -191,28 +193,30 @@ const ReviewContainer = (props) => {
 
 ReviewContainer.defaultProps = {
   isBrief: true,
+  reviews: [],
+  averageScore: 0,
 };
 
 ReviewContainer.propTypes = {
-  displayInfoId: PropTypes.number.isRequired,
-  averageScore: PropTypes.number.isRequired,
+  displayInfoId: PropTypes.string.isRequired,
+  averageScore: PropTypes.number,
   reviews: PropTypes.arrayOf(
     PropTypes.shape({
-      comment: PropTypes.string.isRequired,
-      commentId: PropTypes.number.isRequired,
-      productId: PropTypes.number.isRequired,
-      reservationDate: PropTypes.string.isRequired,
-      reservationEmail: PropTypes.string.isRequired,
-      reservationInfoId: PropTypes.number.isRequired,
-      score: PropTypes.string.isRequired,
+      comment: PropTypes.string,
+      commentId: PropTypes.number,
+      productId: PropTypes.number,
+      reservationDate: PropTypes.string,
+      reservationEmail: PropTypes.string,
+      reservationInfoId: PropTypes.number,
+      score: PropTypes.string,
       commentImages: PropTypes.arrayOf(
         PropTypes.shape({
-          deleteFlag: PropTypes.number.isRequired,
-          saveFileName: PropTypes.string.isRequired,
-        }).isRequired,
+          deleteFlag: PropTypes.number,
+          saveFileName: PropTypes.string,
+        }),
       ),
     }),
-  ).isRequired,
+  ),
   isBrief: PropTypes.bool,
 };
 

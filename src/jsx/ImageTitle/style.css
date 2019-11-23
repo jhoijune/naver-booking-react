@@ -1,11 +1,6 @@
-.ImageTitle .container {
+.ImageTitle {
   position: relative;
   width: auto;
-  /*
-  width: 100vw;
-  max-width: 414px;
-  max-width: var(--breakpoint-width);
-  */
   height: 100vw;
   max-height: 414px;
   display: flex;
@@ -13,7 +8,7 @@
   z-index: 2;
 }
 
-.ImageTitle .topSection {
+.ImageTitle .top {
   flex: 3;
   text-align: center;
   display: flex;
@@ -21,7 +16,7 @@
   justify-content: center;
 }
 
-.ImageTitle .topSection > span {
+.ImageTitle .top > span {
   display: inline-block;
   font-size: 12px;
   color: #c0c0c0;
@@ -31,19 +26,19 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-.ImageTitle .topSection span.bright {
+.ImageTitle .top span.bright {
   color: #fff;
   color: var(--text-bright-color);
   background-color: transparent;
 }
 
-.ImageTitle .middleSection {
+.ImageTitle .middle {
   flex: 4;
   display: flex;
   align-items: center;
 }
 
-.ImageTitle .leftSection {
+.ImageTitle .left {
   flex: 1;
   font-size: 35px;
   line-height: 80px;
@@ -52,15 +47,15 @@
   text-align: center;
 }
 
-.ImageTitle .leftSection i:hover {
+.ImageTitle .left i:hover {
   cursor: pointer;
 }
 
-.ImageTitle .centerSection {
+.ImageTitle .center {
   flex: 8;
 }
 
-.ImageTitle .rightSection {
+.ImageTitle .right {
   flex: 1;
   font-size: 35px;
   line-height: 80px;
@@ -69,11 +64,11 @@
   text-align: center;
 }
 
-.ImageTitle .rightSection i:hover {
+.ImageTitle .right i:hover {
   cursor: pointer;
 }
 
-.ImageTitle .bottomSection {
+.ImageTitle .bottom {
   flex: 3;
 }
 

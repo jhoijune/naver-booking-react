@@ -42,7 +42,7 @@ const ImageSlider = React.forwardRef((props, ref) => {
           if (value && isPromotion) {
             return (
               <li key={index}>
-                <Link to={`detail?productId=${value.productId}`}>
+                <Link to={`detail/${value.displayInfoId}`}>
                   <MainImage src={value.saveFileName} alt="promotionImage" />
                 </Link>
               </li>
@@ -51,7 +51,7 @@ const ImageSlider = React.forwardRef((props, ref) => {
           if (value) {
             return (
               <li key={index}>
-                <MainImage src={value.saveFileName} alt="itemImage" />
+                <MainImage src={`/${value.saveFileName}`} alt="itemImage" />
               </li>
             );
           }
@@ -73,7 +73,7 @@ ImageSlider.propTypes = {
   images: PropTypes.arrayOf(
     PropTypes.shape({
       saveFileName: PropTypes.string.isRequired,
-      productId: PropTypes.number,
+      displayInfoId: PropTypes.number,
     }),
   ).isRequired,
   imageWidth: PropTypes.number.isRequired,

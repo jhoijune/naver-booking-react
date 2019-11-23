@@ -1,8 +1,7 @@
 .EventInfo {
   background-color: #fdfced;
-  width: 100vw;
-  max-width: 372px;
-  padding: 10px 20px;
+  width: auto;
+  padding: 10px 20px 0 20px;
   border-color: #c0c0c0;
   border-style: solid;
   border-width: 0 1px 1px 1px;
@@ -12,15 +11,14 @@
   font-family: 'Nanum Gothic Bold';
   line-height: 27px;
   font-size: 1rem;
-  margin: 0;
-  padding: 0 0 10px 0;
+  margin-bottom: 10px;
 }
 
 .EventInfo p {
   margin: 0;
   line-height: 25px;
   font-weight: 500;
-  padding: 10px 0 0 0;
+  padding: 10px 0 10px 0;
   border-top: 1px solid #c0c0c0;
 }
 

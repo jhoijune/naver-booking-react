@@ -9,16 +9,22 @@ const MainView = (props) => {
   const leftProducts = products.filter((v, index) => index % 2 === 0);
   const rightProducts = products.filter((v, index) => index % 2 === 1);
 
-  return (
+  return products.length ? (
     <div className="MainView">
       <ProductContainer className="left">{leftProducts}</ProductContainer>
       <ProductContainer className="right">{rightProducts}</ProductContainer>
     </div>
+  ) : (
+    <div className="MainView" />
   );
 };
 
+MainView.defaultProps = {
+  products: [],
+};
+
 MainView.propTypes = {
-  products: PropTypes.arrayOf(PropTypes.element.isRequired).isRequired,
+  products: PropTypes.arrayOf(PropTypes.element),
 };
 
 export default MainView;
