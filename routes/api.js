@@ -20,6 +20,36 @@ import { validImageType } from '../src/js/common';
 import { confirmAPIRequest } from './middlewares';
 
 const router = express.Router();
+const cache = {
+  insertData(name, id, data, limit = 10) {
+    if (this[name]) {
+      if (this[name].list.length === limit) {
+        const firstId = this[name].list.shift();
+        delete this[name].data[firstId];
+      }
+      this[name].list.push(id);
+      this[name].data[id] = data;
+    } else {
+      // init
+      this[name] = { list: [], data: {} };
+      this[name].list.push(id);
+      this[name].data[id] = data;
+    }
+  },
+  getData(name, id) {
+    // isExist를 거쳐서 id가 있다고 가정
+    const index = this[name].list.indexOf(id);
+    this[name].list.splice(index, 1);
+    this[name].list.push(id);
+    return this[name].data[id];
+  },
+  isExist(name, id) {
+    if (this[name].data[id]) {
+      return true;
+    }
+    return false;
+  },
+};
 
 const uploadFolderPath = path.join(
   __dirname,
@@ -53,10 +83,15 @@ const upload = multer({
 
 router.get('/products', confirmAPIRequest, async (req, res) => {
   try {
-    const query =
-      'SELECT display_info.id as displayInfoId,place_name as placeName,content as productContent,description as productDescription,product.id as productId,save_file_name as productImageUrl,product.category_id as categoryId from display_info INNER JOIN product ON display_info.product_id = product.id INNER JOIN product_image ON product.id = product_image.product_id INNER JOIN file_info ON product_image.file_id = file_info.id WHERE product_image.type = "th"';
-    const results = (await sequelize.query(query))[0];
-    res.json({ items: results, totalCount: results.length });
+    if (cache.products) {
+      res.json(cache.products);
+    } else {
+      const query =
+        'SELECT display_info.id as displayInfoId,place_name as placeName,content as productContent,description as productDescription,product.id as productId,save_file_name as productImageUrl,product.category_id as categoryId from display_info INNER JOIN product ON display_info.product_id = product.id INNER JOIN product_image ON product.id = product_image.product_id INNER JOIN file_info ON product_image.file_id = file_info.id WHERE product_image.type = "th"';
+      const [results] = await sequelize.query(query);
+      cache.products = { items: results, totalCount: results.length };
+      res.json(cache.products);
+    }
   } catch (err) {
     console.error(err);
   }
@@ -64,73 +99,79 @@ router.get('/products', confirmAPIRequest, async (req, res) => {
 
 router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
   try {
-    console.log('들어옴');
-    const subquery = `select product_id from display_info WHERE id=${req.params.displayInfoId}`;
-    const productId = (await sequelize.query(subquery))[0][0].product_id;
-    const result = {};
-    const averageScoreQuery =
-      'select AVG(score) as averageScore from product INNER JOIN ' +
-      'reservation_user_comment ON product.id = reservation_user_comment.product_id ' +
-      `WHERE product.id = ${productId} AND delete_flag=0`;
-    const { averageScore } = (await sequelize.query(averageScoreQuery))[0][0];
-    result.averageScore = averageScore;
-    const commentsQuery =
-      'SELECT comment,reservation_user_comment.id as commentId,reservation_user_comment.create_date as createDate,' +
-      'reservation_user_comment.modify_date as modifyDate,reservation_info.product_id as productId,reservation_date as reservationDate,' +
-      'email as reservationEmail,reservation_info.id as reservationInfoId,reservation_name as reservationName,reservation_tel as reservationTelephone,' +
-      'score from reservation_info INNER JOIN reservation_user_comment ON reservation_info.id = reservation_user_comment.reservation_info_id ' +
-      `INNER JOIN reservation_email ON reservation_email.id = reservation_user_comment.reservation_email_id WHERE reservation_user_comment.product_id = ${productId} ` +
-      'AND delete_flag = 0';
-    const comments = (await sequelize.query(commentsQuery))[0];
-    const commentImagesQueryHead =
-      'SELECT content_type as contentType,create_date as createDate,delete_flag as deleteFlag,file_info.id as fileId,' +
-      'reservation_user_comment_image.id as imageId,modify_date as modifyDate,reservation_info_id as reservationInfoId,' +
-      'reservation_user_comment_id as reservationUserCommentId,save_file_name as saveFileName FROM reservation_user_comment_image ' +
-      'INNER JOIN file_info ON reservation_user_comment_image.file_id = file_info.id';
-    for (const comment of comments) {
-      comment.reservationDate = moment(comment.reservationDate).format(
-        'YYYY.MM.DD.(ddd)',
-      );
-      const commentImagesQuery =
-        `${commentImagesQueryHead} WHERE reservation_user_comment_id = ${comment.commentId}` +
-        ` AND delete_flag = 0`;
-      const commentImages = (await sequelize.query(commentImagesQuery))[0];
-      comment.commentImages = commentImages;
+    const keyName = 'products/id';
+    const id = req.params.displayInfoId;
+    if (cache[keyName] && cache.isExist(keyName, id)) {
+      res.json(cache.getData(keyName, id));
+    } else {
+      const subquery = `select product_id from display_info WHERE id=${id}`;
+      const productId = (await sequelize.query(subquery))[0][0].product_id;
+      const result = {};
+      const averageScoreQuery =
+        'select AVG(score) as averageScore from product INNER JOIN ' +
+        'reservation_user_comment ON product.id = reservation_user_comment.product_id ' +
+        `WHERE product.id = ${productId} AND delete_flag=0`;
+      const { averageScore } = (await sequelize.query(averageScoreQuery))[0][0];
+      result.averageScore = averageScore;
+      const commentsQuery =
+        'SELECT comment,reservation_user_comment.id as commentId,reservation_user_comment.create_date as createDate,' +
+        'reservation_user_comment.modify_date as modifyDate,reservation_info.product_id as productId,reservation_date as reservationDate,' +
+        'email as reservationEmail,reservation_info.id as reservationInfoId,reservation_name as reservationName,reservation_tel as reservationTelephone,' +
+        'score from reservation_info INNER JOIN reservation_user_comment ON reservation_info.id = reservation_user_comment.reservation_info_id ' +
+        `INNER JOIN reservation_email ON reservation_email.id = reservation_user_comment.reservation_email_id WHERE reservation_user_comment.product_id = ${productId} ` +
+        'AND delete_flag = 0';
+      const [comments] = await sequelize.query(commentsQuery);
+      const commentImagesQueryHead =
+        'SELECT content_type as contentType,create_date as createDate,delete_flag as deleteFlag,file_info.id as fileId,' +
+        'reservation_user_comment_image.id as imageId,modify_date as modifyDate,reservation_info_id as reservationInfoId,' +
+        'reservation_user_comment_id as reservationUserCommentId,save_file_name as saveFileName FROM reservation_user_comment_image ' +
+        'INNER JOIN file_info ON reservation_user_comment_image.file_id = file_info.id';
+      for (const comment of comments) {
+        comment.reservationDate = moment(comment.reservationDate).format(
+          'YYYY.MM.DD.(ddd)',
+        );
+        const commentImagesQuery =
+          `${commentImagesQueryHead} WHERE reservation_user_comment_id = ${comment.commentId}` +
+          ` AND delete_flag = 0`;
+        const [commentImages] = await sequelize.query(commentImagesQuery);
+        comment.commentImages = commentImages;
+      }
+      result.comments = comments;
+      const displayInfoQuery =
+        'select category.id as categoryId,name as categoryName,display_info.create_date as createDate,' +
+        'display_info.id as displayInfoId,email,homepage,display_info.modify_date as modifyDate,opening_hours as openingHours,' +
+        'place_lot as placeLot,place_name as placeName,place_street as placeStreet,content as productContent,description ' +
+        'as productDescription,event as productEvent,product.id as productId,tel as telephone from display_info INNER JOIN ' +
+        'product on display_info.product_id = product.id INNER JOIN category ON category.id = product.category_id ' +
+        `WHERE display_info.id = ${req.params.displayInfoId}`;
+      const [displayInfo] = (await sequelize.query(displayInfoQuery))[0];
+      result.displayInfo = displayInfo;
+      const displayInfoImageQuery =
+        'select content_type as contentType,file_info.create_date as createDate,delete_flag as deleteFlag,' +
+        'display_info.id as displayInfoId,display_info_image.id as displayInfoImageId,file_info.id as fileId,file_name as fileName,' +
+        'file_info.modify_date as modifyDate,save_file_name as saveFileName from display_info INNER JOIN display_info_image ' +
+        'ON display_info.id = display_info_image.display_info_id INNER JOIN file_info ON display_info_image.file_id = file_info.id ' +
+        `WHERE display_info.id = ${req.params.displayInfoId}`;
+      const [displayInfoImage] = (await sequelize.query(
+        displayInfoImageQuery,
+      ))[0];
+      result.displayInfoImage = displayInfoImage;
+      const productImagesQuery =
+        'select content_type as contentType,create_date as createDate,delete_flag as deleteFlag,' +
+        'file_info.id as fileInfoId,file_name as fileName,modify_date as modifyDate,product_id as productId,' +
+        'product_image.id as productImageId,save_file_name as saveFileName,type from product_image INNER JOIN ' +
+        `file_info ON product_image.file_id = file_info.id WHERE product_id = ${productId}`;
+      const [productImages] = await sequelize.query(productImagesQuery);
+      result.productImages = productImages;
+      const productPricesQuery =
+        'select create_date as createDate,discount_rate as discountRate,modify_date as modifyDate,' +
+        'price,price_type_name as priceTypeName,product_id as productId,id as productPriceID from product_price ' +
+        `where product_id = ${productId}`;
+      const [productPrices] = await sequelize.query(productPricesQuery);
+      result.productPrices = productPrices;
+      cache.insertData(keyName, id, result);
+      res.json(result);
     }
-    result.comments = comments;
-    const displayInfoQuery =
-      'select category.id as categoryId,name as categoryName,display_info.create_date as createDate,' +
-      'display_info.id as displayInfoId,email,homepage,display_info.modify_date as modifyDate,opening_hours as openingHours,' +
-      'place_lot as placeLot,place_name as placeName,place_street as placeStreet,content as productContent,description ' +
-      'as productDescription,event as productEvent,product.id as productId,tel as telephone from display_info INNER JOIN ' +
-      'product on display_info.product_id = product.id INNER JOIN category ON category.id = product.category_id ' +
-      `WHERE display_info.id = ${req.params.displayInfoId}`;
-    const displayInfo = (await sequelize.query(displayInfoQuery))[0][0];
-    result.displayInfo = displayInfo;
-    const displayInfoImageQuery =
-      'select content_type as contentType,file_info.create_date as createDate,delete_flag as deleteFlag,' +
-      'display_info.id as displayInfoId,display_info_image.id as displayInfoImageId,file_info.id as fileId,file_name as fileName,' +
-      'file_info.modify_date as modifyDate,save_file_name as saveFileName from display_info INNER JOIN display_info_image ' +
-      'ON display_info.id = display_info_image.display_info_id INNER JOIN file_info ON display_info_image.file_id = file_info.id ' +
-      `WHERE display_info.id = ${req.params.displayInfoId}`;
-    const displayInfoImage = (await sequelize.query(
-      displayInfoImageQuery,
-    ))[0][0];
-    result.displayInfoImage = displayInfoImage;
-    const productImagesQuery =
-      'select content_type as contentType,create_date as createDate,delete_flag as deleteFlag,' +
-      'file_info.id as fileInfoId,file_name as fileName,modify_date as modifyDate,product_id as productId,' +
-      'product_image.id as productImageId,save_file_name as saveFileName,type from product_image INNER JOIN ' +
-      `file_info ON product_image.file_id = file_info.id WHERE product_id = ${productId}`;
-    const productImages = (await sequelize.query(productImagesQuery))[0];
-    result.productImages = productImages;
-    const productPricesQuery =
-      'select create_date as createDate,discount_rate as discountRate,modify_date as modifyDate,' +
-      'price,price_type_name as priceTypeName,product_id as productId,id as productPriceID from product_price ' +
-      `where product_id = ${productId}`;
-    const productPrices = (await sequelize.query(productPricesQuery))[0];
-    result.productPrices = productPrices;
-    res.json(result);
   } catch (err) {
     console.error(err);
   }
@@ -143,7 +184,7 @@ router.get('/reservations', confirmAPIRequest, async (req, res) => {
       'modify_date as modifyDate,product_id as productId,reservation_date as reservationDate,email as reservationEmail,' +
       'reservation_info.id as reservationInfoId,reservation_name as reservationName,reservation_tel as reservationTelephone ' +
       'from reservation_info INNER JOIN reservation_email ON reservation_info.reservation_email_id = reservation_email.id';
-    const reservationInfo = (await sequelize.query(reservationInfoQuery))[0];
+    const [reservationInfo] = await sequelize.query(reservationInfoQuery);
     for (const element of reservationInfo) {
       const totalPriceQuery =
         'SELECT SUM(price*count) as totalPrice from reservation_info_price INNER JOIN product_price ' +
@@ -158,7 +199,7 @@ router.get('/reservations', confirmAPIRequest, async (req, res) => {
         'event as productEvent,product.id as productId,tel as telephone from display_info INNER JOIN product ON ' +
         'display_info.product_id = product.id INNER JOIN category ON product.category_id = category.id ' +
         `WHERE display_info.id = ${element.displayInfoId}`;
-      const displayInfo = (await sequelize.query(displayInfoQuery))[0][0];
+      const [displayInfo] = (await sequelize.query(displayInfoQuery))[0];
       element.displayInfo = displayInfo;
     }
     const result = {
@@ -182,7 +223,7 @@ router.get('/reservations/:emailId', confirmAPIRequest, async (req, res) => {
       'reservation_info.id = reservation_info_price.reservation_info_id INNER JOIN product_price ON ' +
       `product_price.id = reservation_info_price.product_price_id WHERE reservation_info.reservation_email_id = ${emailId} ` +
       'GROUP BY reservation_info.id';
-    const reservationInfo = (await sequelize.query(reservationInfoQuery))[0];
+    const [reservationInfo] = await sequelize.query(reservationInfoQuery);
     const toUsedReservation = [];
     const usedReservation = [];
     const canceledReservation = [];
@@ -191,7 +232,7 @@ router.get('/reservations/:emailId', confirmAPIRequest, async (req, res) => {
         'SELECT price,price_type_name as priceTypeName,count from product_price INNER JOIN ' +
         'reservation_info_price ON product_price.id = reservation_info_price.product_price_id INNER JOIN reservation_info ON ' +
         `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info.id = ${eachReservation.reservationInfoId}`;
-      const priceInfo = (await sequelize.query(priceInfoQuery))[0];
+      const [priceInfo] = await sequelize.query(priceInfoQuery);
       eachReservation.priceInfo = priceInfo;
       eachReservation.reservationDate = moment(
         eachReservation.reservationDate,
@@ -226,12 +267,12 @@ router.post('/reservations', async (req, res) => {
       postable = false;
       message = '상품 전시 정보가 일치하지 않습니다';
     }
-    const realProductId = (await DisplayInfo.findOne({
+    const { product_id: realProductId } = await DisplayInfo.findOne({
       attributes: ['product_id'],
       where: {
         id: req.body.displayInfoId,
       },
-    })).product_id;
+    });
     if (postable && req.body.productId !== realProductId) {
       postable = false;
       message = '상품 정보가 일치하지 않습니다';
@@ -405,7 +446,7 @@ router.post(
           Number(req.body.score) > 5 ||
           !Number.isInteger(Number(req.body.score)))
       ) {
-        postalbe = false;
+        postable = false;
         message = '별점 개수가 올바르지 않습니다';
       }
       if (
@@ -594,8 +635,6 @@ router.put(
           },
         },
       );
-      console.log('exImage는', req.body.exImage);
-      console.log('newImage는', req.body.newImage);
       if (req.body.exImage && req.body.newImage !== 0) {
         // 파일 삭제
         // 기존에 이미지가 존재하면서 추가하였거나 제거한 경우
@@ -668,34 +707,37 @@ router.put(
 
 router.get('/categories', confirmAPIRequest, async (req, res) => {
   try {
-    const query =
-      'SELECT count(*) as count,category_id as id,category.name ' +
-      'from product INNER JOIN category ON product.category_id = category.id group by id';
-    const results = (await sequelize.query(query))[0];
-    res.json({ items: results });
+    if (cache.categories) {
+      res.json(cache.categories);
+    } else {
+      const query =
+        'SELECT count(*) as count,category_id as id,category.name ' +
+        'from product INNER JOIN category ON product.category_id = category.id group by id';
+      const [results] = await sequelize.query(query);
+      cache.categories = { items: results };
+      res.json(cache.categories);
+    }
   } catch (err) {
     console.error(err);
   }
 });
 
-router.get('/promotions', confirmAPIRequest, async (req, res, next) => {
+router.get('/promotions', confirmAPIRequest, async (req, res) => {
   try {
-    const query =
-      'SELECT promotion.id,promotion.product_id as productId,save_file_name as saveFileName ' +
-      'from promotion INNER JOIN product_image ON promotion.product_id = product_image.product_id ' +
-      'INNER JOIN file_info ON product_image.file_id = file_info.id ' +
-      "WHERE product_image.type = 'ma'";
-    const [results] = await sequelize.query(query);
-    for (const result of results) {
-      const { id } = await DisplayInfo.findOne({
-        attributes: ['id'],
-        where: {
-          product_id: result.productId,
-        },
-      });
-      result.displayInfoId = id;
+    if (cache.promotions) {
+      res.json(cache.promotions);
+    } else {
+      const query =
+        'SELECT promotion.id,promotion.product_id as productId,' +
+        'display_info.id as displayInfoId,save_file_name as saveFileName from promotion ' +
+        'INNER JOIN product_image ON promotion.product_id = product_image.product_id ' +
+        'INNER JOIN file_info ON product_image.file_id = file_info.id ' +
+        'INNER JOIN display_info ON promotion.product_id = display_info.product_id ' +
+        'WHERE product_image.type = "ma"';
+      const [results] = await sequelize.query(query);
+      cache.promotions = { items: results };
+      res.json(cache.promotions);
     }
-    res.json({ items: results });
   } catch (err) {
     console.error(err);
   }

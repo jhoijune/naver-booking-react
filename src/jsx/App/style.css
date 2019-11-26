@@ -65,8 +65,10 @@ a {
 
 #content {
   width: 100vw;
+  height: 100vh;
   max-width: 414px;
   max-width: var(--breakpoint-width);
+  background-color: #e9ecef;
 }
 
 @media (min-width: 414px) {
@@ -205,15 +207,6 @@ a {
 
 .fn-star2:before {
   content: '\EAA3';
-}
-
-.fn-star3:before {
-  content: '\EAA3';
-  background: linear-gradient(to Right, #f00 70%, #808080 30%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: initial;
 }
 
 .fn-up1:before {

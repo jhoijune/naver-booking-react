@@ -68,8 +68,8 @@ const ProductDesc = (props) => {
             {
               style: {
                 backgroundColor: '#f3f5f6',
-                border: 'none',
-                borderTop: '1px solid #ccc',
+                borderLeft: 'none',
+                borderRight: 'none',
               },
               click: showMoreDesc,
               children: isFold ? openText : foldText,

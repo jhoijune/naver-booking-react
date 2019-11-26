@@ -13,13 +13,15 @@ const DetailImage = (props) => {
   const { images, title, transitionTime } = props;
   const [degree, setDegree] = useState(0);
   const [imageWidth, setImageWidth] = useState(0);
+  const [transitionDuration, setTransitionDuration] = useState(transitionTime);
   const imageList = useRef(null);
 
-  const getImageWidth = () => {
-    return resizeEnd(() => {
-      setImageWidth(imageList.current.firstElementChild.clientWidth);
-    });
+  const doingResize = () => {
+    setImageWidth(imageList.current.firstElementChild.clientWidth);
+    setTransitionDuration(0);
   };
+
+  let doneResize;
 
   useEffect(() => {
     setImageWidth(
@@ -27,8 +29,18 @@ const DetailImage = (props) => {
         imageList.current.firstElementChild.clientWidth) ||
         0,
     );
-    window.addEventListener('resize', getImageWidth());
-    return () => window.removeEventListener('resize', getImageWidth());
+    window.addEventListener('resize', doingResize);
+    window.addEventListener(
+      'resize',
+      (() => {
+        doneResize = resizeEnd(() => setTransitionDuration(transitionTime));
+        return doneResize;
+      })(),
+    );
+    return () => {
+      window.removeEventListener('resize', doingResize);
+      window.removeEventListener('resize', doneResize);
+    };
   }, [images]);
 
   const leftScroll = () => {
@@ -59,7 +71,7 @@ const DetailImage = (props) => {
       <ImageSlider
         ref={imageList}
         degree={degree}
-        transitionTime={transitionTime}
+        transitionTime={transitionDuration}
         images={images}
         imageWidth={imageWidth}
         isPromotion={false}

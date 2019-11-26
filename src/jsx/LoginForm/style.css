@@ -2,12 +2,11 @@
   width: auto;
   background-color: #e9ecef;
   background-color: var(--grey-color);
-  border: 1px solid #000;
 }
 
 .LoginForm .headerBox {
   margin: 0 20px;
-  border: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
 }
 
 .LoginForm h1 {

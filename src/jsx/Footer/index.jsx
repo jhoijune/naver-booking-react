@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 
 import './style.css';
-import { clearInterval } from 'timers';
 
 const Footer = () => {
   const [isRiseable, setIsRiseable] = useState(false);
 
   useEffect(() => {
-    const changeRiseable = setInterval(() => {
+    const id = setInterval(() => {
       if (document.body.scrollHeight > window.innerHeight) {
         setIsRiseable(true);
       } else {
         setIsRiseable(false);
       }
     }, 1000);
-    return () => clearInterval(changeRiseable);
+    return () => clearInterval(id);
   }, []);
 
   return (

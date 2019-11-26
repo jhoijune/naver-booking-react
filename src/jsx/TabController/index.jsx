@@ -5,7 +5,7 @@ import TabUI from '../TabUI';
 import TabView from '../TabView';
 
 const TabController = (props) => {
-  const { labels, views, alarm, top, bottom } = props;
+  const { labels, views, alarm, correctionNeeded, top, bottom } = props;
   // top,bottom은 정적으로 보여줄 뷰
   const [selected, setSelected] = useState(0);
   const [indicatorStyle, setIndicatorStyle] = useState({
@@ -15,10 +15,13 @@ const TabController = (props) => {
   const [viewStyle, setViewStyle] = useState({
     transitionDuration: '0.5s',
   });
+  const [viewHeight, setViewHeight] = useState(0);
   const uiRef = useRef(null);
   const viewRef = useRef(null);
   const selectedRef = useRef(selected);
   selectedRef.current = selected;
+  const viewHeightRef = useRef(viewHeight);
+  viewHeightRef.current = viewHeight;
 
   const handleClick = (index) => {
     if (alarm) {
@@ -52,11 +55,27 @@ const TabController = (props) => {
   useEffect(() => {
     window.addEventListener('resize', reviseIndicator);
     window.addEventListener('resize', reviseViewWidth);
+    const id = setInterval(() => {
+      const viewBody =
+        viewRef.current.children[0].children[selectedRef.current].children[0]; // section -> ul -> li -> div
+      const height = viewBody && viewBody.offsetHeight;
+      if (viewHeight.current !== height) {
+        setViewHeight(height);
+      }
+    }, 100);
     return () => {
       window.removeEventListener('resize', reviseIndicator);
       window.removeEventListener('resize', reviseViewWidth);
+      clearInterval(id);
     };
   }, []);
+
+  useEffect(() => {
+    setViewStyle({
+      ...viewStyle,
+      height: viewHeight,
+    });
+  }, [viewHeight]);
 
   useEffect(reviseIndicator, [selected]);
 
@@ -68,15 +87,6 @@ const TabController = (props) => {
       transform: `translate(-${width * selected}px)`,
     });
   }, [selected]);
-
-  useEffect(() => {
-    const viewBody = viewRef.current.children[0].children[selected].children[0]; // section -> ul -> li -> div
-    const height = viewBody && viewBody.offsetHeight;
-    setViewStyle({
-      ...viewStyle,
-      height: height || '',
-    });
-  }, [views]);
 
   return (
     <div className="TabController">

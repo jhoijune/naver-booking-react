@@ -6,7 +6,10 @@ import './style.css';
 const ReviewSummary = (props) => {
   const { averageScore, reviewCount, displayStar } = props;
   return (
-    <article className="CommentSummary">
+    <article
+      className="ReviewSummary"
+      style={{ borderBottom: reviewCount ? '' : 'none' }}
+    >
       <h2>예매자 한줄평</h2>
       <div className="summaryContainer">
         <div className="leftContainer">
@@ -24,7 +27,7 @@ const ReviewSummary = (props) => {
 };
 
 ReviewSummary.propTypes = {
-  averageScore: PropTypes.string.isRequired,
+  averageScore: PropTypes.number.isRequired,
   reviewCount: PropTypes.number.isRequired,
   displayStar: PropTypes.func.isRequired,
 };

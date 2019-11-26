@@ -1,8 +1,5 @@
-// props 수정
-
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import axios from 'axios';
 
@@ -12,22 +9,47 @@ import ReviewList from '../ReviewList';
 import { ModalContext } from '../Layout';
 import ButtonBunch from '../ButtonBunch';
 
+/*
+displayInfoId={displayInfoId}
+reviews={productData.comments}
+averageScore={productData.averageScore}
+*/
+
 const ReviewContainer = (props) => {
   // 전체적으로 만들고 다시 검토
-  const { isBrief, displayInfoId } = props;
-  const [reviews, setReviews] = useState(props.reviews);
-  const [averageScore, setAverageScore] = useState(props.averageScore);
+  const {
+    isBrief,
+    displayInfoId,
+    reviews: exReviews,
+    averageScore: exAverageScore,
+  } = props;
+  const [reviews, setReviews] = useState([]);
+  const [averageScore, setAverageScore] = useState(0);
   const [isModifiable, setIsModifiable] = useState(false);
   const [exData, setExData] = useState({});
   const { alertModal, confirmModal } = useContext(ModalContext);
+  const styleRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (styleRef.current) {
+        document.head.removeChild(styleRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    setReviews(exReviews);
+    setAverageScore(exAverageScore || 0);
+  }, [exReviews]);
 
   useEffect(() => {
     // reviews가 달라졌을 때 averageScore바꾸는 effect
     if (reviews.length !== 0) {
-      const modifiedAverageScore =
-        reviews.reduce((accum, current) => {
-          accum + Number(current.score);
-        }) / reviews.length;
+      let modifiedAverageScore =
+        reviews.reduce((accum, current) => accum + Number(current.score), 0) /
+        reviews.length;
+      modifiedAverageScore = Math.round(modifiedAverageScore * 10) / 10;
       setAverageScore(modifiedAverageScore);
     }
   }, [reviews]);
@@ -42,19 +64,24 @@ const ReviewContainer = (props) => {
       stars.push(<i className="fn fn-star2 getStar" />);
     });
     if (ratioCount > Number.EPSILON) {
-      const style = {
-        ':before': {
-          background: `linear-gradient(to Right,#f00 ${Math.round(
+      if (styleRef.current) {
+        styleRef.current.innerText = `.ReviewContainer .ReviewSummary .ratioStar:before { 
+          background: linear-gradient(to Right,#f00 ${Math.round(
             ratioCount * 100,
-          )}%,#E6E6E6 ${Math.round((1 - ratioCount) * 100)}%)`,
-          content: 'EAA3',
-          backgroundClip: 'text',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          display: 'initial',
-        },
-      };
-      stars.push(<i className="fn fn-star2 ratioStar" style={style} />);
+          )}%,#E6E6E6 ${Math.round((1 - ratioCount) * 100)}%);
+          -webkit-background-clip: text;
+        }`;
+      } else {
+        styleRef.current = document.createElement('style');
+        styleRef.current.innerText = `.ReviewContainer .ReviewSummary .ratioStar:before { 
+          background: linear-gradient(to Right,#f00 ${Math.round(
+            ratioCount * 100,
+          )}%,#E6E6E6 ${Math.round((1 - ratioCount) * 100)}%);
+          -webkit-background-clip: text;
+        }`;
+        document.head.appendChild(styleRef.current);
+      }
+      stars.push(<i className="fn fn-star2 ratioStar" />);
     }
     _.times(notFillCount, () => {
       stars.push(<i className="fn fn-star2 notGetStar" />);
@@ -113,7 +140,8 @@ const ReviewContainer = (props) => {
 
   const confirmDelete = (commentId) => {
     // 상세정보 창의 리뷰 삭제 버튼을 눌렀을 때의 행동
-    confirmModal('리뷰를 삭제하시겠습니까?', deleteComment(commentId));
+    return () =>
+      confirmModal('리뷰를 삭제하시겠습니까?', deleteComment(commentId));
   };
 
   const confirmEdit = (id) => {
@@ -147,37 +175,50 @@ const ReviewContainer = (props) => {
   };
 
   return (
-    <section className="CommentContainer">
+    <section className="ReviewContainer">
       <ReviewSummary
         averageScore={averageScore}
         reviewCount={reviews.length}
         displayStar={displayStar}
       />
-      <ReviewList
-        reviews={reviews}
-        isBrief={isBrief}
-        isModifiable={isModifiable}
-        exData={exData}
-        confirmDelete={confirmDelete}
-        confirmCancel={confirmCancel}
-        confirmEdit={confirmEdit}
-        editComment={editComment}
-      />
-      <aside>
-        <p>
-          <i className="fn fn-alarm1" />
-          네이버 예약을 통해 실제 방문한 이용자가 남긴 평가입니다.
-        </p>
-      </aside>
-      {isBrief ? (
+      {reviews.length ? (
+        <ReviewList
+          reviews={reviews}
+          isBrief={isBrief}
+          isModifiable={isModifiable}
+          exData={exData}
+          confirmDelete={confirmDelete}
+          confirmCancel={confirmCancel}
+          confirmEdit={confirmEdit}
+          editComment={editComment}
+        />
+      ) : (
+        ''
+      )}
+      {reviews.length ? (
+        <aside>
+          <p>
+            <i className="fn fn-alarm1" />
+            네이버 예약을 통해 실제 방문한 이용자가 남긴 평가입니다.
+          </p>
+        </aside>
+      ) : (
+        ''
+      )}
+      {isBrief && reviews.length > 5 ? (
         <ButtonBunch
           notes={[
             {
-              style: { backgroundColor: '#E9ECEF' },
+              style: {
+                color: '#000',
+                backgroundColor: '#F3F5F6',
+                border: 'none',
+                borderTop: '1px solid #c0c0c0',
+              },
               click: `/review/${displayInfoId}`,
               children: (
                 <span>
-                  예매자 리뷰 더보기
+                  {'예매자 리뷰 더보기 '}
                   <i className="fn fn-forward1" />
                 </span>
               ),
@@ -194,12 +235,12 @@ const ReviewContainer = (props) => {
 ReviewContainer.defaultProps = {
   isBrief: true,
   reviews: [],
-  averageScore: 0,
+  averageScore: '',
 };
 
 ReviewContainer.propTypes = {
   displayInfoId: PropTypes.string.isRequired,
-  averageScore: PropTypes.number,
+  averageScore: PropTypes.string,
   reviews: PropTypes.arrayOf(
     PropTypes.shape({
       comment: PropTypes.string,

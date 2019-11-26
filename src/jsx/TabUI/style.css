@@ -14,7 +14,7 @@
 .TabUI li {
   font-family: 'Nanum Gothic Bold';
   font-size: 15px;
-  flex: 1;
+  flex: auto;
   padding: 7.5px 0px;
 }
 

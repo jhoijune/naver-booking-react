@@ -18,7 +18,6 @@ const ProductBox = (props) => {
   } = props;
   const [isFold, setIsFold] = useState(true);
   const [isIconShowing, setIsIconShowing] = useState(false);
-  // const [textObj, setTextObj] = useState({ simple: '', detail: '' });
   const detailText = useRef(null);
 
   let textObj;
@@ -63,19 +62,22 @@ const ProductBox = (props) => {
           }}
           onMouseOut={() => {
             setIsIconShowing(false);
-          }}>
+          }}
+        >
           {textObj.detail ? (
             <p>
               {textObj.simple}
               <span
                 className="dots"
-                style={{ display: isFold ? 'inline' : 'none' }}>
+                style={{ display: isFold ? 'inline' : 'none' }}
+              >
                 ...
               </span>
               <span
                 className="moreDesc"
                 ref={detailText}
-                style={{ display: 'none' }}>
+                style={{ display: 'none' }}
+              >
                 {textObj.detail}
               </span>
               <div className="helping">

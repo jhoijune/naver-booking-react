@@ -1,28 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+import NavBar from '../NavBar';
 import ReviewContainer from '../ReviewContainer';
 
 const ReviewProvider = () => {
   const { displayInfoId } = useParams();
-  let productData;
+  const [productData, setProductData] = useState({});
 
-  useEffect(async () => {
-    try {
-      productData = (await axios.get(`/api/products/${displayInfoId}`)).data;
-    } catch (error) {
-      console.error(error);
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/${displayInfoId}`);
+        setProductData(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
   }, []);
 
+  useEffect(() => {
+    if (productData.displayInfo) {
+      document.title = `리뷰 : ${productData.displayInfo.productDescription}`;
+    }
+  }, [productData]);
+
   return (
-    <ReviewContainer
-      displayInfoId={displayInfoId}
-      averageScore={productData.averageScore}
-      reviews={productData.comments}
-      isBrief={false}
-    />
+    <div className="ReviewProvider">
+      <NavBar
+        name={
+          productData.displayInfo && productData.displayInfo.productDescription
+        }
+      />
+      <ReviewContainer
+        displayInfoId={displayInfoId}
+        averageScore={productData.averageScore}
+        reviews={productData.comments}
+        isBrief={false}
+      />
+    </div>
   );
 };
 

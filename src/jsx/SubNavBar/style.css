@@ -1,11 +1,15 @@
 .SubNavBar {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
   padding: 20px 10px;
   width: auto;
   display: flex;
   font-size: 18px;
+  border-bottom: 1px solid #c0c0c0;
 }
 
 .SubNavBar h1 {
+  text-align: center;
   font-size: 18px;
   font-family: 'Nanum Gothic Bold';
   margin: 0;

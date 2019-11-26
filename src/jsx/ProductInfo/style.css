@@ -1,10 +1,9 @@
 .ProductInfo {
-  width: 100vw;
-  max-width: 412px;
-  border-color: #c0c0c0;
-  border-style: solid;
-  border-width: 0 1px 1px 1px;
+  width: auto;
+  background-color: var(--text-bright-color);
+  background-color: #fff;
   overflow: hidden;
+  border-bottom: 1px solid #ccc;
 }
 
 .ProductInfo .productDetail {
@@ -14,8 +13,7 @@
 
 .ProductInfo .productDetail h2 {
   font-family: 'Nanum Gothic Bold';
-  padding-left: 7px;
-  margin: 14px 0px 14px 0px;
+  padding: 14px 0px 14px 7px;
   font-size: 16px;
 }
 
@@ -23,6 +21,11 @@
   margin: 0;
   line-height: 20px;
   padding: 0 20px 0px 20px;
+}
+
+.ProductInfo .directions {
+  width: 100vw;
+  max-width: 414px;
 }
 
 .ProductInfo .directions img {

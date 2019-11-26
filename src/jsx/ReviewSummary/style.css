@@ -1,8 +1,6 @@
 .ReviewSummary {
-  padding-bottom: 14px;
-  border-bottom-color: #c0c0c0;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
+  padding: 10px 10px 14px 10px;
+  border-bottom: 1px solid #c0c0c0;
 }
 
 .ReviewSummary h2 {

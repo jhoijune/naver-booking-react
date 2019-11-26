@@ -65,39 +65,39 @@ const PromotionImage = (props) => {
     setScrollable(true);
   };
 
-  const startScroll = () => {
-    return resizeEnd(() => {
-      setScrollable(true);
-    });
+  const doingResize = () => {
+    setScrollable(false);
+    setImageWidth(imageList.current.firstElementChild.clientWidth);
+    setTransitionDuration(0);
   };
 
-  const pauseScroll = () => {
-    setScrollable(false);
-  };
+  let doneResize;
 
   useEffect(() => {
-    window.addEventListener('resize', pauseScroll);
-    window.addEventListener('resize', startScroll());
+    window.addEventListener('resize', doingResize);
+    window.addEventListener(
+      'resize',
+      (() => {
+        doneResize = resizeEnd(() => {
+          setScrollable(true);
+          setImageWidth(imageList.current.firstElementChild.clientWidth);
+          setTransitionDuration(transitionTime);
+        });
+        return doneResize;
+      })(),
+    );
     return () => {
-      window.removeEventListener('resize', pauseScroll);
-      window.removeEventListener('resize', startScroll());
+      window.removeEventListener('resize', doingResize);
+      window.removeEventListener('resize', doneResize);
     };
   }, []);
-
-  const getImageWidth = () => {
-    return resizeEnd(() => {
-      setImageWidth(imageList.current.firstElementChild.clientWidth);
-    });
-  };
 
   useEffect(() => {
     setImageWidth(
       (imageList.current.firstElementChild &&
         imageList.current.firstElementChild.clientWidth) ||
         0,
-    ); // 처음엔 0으로 됨
-    window.addEventListener('resize', getImageWidth());
-    return () => window.removeEventListener('resize', getImageWidth());
+    );
   }, [images]);
 
   return (
@@ -126,22 +126,3 @@ PromotionImage.propTypes = {
 };
 
 export default PromotionImage;
-
-/*
-function debounce(func) {
-  let timer;
-  return function(event) {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(func, 100, event);
-    setTimeout()
-  };
-}
-
-window.addEventListener(
-  'resize',
-  debounce(event => {
-    // resize 끝났을 때
-    scrollAble = true;
-  }),
-);
-*/

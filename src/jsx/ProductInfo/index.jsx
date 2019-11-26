@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 import TabController from '../TabController';
+import ButtonBunch from '../ButtonBunch';
 
 const ProductInfo = (props) => {
   const {
@@ -57,16 +58,16 @@ const ProductInfo = (props) => {
               </p>
               <p className="text">{telephone}</p>
             </div>
-            <div className="buttonContainer">
-              <button className="findRoad">
-                <i className="fn fn-path-find2" />
-                길찾기
-              </button>
-              <button className="navigation">
-                <i className="fn fn-car-find2" />
-                내비게이션
-              </button>
-            </div>
+          </div>
+          <div className="buttonContainer">
+            <button className="findRoad">
+              <i className="fn fn-path-find2" />
+              길찾기
+            </button>
+            <button className="navigation">
+              <i className="fn fn-car-find2" />
+              내비게이션
+            </button>
           </div>
         </article>,
       ]);

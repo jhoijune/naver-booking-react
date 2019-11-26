@@ -1,9 +1,5 @@
 .ProductDesc {
-  width: 100vw;
-  max-width: 412px;
-  border-color: #c0c0c0;
-  border-style: solid;
-  border-width: 1px 1px 1px 1px;
+  width: auto;
   background-color: var(--text-bright-color);
   background-color: #fff;
 }

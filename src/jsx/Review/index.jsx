@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import './style.css';
+
 const Review = (props) => {
   const {
     review,
@@ -12,6 +14,7 @@ const Review = (props) => {
     confirmDelete,
   } = props;
   // 이미지 보정
+
   return (
     <article className="Review">
       <div className="top">

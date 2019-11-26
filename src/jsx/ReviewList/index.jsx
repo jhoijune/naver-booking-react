@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import './style.css';
 import Review from '../Review';
 import ReviewEdit from '../ReviewEdit';
 
@@ -64,19 +65,20 @@ const ReviewList = (props) => {
 ReviewList.propTypes = {
   reviews: PropTypes.arrayOf(
     PropTypes.shape({
-      commentId: PropTypes.number.isRequired,
-      comment: PropTypes.string.isRequired,
-      score: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      commentId: PropTypes.number,
+      comment: PropTypes.string,
+      score: PropTypes.string,
+      email: PropTypes.string,
+      date: PropTypes.string,
       commentImages: PropTypes.arrayOf(
         PropTypes.shape({
           saveFileName: PropTypes.string,
         }),
-      ).isRequired,
+      ),
     }),
   ).isRequired,
   isBrief: PropTypes.bool.isRequired,
+  isModifiable: PropTypes.bool.isRequired,
   editComment: PropTypes.func.isRequired,
   confirmDelete: PropTypes.func.isRequired,
   confirmEdit: PropTypes.func.isRequired,

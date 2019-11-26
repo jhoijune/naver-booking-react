@@ -13,7 +13,7 @@ const MainNavBar = (props) => {
       <Link to="/">
         <img src="/images/icon/icon.png" alt="naver icon" />
       </Link>
-      <Link to="/">
+      <Link to="/bookinglogin">
         <h2>{isLogoutable ? '로그아웃' : '예약확인'}</h2>
       </Link>
     </nav>

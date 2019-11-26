@@ -26,7 +26,6 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/bookinglogin">
-          {/* 완성됨 */}
           <Header />
           <LoginForm />
           <Footer />
@@ -44,8 +43,6 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/review/:displayInfoId">
-          {/* 완성됨 */}
-          <NavBar isMain={false} />
           <ReviewProvider />
           <Footer />
         </Route>

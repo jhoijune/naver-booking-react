@@ -1,18 +1,17 @@
-.ReviewContainer .container {
-  padding: 10px;
-  border-color: #c0c0c0;
-  border-style: solid;
-  border-width: 1px;
+.ReviewContainer {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
+  border-bottom: 1px solid #c0c0c0;
 }
 
 .ReviewContainer aside p {
-  padding: 15px 0 5px 0;
+  padding: 15px 10px;
   font-size: 0.8rem;
   opacity: 0.7;
 }
 
 @media (min-width: 414px) {
-  .ReviewContainer .container {
+  .ReviewContainer {
   }
 }
 
