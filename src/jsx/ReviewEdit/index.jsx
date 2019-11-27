@@ -74,18 +74,21 @@ const ReviewEdit = (props) => {
       formObj.append('exImage', !!exData.imageSrc);
             formObj.append('newImage', newImage);
             */
-      const response = await axios.post(form.current.action, formObj);
-      if (response.status === 400) {
-        alertModal(response.statusText);
-        return false;
-      }
-      if (response.status === 201) {
+      const { status } = await axios.post(form.current.action, formObj);
+      if (status === 201) {
         alertModal(isPost ? '리뷰가 등록되었습니다' : '리뷰가 수정되었습니다');
         if (isPost) history.push('/myreservation');
         return true;
       }
     } catch (error) {
       console.error(error);
+      const {
+        response: { data, status },
+      } = error;
+      if (status === 400) {
+        alertModal(data);
+        return false;
+      }
     }
   };
 

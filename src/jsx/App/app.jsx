@@ -31,14 +31,11 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/myreservation">
-          {/* 완성 됨 */}
           <NavBar isLogoutable />
           <ReservationContainer />
           <Footer />
         </Route>
         <Route path="/reserve/:displayInfoId">
-          {/* 완성됨 */}
-          <NavBar isMain={false} />
           <ReserveContainer />
           <Footer />
         </Route>
@@ -47,7 +44,6 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/reviewwrite/:productId">
-          <NavBar isMain={false} />
           {/* reviewEdit가 미완 */}
           <ReviewEdit />
           <Footer />

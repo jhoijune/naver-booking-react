@@ -30,9 +30,15 @@ const ReserveDesc = (props) => {
   );
 };
 
+ReserveDesc.defaultProps = {
+  description: '',
+  place: '',
+  productPrices: [],
+};
+
 ReserveDesc.propTypes = {
-  description: PropTypes.string.isRequired,
-  place: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  place: PropTypes.string,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
   productPrices: PropTypes.arrayOf(
@@ -40,7 +46,7 @@ ReserveDesc.propTypes = {
       priceTypeName: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
     }),
-  ).isRequired,
+  ),
 };
 
 export default ReserveDesc;

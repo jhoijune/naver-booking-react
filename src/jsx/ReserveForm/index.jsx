@@ -123,18 +123,18 @@ const ReserveForm = (props) => {
           productPriceId: productPrices[index].productPriceID,
         });
       }
-      const { status, statusText } = await axios.post(
-        '/api/reservations',
-        reservationInfo,
-      );
-      if (status === 400) {
-        alertModal(statusText);
-      } else if (status === 201) {
+      const { status } = await axios.post('/api/reservations', reservationInfo);
+      if (status === 201) {
         alertModal('예매가 성공적으로 승인되었습니다');
         history.push(`/detail/${displayInfoId}`);
       }
     } catch (error) {
-      console.error(error);
+      const {
+        response: { data, status },
+      } = error;
+      if (status === 400) {
+        alertModal(data);
+      }
     }
   };
 
@@ -174,7 +174,8 @@ const ReserveForm = (props) => {
           style={{
             backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
           }}
-          onClick={confirmSubmit}>
+          onClick={confirmSubmit}
+        >
           <i className="spr_book ico_naver_s" />
           예약하기
         </button>
@@ -183,10 +184,15 @@ const ReserveForm = (props) => {
   );
 };
 
+ReserveForm.defaultProps = {
+  productPrices: [],
+  productId: 0,
+};
+
 ReserveForm.propTypes = {
-  productPrices: PropTypes.array.isRequired,
+  productPrices: PropTypes.array,
   displayInfoId: PropTypes.number.isRequred,
-  productId: PropTypes.number.isRequired,
+  productId: PropTypes.number,
   reservationDate: PropTypes.string.isRequired,
 };
 

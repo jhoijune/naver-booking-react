@@ -372,7 +372,7 @@ router.post('/reservations', async (req, res) => {
   }
 });
 
-router.put('/reservations/:reservationInfoId', async (req, res, next) => {
+router.delete('/reservations/:reservationInfoId', async (req, res) => {
   try {
     const exReservation = await ReservationInfo.findOne({
       where: {

@@ -93,12 +93,7 @@ const ReviewContainer = (props) => {
     // 상세정보 창의 리뷰 수정 버튼 눌렀을 때의 행동
     return async () => {
       try {
-        const {
-          response: { status, statusText },
-        } = axios.get(`/auth/edit/comments/${commentId}`);
-        if (status === 400) {
-          return alertModal(statusText);
-        }
+        axios.get(`/auth/edit/comments/${commentId}`);
         const index = reviews.findIndex((value) => {
           value.commentId === commentId;
         });
@@ -111,7 +106,12 @@ const ReviewContainer = (props) => {
         });
         setIsModifiable(true);
       } catch (error) {
-        console.error(error);
+        const {
+          response: { data, status },
+        } = error;
+        if (status === 400) {
+          alertModal(data);
+        }
       }
     };
   };
@@ -123,9 +123,7 @@ const ReviewContainer = (props) => {
         const {
           response: { status, statusText },
         } = axios.delete(`/api/reservations/comments/${commentId}`);
-        if (status === 400) {
-          alertModal(statusText);
-        } else if (status === 201) {
+        if (status === 201) {
           alertModal('리뷰가 삭제되었습니다');
           const modifiedReviews = reviews.filter((value) => {
             value.commentId !== commentId;
@@ -133,7 +131,12 @@ const ReviewContainer = (props) => {
           setReviews(modifiedReviews);
         }
       } catch (error) {
-        console.error(error);
+        const {
+          response: { data, status },
+        } = error;
+        if (status === 400) {
+          alertModal(data);
+        }
       }
     };
   };

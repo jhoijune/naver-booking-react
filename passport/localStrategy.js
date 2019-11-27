@@ -10,7 +10,6 @@ export default (passport) => {
       },
       async (email, password, done) => {
         try {
-          console.log('나의', email);
           const exUser = await ReservationEmail.findOne({
             where: { email },
           });

@@ -5,29 +5,34 @@ import { ReservationUserComment } from '../models';
 const router = express.Router();
 
 router.post('/login', (req, res, next) => {
+  // FIXME: locals 수정
   passport.authenticate('local', (authError, user, info) => {
     if (authError) {
       console.error(authError);
       return next(authError);
     }
     if (!user) {
-      res.locals.loginError = '예약이 등록되지 않은 회원입니다';
-      return res.redirect('../bookinglogin');
+      res.status(400).send('예약이 등록되지 않은 회원입니다');
     }
     return req.login(user, (loginError) => {
       if (loginError) {
         console.error(loginError);
         return next(loginError);
       }
-      return res.redirect('../myreservation');
+      res.status(200).send();
     });
   })(req, res, next);
+});
+
+router.get('/email', (req, res) => {
+  const email = req.isAuthenticated() ? req.user.email : null;
+  res.send(email);
 });
 
 router.get('/logout', (req, res, next) => {
   req.logout();
   req.session.destroy();
-  res.redirect('/');
+  res.status(200).send();
 });
 
 router.get('/edit/comments/:commentId', async (req, res, next) => {
