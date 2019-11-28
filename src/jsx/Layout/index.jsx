@@ -16,7 +16,7 @@ const Layout = (props) => {
   const [isModal, setIsModal] = useState(false);
   const [modalChildren, setModalChildren] = useState('');
 
-  const alertModal = (text) => {
+  const alertModal = (text, action) => {
     setModalChildren(
       <div>
         <h1>{text}</h1>
@@ -25,6 +25,9 @@ const Layout = (props) => {
             {
               click: () => {
                 setIsModal(false);
+                if (action) {
+                  action();
+                }
               },
               children: '확인',
             },
@@ -42,6 +45,10 @@ const Layout = (props) => {
         <ButtonBunch
           notes={[
             {
+              style: {
+                backgroundColor: '#288FEB',
+                color: '#fff',
+              },
               click: () => {
                 action();
               },

@@ -11,7 +11,6 @@ li.TicketInfo:first-child {
 }
 
 li.TicketInfo .topSection h1 {
-  font-family: 'Nanum Gothic Bold';
   font-size: 22px;
   padding: 5px 0 10px 0;
 }
@@ -65,28 +64,4 @@ li.TicketInfo .bottomSection p:nth-child(2) {
   font-size: 17px;
   font-family: 'Nanum Gothic Bold';
   color: red;
-}
-
-li.TicketInfo button {
-  width: 100%;
-  font-size: 16px;
-  font-family: inherit;
-  padding: 6px 0;
-  margin-bottom: 30px;
-  border: 1px solid #ccc;
-  background-color: #f4f4f4;
-}
-
-li.TicketInfo a {
-  box-sizing: border-box;
-  width: 100%;
-  display: block;
-  text-align: center;
-  color: #000;
-  font-size: 16px;
-  font-family: inherit;
-  padding: 6px 0;
-  margin-bottom: 30px;
-  border: 1px solid #ccc;
-  background-color: #f4f4f4;
 }

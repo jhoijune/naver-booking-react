@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import './style.css';
 import TicketInfo from '../TicketInfo';
 
 const TicketInfoList = (props) => {
@@ -16,7 +17,7 @@ const TicketInfoList = (props) => {
 
 TicketInfoList.propTypes = {
   infos: PropTypes.array.isRequired,
-  actions: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  actions: PropTypes.array.isRequired,
 };
 
 export default TicketInfoList;

@@ -31,14 +31,14 @@ const ReserverInfo = (props) => {
         <h2>예매자 정보</h2>
         <p>
           <i className="fn fn-check" />
-          필수입력
+          {' 필수입력'}
         </p>
       </div>
       <div className="tableContainer">
         <div className="tableRow" id="inputReserver">
           <p>
             <i className="fn fn-check" />
-            예매자
+            {' 예매자'}
           </p>
           <p>
             <input
@@ -70,7 +70,7 @@ const ReserverInfo = (props) => {
         <div className="tableRow" id="inputTel">
           <p>
             <i className="fn fn-check" />
-            연락처
+            {' 연락처'}
           </p>
           <p>
             <input
@@ -102,7 +102,7 @@ const ReserverInfo = (props) => {
         <div className="tableRow" id="inputEmail">
           <p>
             <i className="fn fn-check" />
-            이메일
+            {' 이메일'}
           </p>
           <p>
             <input
@@ -131,7 +131,7 @@ const ReserverInfo = (props) => {
         <div className="tableRow" id="overallReservation">
           <p>
             <i className="fn fn-check" style={{ color: 'transparent' }} />
-            예매내용
+            {' 예매내용'}
           </p>
           <p>{`${reservationDate}, 총 ${totalTicket}매`}</p>
         </div>

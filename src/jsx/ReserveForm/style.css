@@ -1,4 +1,6 @@
 .ReserveForm {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
   width: 100vw;
   max-width: 414px;
   max-width: var(--breakpoint-width);

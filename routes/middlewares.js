@@ -1,8 +1,10 @@
+// FIXME: res.redirect 제거
+
 export const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.redirect('/bookinglogin');
+    res.status(400).send('로그인 하지 않았습니다');
   }
 };
 

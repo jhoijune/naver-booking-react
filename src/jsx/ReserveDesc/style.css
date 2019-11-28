@@ -1,20 +1,23 @@
 .ReserveDesc {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
   border-bottom-color: #e9ecef;
   border-bottom-color: var(--grey-color);
   border-bottom-style: solid;
   border-bottom-width: 10px;
+  padding: 20px;
+}
+
+.ReserveDesc .chargeText {
+  margin-top: 20px;
 }
 
 .ReserveDesc h2 {
-  margin: 20px 0 5px 0;
-  padding: 0 20px;
-  font-family: 'Nanum Gothic Bold';
   font-size: 16px;
+  line-height: 30px;
 }
 
 .ReserveDesc p {
-  margin: 5px 0 20px 0;
-  padding: 0 20px;
   font-size: 14px;
 }
 

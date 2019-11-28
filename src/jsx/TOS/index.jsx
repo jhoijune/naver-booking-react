@@ -9,26 +9,36 @@ const TOS = (props) => {
   const [isCollectionFold, setIsCollectionFold] = useState(true);
   const [isOfferFold, setIsOfferFold] = useState(true);
 
-  const foldText = '접기 <i class="fn fn-up2"></i>';
-  const showText = '보기 <i class="fn fn-down2"></i>';
+  const foldText = (
+    <span>
+      {' 접기'}
+      <i className="fn fn-up2" />
+    </span>
+  );
+  const showText = (
+    <span>
+      {' 보기'}
+      <i className="fn fn-down2" />
+    </span>
+  );
 
   const handleCollectionClick = () => {
     if (isCollectionFold) {
-      $('.collectionUseTerm').slideDown();
       setIsCollectionFold(false);
+      $('.TOS .collectionUseTerm').slideDown();
     } else {
-      $('.collectionUseTerm').slideUp();
       setIsCollectionFold(true);
+      $('.TOS .collectionUseTerm').slideUp();
     }
   };
 
   const handleOfferClick = () => {
     if (isOfferFold) {
-      $('.offerTerm').slideDown();
       setIsOfferFold(false);
+      $('.TOS .offerTerm').slideDown();
     } else {
-      $('.offerTerm').slideUp();
       setIsOfferFold(true);
+      $('.TOS .offerTerm').slideUp();
     }
   };
 
@@ -39,12 +49,13 @@ const TOS = (props) => {
           type="checkbox"
           name="TOSCheck"
           id="TOSCheck"
-          checked={isChecked}
           onChange={({ target: { checked } }) => {
             dispatch({ type: 'CHANGE_TOS', checked });
+            dispatch({ type: 'VERIFY_SUBMIT' });
           }}
+          checked={isChecked}
         />
-        <label htmlFor="TOSCheck">이용자 약관 전체동의</label>
+        <label htmlFor="TOSCheck">{'  이용자 약관 전체동의'}</label>
         <p>필수 동의</p>
       </div>
       <div className="agreement">
@@ -56,10 +67,7 @@ const TOS = (props) => {
           {isCollectionFold ? showText : foldText}
         </p>
       </div>
-      <p
-        className="collectionUseTerm"
-        style={{ display: isCollectionFold ? 'none' : 'block' }}
-      >
+      <p className="collectionUseTerm">
         &lt;개인정보 수집 및 이용 동의&gt;
         <br />
         1. 수집항목 : [필수] 이름, 연락처, [선택] 이메일주소
@@ -88,10 +96,7 @@ const TOS = (props) => {
           {isOfferFold ? showText : foldText}
         </p>
       </div>
-      <p
-        className="offerTerm"
-        style={{ display: isOfferFold ? 'none' : 'block' }}
-      >
+      <p className="offerTerm">
         &lt;개인정보 제3자 제공 동의&gt;
         <br />
         1. 개인정보를 제공받는 자 : 미디어앤아트

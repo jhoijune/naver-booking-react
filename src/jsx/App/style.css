@@ -54,6 +54,12 @@ li {
   padding: 0;
 }
 
+h1,
+h2,
+h3 {
+  font-family: 'Nanum Gothic Bold';
+}
+
 ul,
 ol {
   list-style: none;
@@ -65,7 +71,7 @@ a {
 
 #content {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   max-width: 414px;
   max-width: var(--breakpoint-width);
   background-color: #e9ecef;

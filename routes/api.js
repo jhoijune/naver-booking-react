@@ -17,9 +17,10 @@ import {
   FileInfo,
 } from '../models';
 import { validImageType } from '../src/js/common';
-import { confirmAPIRequest } from './middlewares';
+import { confirmAPIRequest, isLoggedIn } from './middlewares';
 
 const router = express.Router();
+moment.locale('ko');
 const cache = {
   insertData(name, id, data, limit = 10) {
     if (this[name]) {
@@ -152,9 +153,9 @@ router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
         'file_info.modify_date as modifyDate,save_file_name as saveFileName from display_info INNER JOIN display_info_image ' +
         'ON display_info.id = display_info_image.display_info_id INNER JOIN file_info ON display_info_image.file_id = file_info.id ' +
         `WHERE display_info.id = ${req.params.displayInfoId}`;
-      const [displayInfoImage] = (await sequelize.query(
-        displayInfoImageQuery,
-      ))[0];
+      const [displayInfoImage] = (
+        await sequelize.query(displayInfoImageQuery)
+      )[0];
       result.displayInfoImage = displayInfoImage;
       const productImagesQuery =
         'select content_type as contentType,create_date as createDate,delete_flag as deleteFlag,' +
@@ -177,7 +178,31 @@ router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
   }
 });
 
-router.get('/reservations', confirmAPIRequest, async (req, res) => {
+router.get('/reservations/date', (req, res) => {
+  const diffDays = { reserve: Math.floor(Math.random() * 5 + 1) };
+  diffDays.start = diffDays.reserve - Math.floor(Math.random() * 5 + 1);
+  diffDays.end = diffDays.reserve + Math.floor(Math.random() * 5 + 1);
+  const reservationDate = moment
+    .tz('Asia/Seoul')
+    .add(diffDays.reserve, 'days')
+    .format('YYYY.MM.DD HH:mm:ss');
+  const startDate = moment
+    .tz('Asia/Seoul')
+    .add(diffDays.start, 'days')
+    .format('YYYY.MM.DD.(ddd)');
+  const endDate = moment
+    .tz('Asia/Seoul')
+    .add(diffDays.end, 'days')
+    .format('YYYY.MM.DD.(ddd)');
+  res.json({
+    reservationDate,
+    startDate,
+    endDate,
+  });
+});
+
+router.get('/reservations/all', confirmAPIRequest, async (req, res) => {
+  // 예약정보 전체적인 파악용
   try {
     const reservationInfoQuery =
       'SELECT cancel_flag as cancelYn,create_date as createDate,display_info_id as displayInfoId,' +
@@ -207,6 +232,49 @@ router.get('/reservations', confirmAPIRequest, async (req, res) => {
       size: reservationInfo.length,
     };
     res.json(result);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+router.get('/reservations', isLoggedIn, async (req, res, next) => {
+  try {
+    const emailId = req.user.id;
+    const reservationInfoQuery =
+      'SELECT reservation_info.id as reservationInfoId,reservation_date as reservationDate,description,' +
+      'reservation_name as reservationName,reservation_tel as reservationTel,place_name as placeName,cancel_flag as cancelFlag,product.id as productId,' +
+      'SUM(price*count) as totalPrice from reservation_info INNER JOIN display_info ON reservation_info.display_info_id = display_info.id ' +
+      'INNER JOIN product ON reservation_info.product_id = product.id INNER JOIN reservation_info_price ON ' +
+      'reservation_info.id = reservation_info_price.reservation_info_id INNER JOIN product_price ON ' +
+      `product_price.id = reservation_info_price.product_price_id WHERE reservation_info.reservation_email_id = ${emailId} ` +
+      'GROUP BY reservation_info.id';
+    const [reservationInfo] = await sequelize.query(reservationInfoQuery);
+    const toUsedReservation = [];
+    const usedReservation = [];
+    const canceledReservation = [];
+    for (const eachReservation of reservationInfo) {
+      const priceInfoQuery =
+        'SELECT price,price_type_name as priceTypeName,count from product_price INNER JOIN ' +
+        'reservation_info_price ON product_price.id = reservation_info_price.product_price_id INNER JOIN reservation_info ON ' +
+        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info.id = ${eachReservation.reservationInfoId}`;
+      const [priceInfo] = await sequelize.query(priceInfoQuery);
+      eachReservation.priceInfo = priceInfo;
+      eachReservation.reservationDate = moment(
+        eachReservation.reservationDate,
+      ).format('YYYY.MM.DD.(ddd)');
+      if (eachReservation.cancelFlag) {
+        canceledReservation.push(eachReservation);
+      } else if (new Date(eachReservation.reservationDate) <= new Date()) {
+        usedReservation.push(eachReservation);
+      } else {
+        toUsedReservation.push(eachReservation);
+      }
+    }
+    res.json({
+      toUsed: toUsedReservation,
+      used: usedReservation,
+      canceled: canceledReservation,
+    });
   } catch (err) {
     console.error(err);
   }
@@ -262,7 +330,7 @@ router.post('/reservations', async (req, res) => {
     const refererUrlSeparator = req.headers.referer.split('/');
     if (
       req.body.displayInfoId !==
-      Number(refererUrlSeparator[refererUrlSeparator.length - 1])
+      refererUrlSeparator[refererUrlSeparator.length - 1]
     ) {
       postable = false;
       message = '상품 전시 정보가 일치하지 않습니다';
@@ -309,7 +377,7 @@ router.post('/reservations', async (req, res) => {
       },
     });
     let countSum = 0;
-    for (priceInfo of req.body.prices) {
+    for (const priceInfo of req.body.prices) {
       countSum += priceInfo.count;
       for (let i = 0, len = productPriceIds.length; i < len; i++) {
         if (priceInfo.productPriceId === productPriceIds[i].id) {
@@ -372,7 +440,7 @@ router.post('/reservations', async (req, res) => {
   }
 });
 
-router.delete('/reservations/:reservationInfoId', async (req, res) => {
+router.put('/reservations/:reservationInfoId', async (req, res) => {
   try {
     const exReservation = await ReservationInfo.findOne({
       where: {
@@ -411,7 +479,7 @@ router.delete('/reservations/:reservationInfoId', async (req, res) => {
 });
 
 router.post(
-  '/reservations/comments/:reservationInfoId',
+  '/reservations/:reservationInfoId/comments',
   upload.single('image'),
   async (req, res) => {
     try {
@@ -501,7 +569,7 @@ router.post(
   },
 );
 
-router.delete('/reservations/comments/:commentId', async (req, res, next) => {
+router.delete('/reservations/:commentId/comments', async (req, res, next) => {
   try {
     if (!req.isAuthenticated()) {
       return res.status(400).send('로그인 하세요');

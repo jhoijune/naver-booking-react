@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import { ModalContext } from '../Layout';
@@ -11,50 +11,60 @@ const ActionContext = React.createContext({
   confirmCancelReservation: () => {},
 });
 
-const ReservationContainer = (props) => {
-  const { emailId } = props;
+const ReservationContainer = () => {
   const [toUsed, setToUsed] = useState([]);
   const [toUsedLen, setToUsedLen] = useState(0);
+  const [used, setUsed] = useState([]);
+  const [usedLen, setUsedLen] = useState(0);
   const [canceled, setCanceled] = useState([]);
   const [canceledLen, setCanceledLen] = useState(0);
   const { alertModal, confirmModal } = useContext(ModalContext);
-  let used;
-  let usedLen;
+  const history = useHistory();
 
-  useEffect(async () => {
-    try {
-      const { data } = await axios.get(`/api/reservations/${emailId}`);
-      setToUsed(data.toUsed);
-      setToUsedLen(data.toUsed.length);
-      setCanceled(data.canceled);
-      setCanceledLen(data.canceled.length);
-      used = data.used;
-      usedLen = data.used.length;
-    } catch (error) {
-      console.error(error);
-    }
+  useEffect(() => {
+    document.title = '예약 확인';
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get('/api/reservations');
+        setToUsed(data.toUsed);
+        setToUsedLen(data.toUsed.length);
+        setUsed(data.used);
+        setUsedLen(data.used.length);
+        setCanceled(data.canceled);
+        setCanceledLen(data.canceled.length);
+      } catch (error) {
+        const {
+          response: { status },
+        } = error;
+        if (status === 400) {
+          history.push('/');
+        }
+      }
+    };
+    fetchData();
   }, []);
 
   const cancelReservation = async (id) => {
     try {
       const { status } = await axios.put(`/api/reservations/${id}`);
       if (status === 201) {
-        // 오류나면 배열 복사해야함
-        const toDeleteIndex = toUsed.findIndex(
+        const modifiedToUsed = [...toUsed];
+        const modifiedCanceled = [...canceled];
+        const toDeleteIndex = modifiedToUsed.findIndex(
           (value) => value.reservationInfoId === id,
         );
-        const canceledItem = toUsed.splice(toDeleteIndex, 1);
-        const toInsertIndex = canceled.findIndex(
+        const [canceledItem] = modifiedToUsed.splice(toDeleteIndex, 1);
+        const toInsertIndex = modifiedCanceled.findIndex(
           (value) => value.reservationInfoId > id,
         );
         if (toInsertIndex === -1) {
-          canceled.push(canceledItem);
+          modifiedCanceled.push(canceledItem);
         } else {
-          canceled.splice(toInsertIndex, 0, canceledItem);
+          modifiedCanceled.splice(toInsertIndex, 0, canceledItem);
         }
-        setToUsed(toUsed);
+        setToUsed(modifiedToUsed);
         setToUsedLen(toUsedLen - 1);
-        setCanceled(canceled);
+        setCanceled(modifiedCanceled);
         setCanceledLen(canceledLen + 1);
         alertModal('예약이 취소되었습니다');
       }
@@ -87,20 +97,12 @@ const ReservationContainer = (props) => {
           usedLen={usedLen}
           canceledLen={canceledLen}
         />
-        <Ticket infos={toUsed} actions="cancel" isGreen>
-          예약 확정
-        </Ticket>
-        <Ticket infos={used} actions="writeReview">
-          이용 완료
-        </Ticket>
-        <Ticket infos={canceled}>취소된 예약</Ticket>
+        <Ticket text="예약 확정" infos={toUsed} actions={['cancel']} isGreen />
+        <Ticket text="이용 완료" infos={used} actions={['writeReview']} />
+        <Ticket text="취소된 예약" infos={canceled} />
       </div>
     </ActionContext.Provider>
   );
-};
-
-ReservationContainer.propTypes = {
-  emailId: PropTypes.number.isRequired,
 };
 
 export default ReservationContainer;

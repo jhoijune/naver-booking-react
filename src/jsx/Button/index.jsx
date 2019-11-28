@@ -15,11 +15,16 @@ const Button = (props) => {
   };
 
   return typeof click === 'function' ? (
-    <button className="Button" onClick={click} style={createStyle()}>
+    <button
+      className="Button"
+      type="button"
+      onClick={click}
+      style={createStyle()}
+    >
       {children}
     </button>
   ) : (
-    <Link className="Button" to={click} style={style}>
+    <Link className="Button" to={click} style={createStyle()}>
       {children}
     </Link>
   );

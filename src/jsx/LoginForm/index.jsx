@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,6 +10,10 @@ const LoginForm = () => {
   const { alertModal } = useContext(ModalContext);
   const history = useHistory();
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    document.title = '네이버 예약 로그인';
+  }, []);
 
   const handleSubmit = async (event) => {
     try {

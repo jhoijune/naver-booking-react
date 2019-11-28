@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import moment from 'moment-timezone';
 import { useParams } from 'react-router-dom';
 
 import NavBar from '../NavBar';
@@ -12,22 +11,7 @@ const ReserveContainer = () => {
   const { displayInfoId } = useParams();
   const [productData, setProductData] = useState({});
   const [imageSrc, setImageSrc] = useState('');
-
-  const diffDays = { reserve: Math.floor(Math.random() * 5 + 1) };
-  diffDays.start = diffDays.reserve - Math.floor(Math.random() * 5 + 1);
-  diffDays.end = diffDays.reserve + Math.floor(Math.random() * 5 + 1);
-  const reservationDate = moment()
-    .tz('Asia/Seoul')
-    .add(diffDays.reserve, 'days')
-    .format('YYYY.MM.DD HH:mm:ss');
-  const startDate = moment()
-    .tz('Asia/Seoul')
-    .add(diffDays.start, 'days')
-    .format('YYYY.MM.DD.(ddd)');
-  const endDate = moment()
-    .tz('Asia/Seoul')
-    .add(diffDays.end, 'days')
-    .format('YYYY.MM.DD.(ddd)');
+  const [date, setDate] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +24,24 @@ const ReserveContainer = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchDate = async () => {
+      try {
+        const { data } = await axios.get('/api/reservations/date');
+        setDate(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchDate();
+  }, []);
+
+  useEffect(() => {
+    if (productData.displayInfo) {
+      document.title = `예약 ${productData.displayInfo.productDescription}`;
+    }
+  }, [productData]);
 
   useEffect(() => {
     if (productData.productImages) {
@@ -60,21 +62,21 @@ const ReserveContainer = () => {
           productData.displayInfo && productData.displayInfo.productDescription
         }
       />
-      <MainImage src={imageSrc} alt="main image" />
+      <MainImage src={`/${imageSrc}`} alt="main image" />
       <ReserveDesc
         description={
           productData.displayInfo && productData.displayInfo.productDescription
         }
         place={productData.displayInfo && productData.displayInfo.placeLot}
-        startDate={startDate}
-        endDate={endDate}
+        startDate={date.startDate}
+        endDate={date.endDate}
         productPrices={productData.productPrices}
       />
       <ReserveForm
         productPrices={productData.productPrices}
         displayInfoId={displayInfoId}
         productId={productData.displayInfo && productData.displayInfo.productId}
-        reservationDate={reservationDate}
+        reservationDate={date.reservationDate}
       />
     </div>
   );

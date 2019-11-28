@@ -12,7 +12,6 @@
 }
 
 .ProductInfo .productDetail h2 {
-  font-family: 'Nanum Gothic Bold';
   padding: 14px 0px 14px 7px;
   font-size: 16px;
 }
@@ -35,7 +34,6 @@
   max-width: 393px;
 }
 .ProductInfo .directions h2 {
-  font-family: 'Nanum Gothic Bold';
   font-size: 16px;
   margin: 0;
   padding: 0 0 0 10px;

@@ -5,10 +5,10 @@ import TicketHead from '../TicketHead';
 import TicketInfoList from '../TicketInfoList';
 
 const Ticket = (props) => {
-  const { infos, children, actions, isGreen } = props;
+  const { infos, text, actions, isGreen } = props;
   return (
     <article className="Ticket">
-      <TicketHead isGreen={isGreen}>{children}</TicketHead>
+      <TicketHead text={text} isGreen={isGreen} />
       <TicketInfoList infos={infos} actions={actions} />
     </article>
   );
@@ -16,12 +16,13 @@ const Ticket = (props) => {
 
 Ticket.defaultProps = {
   isGreen: false,
+  actions: [],
 };
 
 Ticket.propTypes = {
   infos: PropTypes.array.isRequired,
-  children: PropTypes.node.isRequired,
-  actions: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+  text: PropTypes.string.isRequired,
+  actions: PropTypes.array,
   isGreen: PropTypes.bool,
 };
 

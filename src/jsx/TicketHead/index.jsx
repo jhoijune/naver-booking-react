@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 import './style.css';
 
 const TicketHead = (props) => {
-  const { children, isGreen } = props;
+  const { text, isGreen } = props;
   return (
     <div className={`TicketHead ${isGreen ? 'green' : 'grey'}`}>
       <div className="ticketLeft" />
       <div className="ticketMiddle">
         <span>
           <i className="spr_book2 ico_check2" />
-          {children}
+          {` ${text}`}
         </span>
       </div>
       <div className="ticketRight" />
@@ -20,7 +20,7 @@ const TicketHead = (props) => {
 };
 
 TicketHead.propTypes = {
-  children: PropTypes.node.isRequired,
+  text: PropTypes.string.isRequired,
   isGreen: PropTypes.bool.isRequired,
 };
 

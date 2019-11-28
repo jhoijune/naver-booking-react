@@ -1,0 +1,6 @@
+.TicketInputList {
+  border-bottom-color: #e9ecef;
+  border-bottom-color: var(--grey-color);
+  border-bottom-style: solid;
+  border-bottom-width: 10px;
+}

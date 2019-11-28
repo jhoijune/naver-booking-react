@@ -28,6 +28,7 @@ const MainNavBar = (props) => {
     try {
       const { status } = await axios.get('/auth/logout');
       if (status === 200) {
+        setEmail('');
         history.push('/');
       }
     } catch (error) {

@@ -1,39 +1,46 @@
-// button 부분 buttonbunch로
-import React, { useReducer, useContext } from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import cookie from 'cookie';
 
 import './style.css';
 import { ModalContext } from '../Layout';
-import InputTicket from '../InputTicket';
+import TicketInputList from '../TicketInputList';
 import ReserverInfo from '../ReserverInfo';
 import TOS from '../TOS';
+import ButtonBunch from '../ButtonBunch';
 
-const initialState = (length) => {
-  return {
-    tickets: Array(length).fill(0),
-    name: '',
-    telephone: '',
-    email: '',
-    isVerifiedName: false,
-    isVerifiedTel: false,
-    isVerifiedEmail: false,
-    isTOSChecked: false,
-    submit: false,
-  };
+const initialState = {
+  tickets: [],
+  name: '',
+  telephone: '',
+  email: '',
+  isVerifiedName: false,
+  isVerifiedTel: false,
+  isVerifiedEmail: false,
+  isTOSChecked: false,
+  submit: false,
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'DECREMENT':
-      const modifiedDec = { ...state };
-      modifiedDec.tickets[action.where] = modifiedDec.tickets[action.where] - 1;
-      return modifiedDec;
-    case 'INCREMENT':
-      const modifiedInc = { ...state };
-      modifiedInc.tickets[action.where] = modifiedInc.tickets[action.where] + 1;
-      return modifiedInc;
+    case 'INIT_TICKET': {
+      const tickets = Array(action.length).fill(0);
+      return { ...state, tickets };
+    }
+    case 'DECREMENT': {
+      const modified = { ...state };
+      if (modified.tickets[action.where] > 0) {
+        modified.tickets[action.where] -= 1;
+      }
+      return modified;
+    }
+    case 'INCREMENT': {
+      const modified = { ...state };
+      modified.tickets[action.where] += 1;
+      return modified;
+    }
     case 'CHANGE_NAME':
       return { ...state, name: action.value };
     case 'CHANGE_TEL':
@@ -42,7 +49,7 @@ const reducer = (state, action) => {
       return { ...state, email: action.value };
     case 'CHANGE_TOS':
       return { ...state, isTOSChecked: action.checked };
-    case 'VERIFY_NAME':
+    case 'VERIFY_NAME': {
       const { name } = state;
       if (name.length === 0) {
         return { ...state, isVerifiedName: false };
@@ -51,7 +58,8 @@ const reducer = (state, action) => {
         return { ...state, isVerifiedName: false };
       }
       return { ...state, isVerifiedName: true };
-    case 'VERIFY_TEL':
+    }
+    case 'VERIFY_TEL': {
       const { telephone } = state;
       if (telephone.length === 0) {
         return { ...state, isVerifiedTel: false };
@@ -61,7 +69,8 @@ const reducer = (state, action) => {
         return { ...state, isVerifiedTel: true };
       }
       return { ...state, isVerifiedTel: false };
-    case 'VERIFY_EMAIL':
+    }
+    case 'VERIFY_EMAIL': {
       const { email } = state;
       if (email.length === 0) {
         return { ...state, isVerifiedEmail: false };
@@ -71,7 +80,8 @@ const reducer = (state, action) => {
         return { ...state, isVerifiedEmail: true };
       }
       return { ...state, isVerifiedEmail: false };
-    case 'VERIFY_SUBMIT':
+    }
+    case 'VERIFY_SUBMIT': {
       const {
         tickets,
         isVerifiedName,
@@ -80,9 +90,7 @@ const reducer = (state, action) => {
         isTOSChecked,
       } = state;
       if (
-        tickets.some((value) => {
-          value > 0;
-        }) &&
+        tickets.some((value) => value > 0) &&
         isVerifiedName &&
         isVerifiedTel &&
         isVerifiedEmail &&
@@ -91,7 +99,7 @@ const reducer = (state, action) => {
         return { ...state, submit: true };
       }
       return { ...state, submit: false };
-
+    }
     default:
       throw new Error('');
   }
@@ -99,12 +107,23 @@ const reducer = (state, action) => {
 
 const ReserveForm = (props) => {
   const { productPrices, displayInfoId, productId, reservationDate } = props;
-  const [state, dispatch] = useReducer(
-    reducer,
-    initialState(productPrices.length),
-  );
+  const [state, dispatch] = useReducer(reducer, initialState);
   const { alertModal, confirmModal } = useContext(ModalContext);
   const history = useHistory();
+
+  useEffect(() => {
+    const parsed = cookie.parse(document.cookie);
+    dispatch({ type: 'CHANGE_NAME', value: parsed.reservationName || '' });
+    dispatch({ type: 'VERIFY_NAME' });
+    dispatch({ type: 'CHANGE_TEL', value: parsed.reservationTel || '' });
+    dispatch({ type: 'VERIFY_TEL' });
+    dispatch({ type: 'CHANGE_EMAIL', value: parsed.reservationEmail || '' });
+    dispatch({ type: 'VERIFY_EMAIL' });
+  }, []);
+
+  useEffect(() => {
+    dispatch({ type: 'INIT_TICKET', length: productPrices.length });
+  }, [productPrices]);
 
   const handleSubmit = async () => {
     try {
@@ -119,14 +138,15 @@ const ReserveForm = (props) => {
       };
       for (let index = 0, len = productPrices.length; index < len; index++) {
         reservationInfo.prices.push({
-          count: Number(state.tickets[index]),
+          count: state.tickets[index],
           productPriceId: productPrices[index].productPriceID,
         });
       }
       const { status } = await axios.post('/api/reservations', reservationInfo);
       if (status === 201) {
-        alertModal('예매가 성공적으로 승인되었습니다');
-        history.push(`/detail/${displayInfoId}`);
+        alertModal('예매가 성공적으로 승인되었습니다', () => {
+          history.push(`/detail/${displayInfoId}`);
+        });
       }
     } catch (error) {
       const {
@@ -149,8 +169,8 @@ const ReserveForm = (props) => {
 
   return (
     <section className="ReserveForm">
-      <form action="/api/reservations" method="post">
-        <InputTicket
+      <form>
+        <TicketInputList
           productPrices={productPrices}
           tickets={state.tickets}
           dispatch={dispatch}
@@ -162,23 +182,38 @@ const ReserveForm = (props) => {
           reservationDate={reservationDate.split(' ')[0]}
           totalTicket={state.tickets.reduce(
             (accum, current) => accum + current,
+            0,
           )}
           dispatch={dispatch}
           isVerifiedName={state.isVerifiedName}
           isVerifiedTel={state.isVerifiedTel}
           isVerifiedEmail={state.isVerifiedEmail}
         />
-        <TOS isChecked={state.TOS} dispatch={dispatch} />
-        <button
-          type="submit"
-          style={{
-            backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
-          }}
-          onClick={confirmSubmit}
-        >
-          <i className="spr_book ico_naver_s" />
-          예약하기
-        </button>
+        <TOS isChecked={state.isTOSChecked} dispatch={dispatch} />
+        <ButtonBunch
+          notes={[
+            {
+              style: {
+                backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
+                fontSize: '16px',
+                fontFamily: 'Nanum Gothic Bold',
+                color: '#fff',
+                transition: 'background-color 1s',
+              },
+              click: confirmSubmit,
+              children: (
+                <span>
+                  <i
+                    className="spr_book ico_naver_s"
+                    style={{ verticalAlign: 'middle' }}
+                  />
+                  {' 예약하기'}
+                </span>
+              ),
+            },
+          ]}
+          padding={[0, 10, 10, 10]}
+        />
       </form>
     </section>
   );
@@ -187,13 +222,14 @@ const ReserveForm = (props) => {
 ReserveForm.defaultProps = {
   productPrices: [],
   productId: 0,
+  reservationDate: '',
 };
 
 ReserveForm.propTypes = {
   productPrices: PropTypes.array,
   displayInfoId: PropTypes.number.isRequred,
   productId: PropTypes.number,
-  reservationDate: PropTypes.string.isRequired,
+  reservationDate: PropTypes.string,
 };
 
 export default ReserveForm;

@@ -14,28 +14,28 @@ const ReservationCount = (props) => {
           <li>
             <span>
               <i className="spr_book2 ico_book2" />
-              전체
+              {' 전체'}
             </span>
             <h1>{toUsedLen + usedLen + canceledLen}</h1>
           </li>
           <li>
             <span>
               <i className="spr_book2 ico_book_ss" />
-              이용예정
+              {' 이용예정'}
             </span>
             <h1>{toUsedLen}</h1>
           </li>
           <li>
             <span>
               <i className="spr_book2 ico_check" />
-              이용완료
+              {' 이용완료'}
             </span>
             <h1>{usedLen}</h1>
           </li>
           <li>
             <span>
               <i className="spr_book2 ico_back" />
-              취소·환불
+              {' 취소·환불'}
             </span>
             <h1>{canceledLen}</h1>
           </li>

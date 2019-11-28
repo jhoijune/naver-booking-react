@@ -21,28 +21,41 @@ const TicketInfo = (props) => {
     },
     actions,
   } = props;
+
   const { confirmCancelReservation } = useContext(ActionContext);
   const reservationSummary = priceInfo
     .reduce((accum, current) => {
-      `${accum}    ${priceTypeMapper[current.priceTypeName]} ${
+      return `${accum} ${priceTypeMapper(current.priceTypeName)} ${
         current.count
       } 매,`;
     }, '')
     .slice(0, -1);
 
   const createButton = (actions) => {
-    const notes = actions.map((value) => {
-      if (value === 'cancel') {
-        return { click: confirmCancelReservation(productId), children: '취소' };
-      }
-      if (value === 'reviewWrite') {
-        return {
-          click: `/reviewwrite/${productId}`,
-          children: '예매자 리뷰 남기기',
-        };
-      }
-    });
-    return <ButtonBunch notes={notes} />;
+    if (actions.length) {
+      const style = {
+        fontSize: '16px',
+        lineHeight: '20px',
+      };
+      const notes = actions.map((value) => {
+        if (value === 'cancel') {
+          return {
+            style,
+            click: confirmCancelReservation(reservationInfoId),
+            children: '취소',
+          };
+        }
+        if (value === 'writeReview') {
+          return {
+            style,
+            click: `/reviewwrite/${productId}`,
+            children: '예매자 리뷰 남기기',
+          };
+        }
+      });
+      return <ButtonBunch margin={[0, 0, 15, 0]} notes={notes} />;
+    }
+    return '';
   };
 
   return (
@@ -95,12 +108,14 @@ TicketInfo.propTypes = {
     placeName: PropTypes.string.isRequired,
     totalPrice: PropTypes.number.isRequired,
     productId: PropTypes.number.isRequired,
-    priceInfo: PropTypes.shape({
-      priceTypeName: PropTypes.string.isRequired,
-      count: PropTypes.number.isRequired,
-    }),
-  }).isRequired,
-  actions: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+    priceInfo: PropTypes.arrayOf(
+      PropTypes.shape({
+        priceTypeName: PropTypes.string.isRequired,
+        count: PropTypes.number.isRequired,
+      }).isRequired,
+    ).isRequired,
+  }),
+  actions: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default TicketInfo;

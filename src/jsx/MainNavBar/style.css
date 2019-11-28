@@ -31,12 +31,15 @@
 }
 
 .MainNavBar h2 {
-  font-family: 'Nanum Gothic Bold';
   font-size: 4.35vw;
   padding-right: 2.5vw;
   margin: 0px;
   color: #fff;
   color: var(--text-bright-color);
+}
+
+.MainNavBar span {
+  cursor: pointer;
 }
 
 @media (min-width: 414px) {
