@@ -5,7 +5,7 @@ import TabUI from '../TabUI';
 import TabView from '../TabView';
 
 const TabController = (props) => {
-  const { labels, views, alarm, correctionNeeded, top, bottom } = props;
+  const { labels, views, alarm, top, bottom } = props;
   // top,bottom은 정적으로 보여줄 뷰
   const [selected, setSelected] = useState(0);
   const [indicatorStyle, setIndicatorStyle] = useState({
@@ -70,13 +70,6 @@ const TabController = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    setViewStyle({
-      ...viewStyle,
-      height: viewHeight,
-    });
-  }, [viewHeight]);
-
   useEffect(reviseIndicator, [selected]);
 
   useEffect(() => {
@@ -98,7 +91,11 @@ const TabController = (props) => {
         indicatorStyle={indicatorStyle}
       />
       {top}
-      <TabView ref={viewRef} views={views} style={viewStyle} />
+      <TabView
+        ref={viewRef}
+        views={views}
+        style={{ ...viewStyle, height: viewHeight }}
+      />
       {bottom}
     </div>
   );
@@ -108,11 +105,12 @@ TabController.defaultProps = {
   alarm: false,
   top: '',
   bottom: '',
+  views: [],
 };
 
 TabController.propTypes = {
   labels: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
-  views: PropTypes.arrayOf(PropTypes.node).isRequired,
+  views: PropTypes.arrayOf(PropTypes.node),
   alarm: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   top: PropTypes.node,
   bottom: PropTypes.node,

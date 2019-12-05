@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import $ from 'jquery';
@@ -65,21 +65,23 @@ const ProductBox = (props) => {
           }}
         >
           {textObj.detail ? (
-            <p>
-              {textObj.simple}
-              <span
-                className="dots"
-                style={{ display: isFold ? 'inline' : 'none' }}
-              >
-                ...
-              </span>
-              <span
-                className="moreDesc"
-                ref={detailText}
-                style={{ display: 'none' }}
-              >
-                {textObj.detail}
-              </span>
+            <div>
+              <p>
+                {textObj.simple}
+                <span
+                  className="dots"
+                  style={{ display: isFold ? 'inline' : 'none' }}
+                >
+                  ...
+                </span>
+                <span
+                  className="moreDesc"
+                  ref={detailText}
+                  style={{ display: 'none' }}
+                >
+                  {textObj.detail}
+                </span>
+              </p>
               <div className="helping">
                 <i
                   className={`fn ${isFold ? 'fn-dots2' : 'fn-up2'}`}
@@ -89,7 +91,7 @@ const ProductBox = (props) => {
                   }}
                 />
               </div>
-            </p>
+            </div>
           ) : (
             <p>{textObj.simple}</p>
           )}

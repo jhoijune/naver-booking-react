@@ -15,6 +15,7 @@ const TOS = (props) => {
       <i className="fn fn-up2" />
     </span>
   );
+
   const showText = (
     <span>
       {' 보기'}

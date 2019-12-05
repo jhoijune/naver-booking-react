@@ -3,9 +3,11 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import { ModalContext } from '../Layout';
+import NavBar from '../NavBar';
 // FIXME: cycle 제거
 import Ticket from '../Ticket';
 import ReservationCount from '../ReservationCount';
+import Footer from '../Footer';
 
 const ActionContext = React.createContext({
   confirmCancelReservation: () => {},
@@ -34,10 +36,12 @@ const ReservationContainer = () => {
         setCanceledLen(data.canceled.length);
       } catch (error) {
         const {
-          response: { status },
+          response: { data, status },
         } = error;
         if (status === 400) {
-          history.push('/');
+          alertModal(data, () => {
+            history.push('/');
+          });
         }
       }
     };

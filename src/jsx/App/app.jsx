@@ -12,7 +12,7 @@ import DetailContainer from '../DetailContainer';
 import ReserveContainer from '../ReserveContainer';
 import ReservationContainer from '../ReservationContainer';
 import PromotionImage from '../PromotionImage';
-import ReviewEdit from '../ReviewEdit';
+import WriteReviewContainer from '../WriteReviewContainer';
 import ReviewProvider from '../ReviewProvider';
 import MainContainer from '../MainContainer';
 
@@ -43,11 +43,10 @@ ReactDOM.render(
           <ReviewProvider />
           <Footer />
         </Route>
-        <Route path="/reviewwrite/:productId">
-          {/* reviewEdit가 미완 */}
-          <ReviewEdit />
-          <Footer />
-        </Route>
+        <Route
+          path="/reviewwrite/:productId"
+          component={WriteReviewContainer}
+        />
         <Route exact path="/">
           <NavBar />
           <PromotionImage />

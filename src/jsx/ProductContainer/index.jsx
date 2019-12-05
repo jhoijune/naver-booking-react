@@ -10,7 +10,7 @@ const ProductContainer = (props) => {
 
 ProductContainer.propTypes = {
   className: PropTypes.string.isRequired,
-  children: PropTypes.element.isRequired,
+  children: PropTypes.arrayOf(PropTypes.element.isRequired).isRequired,
 };
 
 export default ProductContainer;

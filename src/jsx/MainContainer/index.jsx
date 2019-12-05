@@ -35,7 +35,9 @@ const MainContainer = (props) => {
         const modifiedViewsArr = [...viewsArr];
         modifiedViewsArr[0] = items
           .slice(0, basisCount)
-          .map((info) => <ProductBox itemInfo={info} />);
+          .map((info) => (
+            <ProductBox key={info.displayInfoId} itemInfo={info} />
+          ));
         const modifiedViews = [...views];
         modifiedViews[0] = <MainView products={modifiedViewsArr[0]} />;
         setCategoryProducts(modifiedCategory);
@@ -80,7 +82,7 @@ const MainContainer = (props) => {
         .slice(viewsLen, finalInd)
         .forEach((info) => {
           modifiedViewsArr[selectedCategory].push(
-            <ProductBox itemInfo={info} />,
+            <ProductBox key={info.displayInfoId} itemInfo={info} />,
           );
         });
       const modifiedViews = [...views];
@@ -115,7 +117,9 @@ const MainContainer = (props) => {
         const modifiedViewsArr = [...viewsArr];
         modifiedViewsArr[selectedCategory] = specificProducts
           .slice(0, basisCount)
-          .map((value) => <ProductBox itemInfo={value} />);
+          .map((info) => (
+            <ProductBox key={info.displayInfoId} itemInfo={info} />
+          ));
         const modifiedViews = [...views];
         modifiedViews[selectedCategory] = (
           <MainView products={modifiedViewsArr[selectedCategory]} />

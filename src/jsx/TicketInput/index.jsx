@@ -59,13 +59,17 @@ const TicketInput = (props) => {
   );
 };
 
+TicketInput.defaultProps = {
+  count: 0,
+};
+
 TicketInput.propTypes = {
   productPrice: PropTypes.shape({
     priceTypeName: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
     discountRate: PropTypes.string.isRequired,
   }).isRequired,
-  count: PropTypes.number.isRequired,
+  count: PropTypes.number,
   dispatch: PropTypes.func.isRequired,
   where: PropTypes.number.isRequired,
 };

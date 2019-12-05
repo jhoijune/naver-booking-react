@@ -50,6 +50,11 @@ const cache = {
     }
     return false;
   },
+  deleteData(name, id) {
+    const index = this[name].list.indexOf(id);
+    this[name].list.splice(index, 1);
+    delete this[name].data[id];
+  },
 };
 
 const uploadFolderPath = path.join(
@@ -80,6 +85,15 @@ const upload = multer({
     },
   }),
   limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+router.get('/temp', async (req, res) => {
+  // API 테스트용
+  try {
+    res.send();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 router.get('/products', confirmAPIRequest, async (req, res) => {
@@ -127,17 +141,22 @@ router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
         'reservation_user_comment_image.id as imageId,modify_date as modifyDate,reservation_info_id as reservationInfoId,' +
         'reservation_user_comment_id as reservationUserCommentId,save_file_name as saveFileName FROM reservation_user_comment_image ' +
         'INNER JOIN file_info ON reservation_user_comment_image.file_id = file_info.id';
-      for (const comment of comments) {
-        comment.reservationDate = moment(comment.reservationDate).format(
+      const imageQueryArr = [];
+      comments.forEach((comment) => {
+        const commentImagesQuery =
+          `${commentImagesQueryHead} WHERE reservation_user_comment_id = ${comment.commentId} ` +
+          `AND delete_flag = 0`;
+        imageQueryArr.push(sequelize.query(commentImagesQuery));
+      });
+      const images = await Promise.all(imageQueryArr);
+      const modifiedComments = comments.map((comment, index) => {
+        const reservationDate = moment(comment.reservationDate).format(
           'YYYY.MM.DD.(ddd)',
         );
-        const commentImagesQuery =
-          `${commentImagesQueryHead} WHERE reservation_user_comment_id = ${comment.commentId}` +
-          ` AND delete_flag = 0`;
-        const [commentImages] = await sequelize.query(commentImagesQuery);
-        comment.commentImages = commentImages;
-      }
-      result.comments = comments;
+        const [commentImages] = images[index];
+        return { ...comment, reservationDate, commentImages };
+      });
+      result.comments = modifiedComments;
       const displayInfoQuery =
         'select category.id as categoryId,name as categoryName,display_info.create_date as createDate,' +
         'display_info.id as displayInfoId,email,homepage,display_info.modify_date as modifyDate,opening_hours as openingHours,' +
@@ -210,25 +229,34 @@ router.get('/reservations/all', confirmAPIRequest, async (req, res) => {
       'reservation_info.id as reservationInfoId,reservation_name as reservationName,reservation_tel as reservationTelephone ' +
       'from reservation_info INNER JOIN reservation_email ON reservation_info.reservation_email_id = reservation_email.id';
     const [reservationInfo] = await sequelize.query(reservationInfoQuery);
-    for (const element of reservationInfo) {
+    const totalPriceQueryArr = [];
+    const displayInfoQueryArr = [];
+    reservationInfo.forEach((value) => {
       const totalPriceQuery =
         'SELECT SUM(price*count) as totalPrice from reservation_info_price INNER JOIN product_price ' +
         'ON product_price.id = reservation_info_price.product_price_id INNER JOIN reservation_info ON ' +
-        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info_id = ${element.reservationInfoId}`;
-      const { totalPrice } = (await sequelize.query(totalPriceQuery))[0][0];
-      element.totalPrice = totalPrice;
+        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info_id = ${value.reservationInfoId}`;
+      totalPriceQueryArr.push(sequelize.query(totalPriceQuery));
       const displayInfoQuery =
         'SELECT category.id as categoryId,category.name as categoryName,display_info.create_date as createDate,' +
         'display_info.id as displayInfoId,email,homepage,display_info.modify_date as modifyDate,opening_hours as openingHours,' +
         'place_lot as placeLot,place_name as placeName,place_street as placeStreet,content as productContent,description as productDescription,' +
         'event as productEvent,product.id as productId,tel as telephone from display_info INNER JOIN product ON ' +
         'display_info.product_id = product.id INNER JOIN category ON product.category_id = category.id ' +
-        `WHERE display_info.id = ${element.displayInfoId}`;
-      const [displayInfo] = (await sequelize.query(displayInfoQuery))[0];
-      element.displayInfo = displayInfo;
-    }
+        `WHERE display_info.id = ${value.displayInfoId}`;
+      displayInfoQueryArr.push(sequelize.query(displayInfoQuery));
+    });
+    const totalPrices = await Promise.all(totalPriceQueryArr);
+    const displayInfos = await Promise.all(displayInfoQueryArr);
+    const modifiedReservationInfo = reservationInfo.map((value, index) => {
+      const { totalPrice } = totalPrices[index][0][0];
+      const [displayInfo] = displayInfos[index][0];
+      return { ...value, totalPrice, displayInfo };
+    });
+    // const { totalPrice } = (await sequelize.query(totalPriceQuery))[0][0];
+    // const [displayInfo] = (await sequelize.query(displayInfoQuery))[0];
     const result = {
-      reservations: reservationInfo,
+      reservations: modifiedReservationInfo,
       size: reservationInfo.length,
     };
     res.json(result);
@@ -237,7 +265,7 @@ router.get('/reservations/all', confirmAPIRequest, async (req, res) => {
   }
 });
 
-router.get('/reservations', isLoggedIn, async (req, res, next) => {
+router.get('/reservations', isLoggedIn, async (req, res) => {
   try {
     const emailId = req.user.id;
     const reservationInfoQuery =
@@ -249,70 +277,49 @@ router.get('/reservations', isLoggedIn, async (req, res, next) => {
       `product_price.id = reservation_info_price.product_price_id WHERE reservation_info.reservation_email_id = ${emailId} ` +
       'GROUP BY reservation_info.id';
     const [reservationInfo] = await sequelize.query(reservationInfoQuery);
-    const toUsedReservation = [];
-    const usedReservation = [];
-    const canceledReservation = [];
-    for (const eachReservation of reservationInfo) {
+    const priceInfoQueryArr = [];
+    const commentInfoArr = [];
+    reservationInfo.forEach((value) => {
       const priceInfoQuery =
         'SELECT price,price_type_name as priceTypeName,count from product_price INNER JOIN ' +
         'reservation_info_price ON product_price.id = reservation_info_price.product_price_id INNER JOIN reservation_info ON ' +
-        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info.id = ${eachReservation.reservationInfoId}`;
-      const [priceInfo] = await sequelize.query(priceInfoQuery);
-      eachReservation.priceInfo = priceInfo;
-      eachReservation.reservationDate = moment(
-        eachReservation.reservationDate,
-      ).format('YYYY.MM.DD.(ddd)');
-      if (eachReservation.cancelFlag) {
-        canceledReservation.push(eachReservation);
-      } else if (new Date(eachReservation.reservationDate) <= new Date()) {
-        usedReservation.push(eachReservation);
-      } else {
-        toUsedReservation.push(eachReservation);
-      }
-    }
-    res.json({
-      toUsed: toUsedReservation,
-      used: usedReservation,
-      canceled: canceledReservation,
+        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info.id = ${value.reservationInfoId}`;
+      priceInfoQueryArr.push(sequelize.query(priceInfoQuery));
+      commentInfoArr.push(
+        ReservationUserComment.findOne({
+          attributes: ['id'],
+          where: {
+            product_id: value.productId,
+            delete_flag: 0,
+          },
+        }),
+      );
     });
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-router.get('/reservations/:emailId', confirmAPIRequest, async (req, res) => {
-  try {
-    const { emailId } = req.params;
-    const reservationInfoQuery =
-      'SELECT reservation_info.id as reservationInfoId,reservation_date as reservationDate,description,' +
-      'reservation_name as reservationName,reservation_tel as reservationTel,place_name as placeName,cancel_flag as cancelFlag,product.id as productId,' +
-      'SUM(price*count) as totalPrice from reservation_info INNER JOIN display_info ON reservation_info.display_info_id = display_info.id ' +
-      'INNER JOIN product ON reservation_info.product_id = product.id INNER JOIN reservation_info_price ON ' +
-      'reservation_info.id = reservation_info_price.reservation_info_id INNER JOIN product_price ON ' +
-      `product_price.id = reservation_info_price.product_price_id WHERE reservation_info.reservation_email_id = ${emailId} ` +
-      'GROUP BY reservation_info.id';
-    const [reservationInfo] = await sequelize.query(reservationInfoQuery);
+    const priceInfos = await Promise.all(priceInfoQueryArr);
+    const commentInfos = await Promise.all(commentInfoArr);
     const toUsedReservation = [];
     const usedReservation = [];
     const canceledReservation = [];
-    for (const eachReservation of reservationInfo) {
-      const priceInfoQuery =
-        'SELECT price,price_type_name as priceTypeName,count from product_price INNER JOIN ' +
-        'reservation_info_price ON product_price.id = reservation_info_price.product_price_id INNER JOIN reservation_info ON ' +
-        `reservation_info_price.reservation_info_id = reservation_info.id WHERE reservation_info.id = ${eachReservation.reservationInfoId}`;
-      const [priceInfo] = await sequelize.query(priceInfoQuery);
-      eachReservation.priceInfo = priceInfo;
-      eachReservation.reservationDate = moment(
-        eachReservation.reservationDate,
-      ).format('YYYY.MM.DD.(ddd)');
-      if (eachReservation.cancelFlag) {
-        canceledReservation.push(eachReservation);
-      } else if (new Date(eachReservation.reservationDate) <= new Date()) {
-        usedReservation.push(eachReservation);
+    reservationInfo.forEach((value, index) => {
+      const [priceInfo] = priceInfos[index];
+      const commentInfo = commentInfos[index];
+      const reservationDate = moment(value.reservationDate).format(
+        'YYYY.MM.DD.(ddd)',
+      );
+      const modifiedValue = {
+        ...value,
+        isCommentExist: !!commentInfo,
+        priceInfo,
+        reservationDate,
+      };
+      if (modifiedValue.cancelFlag) {
+        canceledReservation.push(modifiedValue);
+      } else if (new Date(modifiedValue.reservationDate) <= new Date()) {
+        usedReservation.push(modifiedValue);
       } else {
-        toUsedReservation.push(eachReservation);
+        toUsedReservation.push(modifiedValue);
       }
-    }
+    });
     res.json({
       toUsed: toUsedReservation,
       used: usedReservation,
@@ -377,16 +384,24 @@ router.post('/reservations', async (req, res) => {
       },
     });
     let countSum = 0;
-    for (const priceInfo of req.body.prices) {
+    const isPriceIncorrect = req.body.prices.some((priceInfo) => {
       countSum += priceInfo.count;
-      for (let i = 0, len = productPriceIds.length; i < len; i++) {
-        if (priceInfo.productPriceId === productPriceIds[i].id) {
+      for (
+        let index = 0, len = productPriceIds.length;
+        index < len;
+        index += 1
+      ) {
+        if (priceInfo.productPriceId === productPriceIds[index].id) {
           break;
         }
-        if (i === len - 1) {
-          return res.status(400).send('상품 가격 정보가 맞지 않습니다');
+        if (index === len - 1) {
+          return true;
         }
       }
+      return false;
+    });
+    if (isPriceIncorrect) {
+      return res.status(400).send('상품 가격 정보가 맞지 않습니다');
     }
     if (countSum === 0) {
       return res.status(400).send('상품이 선택되지 않았습니다');
@@ -414,15 +429,15 @@ router.post('/reservations', async (req, res) => {
       create_date: sequelize.fn('NOW'),
       modify_date: sequelize.fn('NOW'),
     });
-    for (const element of req.body.prices) {
-      if (element.count !== 0) {
-        await ReservationInfoPrice.create({
+    req.body.prices.forEach((value) => {
+      if (value.count !== 0) {
+        ReservationInfoPrice.create({
           reservation_info_id: creationInfo.id,
-          product_price_id: element.productPriceId,
-          count: element.count,
+          product_price_id: value.productPriceId,
+          count: value.count,
         });
       }
-    }
+    });
     /* edwith api에 적혀있지만 목적을 모르겠음
         const reservationInfoQuery = "SELECT cancel_flag as cancelYn,create_date as createDate,display_info_id as displayInfoId," +
             "modify_date as modifyDate,product_id as productId,reservation_date as reservationDate,reservation_email as reservationEmail," +
@@ -434,7 +449,7 @@ router.post('/reservations', async (req, res) => {
         const reservationInfoPrice = (await sequelize.query(reservationInfoPriceQuery))[0];
         reservationInfo.prices = reservationInfoPrice;
         */
-    res.status(201).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
   }
@@ -472,7 +487,7 @@ router.put('/reservations/:reservationInfoId', async (req, res) => {
         reservationInfo.prices = reservationInfoPrice;
         res.json(reservationInfo);
         */
-    res.status(201).send();
+    return res.status(201).send();
   } catch (err) {
     console.error(err);
   }
@@ -480,6 +495,7 @@ router.put('/reservations/:reservationInfoId', async (req, res) => {
 
 router.post(
   '/reservations/:reservationInfoId/comments',
+  isLoggedIn,
   upload.single('image'),
   async (req, res) => {
     try {
@@ -556,11 +572,100 @@ router.post(
           create_date: sequelize.fn('NOW'),
           modify_date: sequelize.fn('NOW'),
         });
-        await ReservationUserCommentImage.create({
+        ReservationUserCommentImage.create({
           reservation_info_id: commentCreationInfo.reservation_info_id,
           reservation_user_comment_id: commentCreationInfo.id,
           file_id: fileCreationInfo.id,
         });
+      }
+      // TODO:
+      const keyName = 'products/id';
+      const { display_info_id: displayInfoId } = exReservation;
+      if (cache[keyName] && cache.isExist(keyName, displayInfoId)) {
+        cache.deleteData(keyName, displayInfoId);
+      }
+      return res.status(201).send();
+    } catch (error) {
+      console.error(error);
+    }
+  },
+);
+
+router.delete(
+  '/reservations/:reservationInfoId/comments',
+  isLoggedIn,
+  async (req, res) => {
+    try {
+      const exComment = await ReservationUserComment.findOne({
+        where: {
+          reservation_info_id: Number(req.params.reservationInfoId),
+          reservation_email_id: req.user.id,
+          delete_flag: 0,
+        },
+      });
+      if (!exComment) {
+        return res
+          .status(400)
+          .send('리뷰 정보와 회원 정보가 일치하지 않습니다');
+      }
+      ReservationUserComment.update(
+        {
+          modify_date: sequelize.fn('NOW'),
+          delete_flag: 1,
+        },
+        {
+          where: {
+            id: exComment.id,
+          },
+        },
+      );
+      const exFile = await ReservationUserCommentImage.findOne({
+        attributes: ['file_id'],
+        where: {
+          reservation_info_id: Number(req.params.reservationInfoId),
+          reservation_user_comment_id: exComment.id,
+        },
+        raw: true,
+      });
+      if (exFile) {
+        const { file_id: imageId } = exFile;
+        const { save_file_name: saveFileName } = await FileInfo.findOne({
+          attributes: ['save_file_name'],
+          where: {
+            delete_flag: 0,
+            id: imageId,
+          },
+        });
+        FileInfo.update(
+          {
+            delete_flag: 1,
+            modify_date: sequelize.fn('NOW'),
+          },
+          {
+            where: {
+              id: imageId,
+            },
+          },
+        );
+        fs.unlink(
+          path.join(__dirname, '..', 'public', saveFileName),
+          (error) => {
+            if (error) {
+              console.error(error);
+            }
+          },
+        );
+      }
+      // 캐시 보정 작업
+      const keyName = 'products/id';
+      const { display_info_id: displayInfoId } = await ReservationInfo.findOne({
+        attributes: ['display_info_id'],
+        where: {
+          id: Number(req.params.reservationInfoId),
+        },
+      });
+      if (cache[keyName] && cache.isExist(keyName, displayInfoId)) {
+        cache.deleteData(keyName, displayInfoId);
       }
       res.status(201).send();
     } catch (error) {
@@ -569,88 +674,18 @@ router.post(
   },
 );
 
-router.delete('/reservations/:commentId/comments', async (req, res, next) => {
-  try {
-    if (!req.isAuthenticated()) {
-      return res.status(400).send('로그인 하세요');
-    }
-    const exComment = await ReservationUserComment.findOne({
-      where: {
-        id: req.params.commentId,
-        reservation_email_id: req.user.id,
-      },
-    });
-    if (!exComment) {
-      return res.status(400).send('리뷰 정보와 회원 정보가 일치하지 않습니다');
-    }
-    ReservationUserComment.update(
-      {
-        modify_date: sequelize.fn('NOW'),
-        delete_flag: 1,
-      },
-      {
-        where: {
-          id: req.params.commentId,
-          reservation_email_id: req.user.id,
-        },
-      },
-    );
-    let imageId = await ReservationUserCommentImage.findAll({
-      attributes: ['file_id'],
-      where: {
-        reservation_user_comment_id: Number(req.params.commentId),
-      },
-      raw: true,
-    });
-    imageId = imageId.map((x) => x.file_id);
-    const exImages = await FileInfo.findAll({
-      where: {
-        delete_flag: 0,
-        id: {
-          [Sequelize.Op.in]: imageId,
-        },
-      },
-    });
-    for (const image of exImages) {
-      FileInfo.update(
-        {
-          delete_flag: 1,
-          modify_date: sequelize.fn('NOW'),
-        },
-        {
-          where: {
-            id: image.id,
-          },
-        },
-      );
-      fs.unlink(
-        path.join(__dirname, '..', 'public', image.save_file_name),
-        (error) => {
-          if (error) {
-            console.error(error);
-          }
-        },
-      );
-    }
-    res.status(201).send();
-  } catch (error) {
-    console.error(error);
-  }
-});
-
+// TODO:
 router.put(
-  '/reservations/comments/:commentId',
+  '/reservations/:reservationInfoId/comments',
+  isLoggedIn,
   upload.single('image'),
   async (req, res) => {
     try {
       let postable = true;
       let message;
-      if (!req.isAuthenticated()) {
-        return res.status(400).send('로그인 하세요');
-      }
       const exComment = await ReservationUserComment.findOne({
         where: {
-          id: Number(req.params.commentId),
+          reservation_info_id: Number(req.params.reservationInfoId),
           reservation_email_id: req.user.id,
           delete_flag: 0,
         },
@@ -689,7 +724,7 @@ router.put(
         }
         return res.status(400).send(message);
       }
-      await ReservationUserComment.update(
+      ReservationUserComment.update(
         {
           score: Number(req.body.score),
           comment: req.body.comment,
@@ -697,52 +732,30 @@ router.put(
         },
         {
           where: {
-            id: Number(req.params.commentId),
-            reservation_email_id: req.user.id,
-            delete_flag: 0,
+            id: exComment.id,
           },
         },
       );
-      if (req.body.exImage && req.body.newImage !== 0) {
-        // 파일 삭제
-        // 기존에 이미지가 존재하면서 추가하였거나 제거한 경우
-        let imageId = await ReservationUserCommentImage.findAll({
-          attributes: ['file_id'],
-          where: {
-            reservation_user_comment_id: Number(req.params.commentId),
+      if (req.body.exImageSrc) {
+        // 기존 파일 삭제
+        const { exImageSrc } = req.body;
+        FileInfo.update(
+          {
+            delete_flag: 1,
+            modify_date: sequelize.fn('NOW'),
           },
-          raw: true,
-        });
-        imageId = imageId.map((x) => x.file_id);
-        const exImages = await FileInfo.findAll({
-          where: {
-            delete_flag: 0,
-            id: {
-              [Sequelize.Op.in]: imageId,
+          {
+            where: {
+              save_file_name: exImageSrc,
+              delete_flag: 0,
             },
           },
+        );
+        fs.unlink(path.join(__dirname, '..', 'public', exImageSrc), (error) => {
+          if (error) {
+            console.error(error);
+          }
         });
-        for (const image of exImages) {
-          await FileInfo.update(
-            {
-              delete_flag: 1,
-              modify_date: sequelize.fn('NOW'),
-            },
-            {
-              where: {
-                id: image.id,
-              },
-            },
-          );
-          fs.unlink(
-            path.join(__dirname, '..', 'public', image.save_file_name),
-            (error) => {
-              if (error) {
-                console.error(error);
-              }
-            },
-          );
-        }
       }
       if (req.file) {
         const fileCreationInfo = await FileInfo.create({
@@ -753,20 +766,24 @@ router.put(
           create_date: sequelize.fn('NOW'),
           modify_date: sequelize.fn('NOW'),
         });
-        const commentInfo = await ReservationUserComment.findOne({
-          where: {
-            id: Number(req.params.commentId),
-            reservation_email_id: req.user.id,
-            delete_flag: 0,
-          },
-        });
-        await ReservationUserCommentImage.create({
-          reservation_info_id: commentInfo.reservation_info_id,
-          reservation_user_comment_id: commentInfo.id,
+        ReservationUserCommentImage.create({
+          reservation_info_id: exComment.reservation_info_id,
+          reservation_user_comment_id: exComment.id,
           file_id: fileCreationInfo.id,
         });
       }
-      res.status(201).send();
+      // 캐시 보정 작업
+      const keyName = 'products/id';
+      const { display_info_id: displayInfoId } = await ReservationInfo.findOne({
+        attributes: ['display_info_id'],
+        where: {
+          id: Number(req.params.reservationInfoId),
+        },
+      });
+      if (cache[keyName] && cache.isExist(keyName, displayInfoId)) {
+        cache.deleteData(keyName, displayInfoId);
+      }
+      return res.status(201).send();
     } catch (error) {
       console.error(error);
     }

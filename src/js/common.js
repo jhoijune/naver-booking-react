@@ -26,8 +26,8 @@ const priceTypeMapper = (value) => {
   return priceType[value];
 };
 
-const validImageType = (image) => {
-  const result = ['image/jpeg', 'image/png', 'image/jpg'].indexOf(image) > -1;
+const validImageType = (type) => {
+  const result = ['image/jpeg', 'image/png', 'image/jpg'].indexOf(type) > -1;
   return result;
 };
 

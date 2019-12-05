@@ -1,4 +1,5 @@
 button.Button {
+  cursor: pointer;
   font-family: inherit;
   font-size: 14px;
   text-align: center;
@@ -9,6 +10,7 @@ button.Button {
 }
 
 a.Button {
+  cursor: pointer;
   display: block;
   box-sizing: border-box;
   width: 100%;

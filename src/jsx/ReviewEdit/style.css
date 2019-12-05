@@ -1,34 +1,33 @@
-.writeReview .container {
-  width: 100vw;
-  max-width: 414px;
-  max-width: var(--breakpoint-width);
+.ReviewEdit {
+  background-color: var(--text-bright-color);
+  background-color: #fff;
 }
 
-.writeReview .ratingSection p {
+.ReviewEdit .ratingSection p {
   text-align: center;
   font-size: 17px;
-  margin: 15px 0 10px 0;
+  padding: 15px 0 10px 0;
 }
 
-.writeReview .ratingSection .ratingStar {
+.ReviewEdit .ratingSection .ratingStar {
   display: flex;
   justify-content: center;
 }
 
-.writeReview .ratingSection i {
+.ReviewEdit .ratingSection i {
   font-size: 38px;
   cursor: pointer;
 }
 
-.writeReview .ratingSection i.getStar {
+.ReviewEdit .ratingSection i.getStar {
   color: #f00;
 }
 
-.writeReview .ratingSection i.notGetStar {
+.ReviewEdit .ratingSection i.notGetStar {
   color: #e6e6e6;
 }
 
-.writeReview .ratingSection input[type='number'] {
+.ReviewEdit .ratingSection input[type='number'] {
   all: unset;
   font-size: 40px;
   line-height: 48px;
@@ -39,13 +38,13 @@
   color: #ddd;
 }
 
-.writeReview .writeComment {
+.ReviewEdit .writeComment {
   display: flex;
   justify-content: center;
   padding: 10px 20px 0 20px;
 }
 
-.writeReview .writeComment textarea {
+.ReviewEdit .writeComment textarea {
   width: 100%;
   font-size: 16px;
   line-height: 20px;
@@ -54,7 +53,7 @@
   resize: none;
 }
 
-.writeReview .postImage .imageLetterCount {
+.ReviewEdit .postImage .imageLetterCount {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,22 +64,23 @@
   border-width: 0 1px 1px 1px;
 }
 
-.writeReview .postImage .imageLetterCount input[type='file'] {
+.ReviewEdit .postImage .imageLetterCount input[type='file'] {
   display: none;
 }
 
-.writeReview .postImage .imageLetterCount label {
+.ReviewEdit .postImage .imageLetterCount label {
+  cursor: pointer;
   font-size: 18px;
   margin: 10px 0 10px 10px;
 }
 
-.writeReview .postImage .imageLetterCount p {
+.ReviewEdit .postImage .imageLetterCount p {
   margin: 0 10px 0 0;
   font-size: 14px;
   color: #999;
 }
 
-.writeReview .postImage .thumbnailImage {
+.ReviewEdit .postImage .thumbnailImage {
   width: 200px;
   margin: 20px 0 30px 107px;
   background-size: 100% 100%;
@@ -91,7 +91,7 @@
   display: none;
 }
 
-.writeReview .postImage .thumbnailImage i {
+.ReviewEdit .postImage .thumbnailImage i {
   font-size: 20px;
   color: #1ec800;
   color: var(--main-color);
@@ -99,12 +99,12 @@
   cursor: pointer;
 }
 
-.writeReview .submitSection {
+.ReviewEdit .submitSection {
   background-color: #e9ecef;
   background-color: var(--grey-color);
 }
 
-.writeReview input[name='submit'] {
+.ReviewEdit input[name='submit'] {
   color: #fff;
   color: var(--text-bright-color);
   font-size: 17px;
@@ -119,7 +119,7 @@
   border: none;
 }
 
-.writeReview input[name='change'] {
+.ReviewEdit input[name='change'] {
   display: inline-block;
   color: #fff;
   color: var(--text-bright-color);
@@ -134,7 +134,7 @@
   border: none;
 }
 
-.writeReview input[name='cancel'] {
+.ReviewEdit input[name='cancel'] {
   display: inline-block;
   color: #fff;
   color: var(--text-bright-color);
@@ -149,7 +149,4 @@
 }
 
 @media (min-width: 414px) {
-  .writeReview .container {
-    margin: 0 auto;
-  }
 }

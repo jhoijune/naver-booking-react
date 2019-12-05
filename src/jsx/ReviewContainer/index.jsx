@@ -9,14 +9,7 @@ import ReviewList from '../ReviewList';
 import { ModalContext } from '../Layout';
 import ButtonBunch from '../ButtonBunch';
 
-/*
-displayInfoId={displayInfoId}
-reviews={productData.comments}
-averageScore={productData.averageScore}
-*/
-
 const ReviewContainer = (props) => {
-  // 전체적으로 만들고 다시 검토
   const {
     isBrief,
     displayInfoId,
@@ -40,7 +33,7 @@ const ReviewContainer = (props) => {
 
   useEffect(() => {
     setReviews(exReviews);
-    setAverageScore(exAverageScore || 0);
+    setAverageScore(exAverageScore ? Number(exAverageScore) : 0);
   }, [exReviews]);
 
   useEffect(() => {
@@ -51,6 +44,8 @@ const ReviewContainer = (props) => {
         reviews.length;
       modifiedAverageScore = Math.round(modifiedAverageScore * 10) / 10;
       setAverageScore(modifiedAverageScore);
+    } else {
+      setAverageScore(0);
     }
   }, [reviews]);
 
@@ -59,9 +54,10 @@ const ReviewContainer = (props) => {
     const fillCount = Math.floor(score);
     const notFillCount = maxScore - Math.ceil(score);
     const ratioCount = Math.round(score * 10) / 10 - fillCount;
-    const stars = [];
-    _.times(fillCount, () => {
-      stars.push(<i className="fn fn-star2 getStar" />);
+    const stars = _.range(1, fillCount + 1).map((value) => {
+      if (value) {
+        return <i key={value} className="fn fn-star2 getStar" />;
+      }
     });
     if (ratioCount > Number.EPSILON) {
       if (styleRef.current) {
@@ -81,53 +77,28 @@ const ReviewContainer = (props) => {
         }`;
         document.head.appendChild(styleRef.current);
       }
-      stars.push(<i className="fn fn-star2 ratioStar" />);
+      stars.push(<i key={fillCount + 1} className="fn fn-star2 ratioStar" />);
     }
-    _.times(notFillCount, () => {
-      stars.push(<i className="fn fn-star2 notGetStar" />);
+    _.range(fillCount + Math.ceil(ratioCount) + 1, 6).forEach((value) => {
+      if (value) {
+        stars.push(<i key={value} className="fn fn-star2 notGetStar" />);
+      }
     });
     return <span className="starCount">{stars}</span>;
   };
 
-  const editComment = (commentId) => {
-    // 상세정보 창의 리뷰 수정 버튼 눌렀을 때의 행동
-    return async () => {
-      try {
-        axios.get(`/auth/edit/comments/${commentId}`);
-        const index = reviews.findIndex((value) => {
-          value.commentId === commentId;
-        });
-        const { score, comment, commentImages } = reviews[index];
-        setExData({
-          id: commentId,
-          score,
-          comment,
-          imageSrc: commentImages.length ? commentImages[0].saveFileName : '',
-        });
-        setIsModifiable(true);
-      } catch (error) {
-        const {
-          response: { data, status },
-        } = error;
-        if (status === 400) {
-          alertModal(data);
-        }
-      }
-    };
-  };
-
-  const deleteComment = (commentId) => {
+  const deleteComment = (reservationInfoId) => {
     // 상세정보 창의 리뷰 삭제 버튼을 누르고 확인을 눌렀을 시의 행동
     return async () => {
       try {
-        const {
-          response: { status, statusText },
-        } = axios.delete(`/api/reservations/comments/${commentId}`);
+        const { status } = await axios.delete(
+          `/api/reservations/${reservationInfoId}/comments`,
+        );
         if (status === 201) {
           alertModal('리뷰가 삭제되었습니다');
-          const modifiedReviews = reviews.filter((value) => {
-            value.commentId !== commentId;
-          });
+          const modifiedReviews = reviews.filter(
+            (value) => value.reservationInfoId !== reservationInfoId,
+          );
           setReviews(modifiedReviews);
         }
       } catch (error) {
@@ -141,26 +112,84 @@ const ReviewContainer = (props) => {
     };
   };
 
-  const confirmDelete = (commentId) => {
+  const confirmDelete = (reservationInfoId) => {
     // 상세정보 창의 리뷰 삭제 버튼을 눌렀을 때의 행동
-    return () =>
-      confirmModal('리뷰를 삭제하시겠습니까?', deleteComment(commentId));
+    return () => {
+      confirmModal(
+        '리뷰를 삭제하시겠습니까?',
+        deleteComment(reservationInfoId),
+      );
+    };
   };
 
-  const confirmEdit = (id) => {
+  const editComment = (reservationInfoId) => {
+    // 상세정보 창의 리뷰 수정 버튼 눌렀을 때의 행동
+    return async () => {
+      try {
+        const { status } = await axios.get(
+          `/auth/edit/reservations/${reservationInfoId}/comments`,
+        );
+        if (status === 200) {
+          const index = reviews.findIndex(
+            (review) => review.reservationInfoId === reservationInfoId,
+          );
+          const { score, comment, commentImages } = reviews[index];
+          setExData({
+            score,
+            comment,
+            id: reservationInfoId,
+            imageSrc: commentImages.length ? commentImages[0].saveFileName : '',
+          });
+          setIsModifiable(true);
+        }
+      } catch (error) {
+        const {
+          response: { data, status },
+        } = error;
+        if (status === 400) {
+          alertModal(data);
+        }
+      }
+    };
+  };
+
+  const confirmEdit = (reservationInfoId) => {
     // 상세정보 창의 리뷰 수정 버튼을 누르고 수정 버튼을 다시 눌렀을 때의 행동
     return (submit, score, comment, imageSrc) => {
       confirmModal('리뷰를 수정하시겠습니까?', () => {
         const isProcessed = submit();
         if (isProcessed) {
-          const index = reviews.findIndex((value) => {
-            value.commentId === id;
-          });
+          const index = reviews.findIndex(
+            (review) => review.reservationInfoId === reservationInfoId,
+          );
           const modifiedReviews = [...reviews];
           modifiedReviews[index].comment = comment;
-          modifiedReviews[index].score = score;
-          if (modifiedReviews[index].commentImages.length) {
-            modifiedReviews[index].commentImages[0].saveFileName = imageSrc;
+          modifiedReviews[index].score =
+            typeof score === 'string' ? score : `${score}.0`;
+          /* 
+          * 1. 기존에 파일이 없는 경우
+
+          1.1 파일 추가 X -> req.file에 물린게 없음
+          1.2 파일 추가 -> req.file에 물린게 있음
+
+          2. 기존에 파일이 있는 경우
+
+          2.1 파일 삭제 -> req.file에 물린게 없음
+          2.2 파일 그대로 -> req.file에 물린게 없음
+          2.3 파일 추가(수정) -> req.file에 물린게 있음
+          */
+          if (imageSrc) {
+            if (!modifiedReviews[index].commentImages.length) {
+              // 1.2
+              modifiedReviews[index].commentImages[0] = {};
+              modifiedReviews[index].commentImages[0].saveFileName = imageSrc;
+            } else {
+              // 2.2,2.3
+              modifiedReviews[index].commentImages[0].saveFileName = imageSrc;
+            }
+          } else if (modifiedReviews[index].commentImages.length) {
+            // 1.1은 그대로 둬도 됨
+            modifiedReviews[index].commentImages = [];
           }
           setReviews(modifiedReviews);
         }
@@ -173,6 +202,7 @@ const ReviewContainer = (props) => {
   const confirmCancel = () => {
     // 상세정보 창의 리뷰 수정 버튼을 누르고 취소를 눌렀을 때의 행동
     confirmModal('리뷰 수정을 취소하시겠습니까?', () => {
+      // 그대로 있음;
       setIsModifiable(false);
     });
   };

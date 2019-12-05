@@ -31,7 +31,7 @@ TicketInputList.propTypes = {
       discountRate: PropTypes.string,
     }),
   ).isRequired,
-  tickets: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+  tickets: PropTypes.arrayOf(PropTypes.number).isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 

@@ -9,6 +9,7 @@ const ModalContext = createContext({
   setModalChildren: () => {},
   alertModal: () => {},
   confirmModal: () => {},
+  imageModal: () => {},
 });
 
 const Layout = (props) => {
@@ -18,7 +19,7 @@ const Layout = (props) => {
 
   const alertModal = (text, action) => {
     setModalChildren(
-      <div>
+      <div className="modalText">
         <h1>{text}</h1>
         <ButtonBunch
           notes={[
@@ -40,7 +41,7 @@ const Layout = (props) => {
 
   const confirmModal = (text, action) => {
     setModalChildren(
-      <div>
+      <div className="modalText">
         <h1>{text}</h1>
         <ButtonBunch
           notes={[
@@ -51,6 +52,7 @@ const Layout = (props) => {
               },
               click: () => {
                 action();
+                setIsModal(false);
               },
               children: '확인',
             },
@@ -63,6 +65,18 @@ const Layout = (props) => {
           ]}
         />
       </div>,
+    );
+    setIsModal(true);
+  };
+
+  const imageModal = (src) => {
+    setModalChildren(
+      <img
+        onClick={() => {
+          setIsModal(false);
+        }}
+        src={src}
+      />,
     );
     setIsModal(true);
   };
@@ -80,6 +94,7 @@ const Layout = (props) => {
         setModalChildren,
         alertModal,
         confirmModal,
+        imageModal,
       }}
     >
       {children}

@@ -18,6 +18,7 @@ const TicketInfo = (props) => {
       placeName,
       totalPrice,
       productId,
+      isCommentExist,
     },
     actions,
   } = props;
@@ -37,23 +38,27 @@ const TicketInfo = (props) => {
         fontSize: '16px',
         lineHeight: '20px',
       };
-      const notes = actions.map((value) => {
-        if (value === 'cancel') {
-          return {
+      const notes = [];
+      actions.forEach((action) => {
+        if (action === 'cancel') {
+          notes.push({
             style,
             click: confirmCancelReservation(reservationInfoId),
             children: '취소',
-          };
+          });
         }
-        if (value === 'writeReview') {
-          return {
+        if (action === 'writeReview' && !isCommentExist) {
+          notes.push({
             style,
             click: `/reviewwrite/${productId}`,
             children: '예매자 리뷰 남기기',
-          };
+          });
         }
       });
-      return <ButtonBunch margin={[0, 0, 15, 0]} notes={notes} />;
+      if (notes.length) {
+        return <ButtonBunch margin={[0, 0, 15, 0]} notes={notes} />;
+      }
+      return '';
     }
     return '';
   };
@@ -106,8 +111,9 @@ TicketInfo.propTypes = {
     reservationName: PropTypes.string.isRequired,
     reservationTel: PropTypes.string.isRequired,
     placeName: PropTypes.string.isRequired,
-    totalPrice: PropTypes.number.isRequired,
+    totalPrice: PropTypes.string.isRequired,
     productId: PropTypes.number.isRequired,
+    isCommentExist: PropTypes.bool.isRequired,
     priceInfo: PropTypes.arrayOf(
       PropTypes.shape({
         priceTypeName: PropTypes.string.isRequired,

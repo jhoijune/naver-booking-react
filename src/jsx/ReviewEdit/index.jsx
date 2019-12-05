@@ -1,16 +1,17 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import _ from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { validImageType } from '../../js/common';
 
+import './style.css';
 import { ModalContext } from '../Layout';
 import ButtonBunch from '../ButtonBunch';
 
 const ReviewEdit = (props) => {
-  // review 만들고 완성해야됨 미완
   const {
-    commentId,
+    id,
     thumbnailWidth,
     exScore,
     exComment,
@@ -31,14 +32,15 @@ const ReviewEdit = (props) => {
   useEffect(() => {
     if (imageSrc) {
       const imageMeasurement = new Image();
-      imageMeasurement.src = imageSrc;
-      imageMeasurement.onload = () => {
+      const revisionSrc = exImageSrc === imageSrc ? `/${imageSrc}` : imageSrc;
+      imageMeasurement.src = revisionSrc;
+      imageMeasurement.onload = function() {
         const ratio = this.height / this.width;
         setThumbnailStyle({
           display: 'flex',
           width: `${thumbnailWidth}px`,
           height: `${thumbnailWidth * ratio}px`,
-          backgroundImage: `url(${this.src})`,
+          backgroundImage: `url(${revisionSrc})`,
         });
       };
     } else {
@@ -52,7 +54,6 @@ const ReviewEdit = (props) => {
   const handleSubmit = async (event) => {
     // return을 좀 정의해서 submit이 됐는가를 알아야함
     try {
-      event.preventDefault();
       if (score <= 0 || score > 5) {
         alertModal('별점 개수가 올바르지 않습니다');
         return false;
@@ -63,25 +64,31 @@ const ReviewEdit = (props) => {
       }
       if (
         imageRef.current.files.length &&
-        !validImageType(imageRef.current.files[0])
+        !validImageType(imageRef.current.files[0].type)
       ) {
         alertModal('이미지는 jpg,jpeg,png 파일만 가능합니다.');
         return false;
       }
       const formObj = new FormData(form.current);
-      /*
-      formObj.append('reservationInfoId,blah);
-      formObj.append('exImage', !!exData.imageSrc);
-            formObj.append('newImage', newImage);
-            */
-      const { status } = await axios.post(form.current.action, formObj);
+      if (!isPost && exImageSrc && (!imageSrc || exImageSrc !== imageSrc)) {
+        formObj.append('exImageSrc', exImageSrc);
+      }
+      const { status } = await axios({
+        method: isPost ? 'POST' : 'PUT',
+        url: `/api/reservations/${id}/comments`,
+        data: formObj,
+      });
       if (status === 201) {
-        alertModal(isPost ? '리뷰가 등록되었습니다' : '리뷰가 수정되었습니다');
-        if (isPost) history.push('/myreservation');
-        return true;
+        if (isPost) {
+          alertModal('리뷰가 등록되었습니다', () => {
+            history.push('/myreservation');
+          });
+        } else {
+          alertModal('리뷰가 수정되었습니다');
+          return true;
+        }
       }
     } catch (error) {
-      console.error(error);
       const {
         response: { data, status },
       } = error;
@@ -100,10 +107,10 @@ const ReviewEdit = (props) => {
 
   const uploadImage = ({ target: { files } }) => {
     const tempImage = files[0];
-    if (!validImageType(tempImage)) {
+    if (!validImageType(tempImage.type)) {
       alertModal('이미지는 jpg,jpeg,png 파일만 가능합니다');
-      imageRef.current.value = ''; // 아마 고쳐야될꺼임
-      setImageSrc(''); // 필요한지 모르겠음
+      imageRef.current.value = '';
+      setImageSrc('');
       return;
     }
     setImageSrc(window.URL.createObjectURL(tempImage));
@@ -118,18 +125,18 @@ const ReviewEdit = (props) => {
   return (
     <section className="ReviewEdit">
       <form
-        method={isPost ? 'POST' : 'PUT'}
-        action={`/api/reservations/comments/${commentId}`}
         encType="multipart/form-data"
         name="reviewForm"
         ref={form}
+        onSubmit={handleSubmit}
       >
         <article className="ratingSection">
           <p>별점과 이용 경험을 남겨주세요.</p>
           <div className="ratingStar">
-            {[1, 2, 3, 4, 5].map((value) => {
+            {_.range(1, 6).map((value) => {
               return (
                 <i
+                  key={value}
                   className={`fn fn-star2 ${
                     score >= value ? 'getStar' : 'notGetStar'
                   }`}
@@ -171,40 +178,55 @@ const ReviewEdit = (props) => {
             />
             <label htmlFor="imageUpload">
               <i className="fn fn-image1" />
-              사진 추가
+              {' 사진 추가'}
             </label>
             <p className="commentCount">
               {`${comment.length}/400 (최소 5자 이상)`}
             </p>
-            <div className="thumbnailImage" style={thumbnailStyle}>
-              <i className="fn fn-cross1" onClick={cancelImageUpload} />
-            </div>
+          </div>
+          <div className="thumbnailImage" style={thumbnailStyle}>
+            <i className="fn fn-cross1" onClick={cancelImageUpload} />
           </div>
         </article>
         {isPost ? (
           <ButtonBunch
             notes={[
               {
-                style: { backgroundColor: '#1EC800' },
+                style: {
+                  backgroundColor: '#1EC800',
+                  color: '#fff',
+                  fontSize: '17px',
+                  fontFamily: 'Nanum Gothic Bold',
+                },
                 click: () => {
                   confirmModal('리뷰를 등록 하시겠습니까?', handleSubmit);
                 },
                 children: '리뷰 등록',
               },
             ]}
+            padding={10}
           />
         ) : (
           <ButtonBunch
             notes={[
               {
-                style: { backgroundColor: '#1EC800' },
+                style: {
+                  backgroundColor: '#1EC800',
+                  color: '#fff',
+                  fontSize: '17px',
+                  fontFamily: 'Nanum Gothic Bold',
+                },
                 click: () => {
                   confirmEdit(handleSubmit, score, comment, imageSrc);
                 },
                 children: '수정',
               },
               {
-                backgroundColor: '#D8DBDE',
+                style: {
+                  backgroundColor: '#D8DBDE',
+                  fontSize: '17px',
+                  fontFamily: 'Nanum Gothic Bold',
+                },
                 click: () => {
                   confirmCancel();
                 },
@@ -227,9 +249,9 @@ ReviewEdit.defaultProps = {
 };
 
 ReviewEdit.propTypes = {
-  commentId: PropTypes.number,
+  id: PropTypes.number,
   thumbnailWidth: PropTypes.number,
-  exScore: PropTypes.number,
+  exScore: PropTypes.string,
   exComment: PropTypes.string,
   exImageSrc: PropTypes.string,
   isPost: PropTypes.bool,

@@ -17,10 +17,10 @@ const TabView = React.forwardRef((props, ref) => {
 });
 
 TabView.propTypes = {
-  views: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,
+  views: PropTypes.arrayOf(PropTypes.node).isRequired,
   style: PropTypes.shape({
     transform: PropTypes.string,
-    height: PropTypes.string,
+    height: PropTypes.number,
   }).isRequired,
 };
 

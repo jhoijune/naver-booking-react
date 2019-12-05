@@ -227,7 +227,7 @@ ReserveForm.defaultProps = {
 
 ReserveForm.propTypes = {
   productPrices: PropTypes.array,
-  displayInfoId: PropTypes.number.isRequred,
+  displayInfoId: PropTypes.string.isRequired,
   productId: PropTypes.number,
   reservationDate: PropTypes.string,
 };

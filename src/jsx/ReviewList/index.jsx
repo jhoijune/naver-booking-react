@@ -19,24 +19,27 @@ const ReviewList = (props) => {
 
   const showReviews = () => {
     const reviewsComp = [];
-    [...reviews].reverse().some((value, index) => {
+    [...reviews].reverse().some((review, index) => {
       if (isBrief && index >= 5) {
         return true;
       }
+      let revisionImageSrc = '';
+      if (review.commentImages.length) {
+        revisionImageSrc = review.commentImages[0].saveFileName;
+        revisionImageSrc = revisionImageSrc.slice(0, 4).includes('blob')
+          ? revisionImageSrc
+          : `/${revisionImageSrc}`;
+      }
       reviewsComp.push(
         <Review
-          key={value.commentId}
-          review={value.comment}
-          image={
-            value.commentImages.length
-              ? value.commentImages[0].saveFileName
-              : ''
-          }
-          score={value.score}
-          email={value.reservationEmail}
-          date={value.reservationDate}
-          editComment={editComment(value.commentId)}
-          confirmDelete={confirmDelete(value.commentId)}
+          key={review.commentId}
+          review={review.comment}
+          imageSrc={revisionImageSrc}
+          score={review.score}
+          email={review.reservationEmail}
+          date={review.reservationDate}
+          editComment={editComment(review.reservationInfoId)}
+          confirmDelete={confirmDelete(review.reservationInfoId)}
         />,
       );
     });
@@ -47,7 +50,7 @@ const ReviewList = (props) => {
     <div className="ReviewList">
       {isModifiable ? (
         <ReviewEdit
-          commentId={id}
+          id={id}
           exScore={score}
           exComment={comment}
           exImageSrc={imageSrc}
@@ -84,10 +87,10 @@ ReviewList.propTypes = {
   confirmEdit: PropTypes.func.isRequired,
   confirmCancel: PropTypes.func.isRequired,
   exData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    score: PropTypes.string.isRequired,
-    comment: PropTypes.string.isRequired,
-    imageSrc: PropTypes.string.isRequired,
+    id: PropTypes.number,
+    score: PropTypes.string,
+    comment: PropTypes.string,
+    imageSrc: PropTypes.string,
   }).isRequired,
 };
 

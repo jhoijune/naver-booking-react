@@ -8,7 +8,7 @@ import './style.css';
 // TODO: isTransparent가 false일 때 fixed이므로 style객체가 있어야 됨
 
 const MainNavBar = (props) => {
-  const { isTransparent, isLogoutable } = props;
+  const { isTransparent, isLogoutable, style } = props;
   const [email, setEmail] = useState('');
   const history = useHistory();
 
@@ -37,13 +37,16 @@ const MainNavBar = (props) => {
   };
 
   return (
-    <nav className={`MainNavBar ${isTransparent ? 'transparent' : 'fixed'}`}>
+    <nav
+      className={`MainNavBar ${isTransparent ? 'transparent' : 'fixed'}`}
+      style={style}
+    >
       <Link to="/">
         <img src="/images/icon/icon.png" alt="naver icon" />
       </Link>
       {isLogoutable ? (
         <span onClick={handleLogout}>
-          <h2>로그아웃</h2>
+          <h2>{email ? '로그아웃' : '예약확인'}</h2>
         </span>
       ) : (
         <Link to={email ? '/myreservation' : '/bookinglogin'}>
