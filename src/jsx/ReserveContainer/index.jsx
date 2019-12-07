@@ -16,7 +16,9 @@ const ReserveContainer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${displayInfoId}`);
+        const { data } = await axios.get(`/api/products/${displayInfoId}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         setProductData(data);
       } catch (error) {
         console.error(error);
@@ -28,7 +30,9 @@ const ReserveContainer = () => {
   useEffect(() => {
     const fetchDate = async () => {
       try {
-        const { data } = await axios.get('/api/reservations/date');
+        const { data } = await axios.get('/api/reservations/date', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         setDate(data);
       } catch (error) {
         console.error(error);

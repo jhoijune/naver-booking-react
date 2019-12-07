@@ -15,6 +15,7 @@ import PromotionImage from '../PromotionImage';
 import WriteReviewContainer from '../WriteReviewContainer';
 import ReviewProvider from '../ReviewProvider';
 import MainContainer from '../MainContainer';
+import NotFound from '../NotFound';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -54,8 +55,9 @@ ReactDOM.render(
           <Footer />
         </Route>
         <Route path="/">
-          <NavBar />
-          {/* 404 not found인걸 나타내게 */}
+          <NavBar isTransparent />
+          <NotFound />
+          <Footer />
         </Route>
       </Switch>
     </Layout>

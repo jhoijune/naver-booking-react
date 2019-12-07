@@ -9,7 +9,8 @@ import { ModalContext } from '../Layout';
 import TicketInputList from '../TicketInputList';
 import ReserverInfo from '../ReserverInfo';
 import TOS from '../TOS';
-import ButtonBunch from '../ButtonBunch';
+import FlexContainer from '../FlexContainer';
+import Button from '../Button';
 
 const initialState = {
   tickets: [],
@@ -142,7 +143,11 @@ const ReserveForm = (props) => {
           productPriceId: productPrices[index].productPriceID,
         });
       }
-      const { status } = await axios.post('/api/reservations', reservationInfo);
+      const { status } = await axios.post(
+        '/api/reservations',
+        reservationInfo,
+        { headers: { 'X-Requested-With': 'XMLHttpRequest' } },
+      );
       if (status === 201) {
         alertModal('예매가 성공적으로 승인되었습니다', () => {
           history.push(`/detail/${displayInfoId}`);
@@ -190,30 +195,30 @@ const ReserveForm = (props) => {
           isVerifiedEmail={state.isVerifiedEmail}
         />
         <TOS isChecked={state.isTOSChecked} dispatch={dispatch} />
-        <ButtonBunch
-          notes={[
-            {
-              style: {
-                backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
-                fontSize: '16px',
-                fontFamily: 'Nanum Gothic Bold',
-                color: '#fff',
-                transition: 'background-color 1s',
-              },
-              click: confirmSubmit,
-              children: (
-                <span>
-                  <i
-                    className="spr_book ico_naver_s"
-                    style={{ verticalAlign: 'middle' }}
-                  />
-                  {' 예약하기'}
-                </span>
-              ),
-            },
-          ]}
-          padding={[0, 10, 10, 10]}
-        />
+        <FlexContainer
+          style={{
+            padding: '0 10px 10px 10px',
+          }}
+        >
+          <Button
+            style={{
+              backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
+              fontSize: '16px',
+              fontFamily: 'Nanum Gothic Bold',
+              color: '#fff',
+              transition: 'background-color 1s',
+            }}
+            click={confirmSubmit}
+          >
+            <span>
+              <i
+                className="spr_book ico_naver_s"
+                style={{ verticalAlign: 'middle' }}
+              />
+              {' 예약하기'}
+            </span>
+          </Button>
+        </FlexContainer>
       </form>
     </section>
   );

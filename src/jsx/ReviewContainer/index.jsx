@@ -7,7 +7,8 @@ import './style.css';
 import ReviewSummary from '../ReviewSummary';
 import ReviewList from '../ReviewList';
 import { ModalContext } from '../Layout';
-import ButtonBunch from '../ButtonBunch';
+import FlexContainer from '../FlexContainer';
+import Button from '../Button';
 
 const ReviewContainer = (props) => {
   const {
@@ -52,7 +53,6 @@ const ReviewContainer = (props) => {
   const displayStar = (score, maxScore = 5) => {
     // averageScore에 맞게 별점을 리턴하는 함수
     const fillCount = Math.floor(score);
-    const notFillCount = maxScore - Math.ceil(score);
     const ratioCount = Math.round(score * 10) / 10 - fillCount;
     const stars = _.range(1, fillCount + 1).map((value) => {
       if (value) {
@@ -79,11 +79,13 @@ const ReviewContainer = (props) => {
       }
       stars.push(<i key={fillCount + 1} className="fn fn-star2 ratioStar" />);
     }
-    _.range(fillCount + Math.ceil(ratioCount) + 1, 6).forEach((value) => {
-      if (value) {
-        stars.push(<i key={value} className="fn fn-star2 notGetStar" />);
-      }
-    });
+    _.range(fillCount + Math.ceil(ratioCount) + 1, maxScore + 1).forEach(
+      (value) => {
+        if (value) {
+          stars.push(<i key={value} className="fn fn-star2 notGetStar" />);
+        }
+      },
+    );
     return <span className="starCount">{stars}</span>;
   };
 
@@ -93,6 +95,9 @@ const ReviewContainer = (props) => {
       try {
         const { status } = await axios.delete(
           `/api/reservations/${reservationInfoId}/comments`,
+          {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          },
         );
         if (status === 201) {
           alertModal('리뷰가 삭제되었습니다');
@@ -128,6 +133,9 @@ const ReviewContainer = (props) => {
       try {
         const { status } = await axios.get(
           `/auth/edit/reservations/${reservationInfoId}/comments`,
+          {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          },
         );
         if (status === 200) {
           const index = reviews.findIndex(
@@ -239,25 +247,22 @@ const ReviewContainer = (props) => {
         ''
       )}
       {isBrief && reviews.length > 5 ? (
-        <ButtonBunch
-          notes={[
-            {
-              style: {
-                color: '#000',
-                backgroundColor: '#F3F5F6',
-                border: 'none',
-                borderTop: '1px solid #c0c0c0',
-              },
-              click: `/review/${displayInfoId}`,
-              children: (
-                <span>
-                  {'예매자 리뷰 더보기 '}
-                  <i className="fn fn-forward1" />
-                </span>
-              ),
-            },
-          ]}
-        />
+        <FlexContainer>
+          <Button
+            style={{
+              color: '#000',
+              backgroundColor: '#F3F5F6',
+              border: 'none',
+              borderTop: '1px solid #c0c0c0',
+            }}
+            click={`/review/${displayInfoId}`}
+          >
+            <span>
+              {'예매자 리뷰 더보기 '}
+              <i className="fn fn-forward1" />
+            </span>
+          </Button>
+        </FlexContainer>
       ) : (
         ''
       )}

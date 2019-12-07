@@ -1,4 +1,6 @@
 button.Button {
+  color: #000;
+  background-color: #f4f4f4;
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
@@ -10,6 +12,8 @@ button.Button {
 }
 
 a.Button {
+  color: #000;
+  background-color: #f4f4f4;
   cursor: pointer;
   display: block;
   box-sizing: border-box;

@@ -4,7 +4,8 @@ import { priceTypeMapper, transformMoneyUnit } from '../../js/common';
 
 import './style.css';
 import { ActionContext } from '../ReservationContainer';
-import ButtonBunch from '../ButtonBunch';
+import FlexContainer from '../FlexContainer';
+import Button from '../Button';
 
 const TicketInfo = (props) => {
   const {
@@ -56,7 +57,17 @@ const TicketInfo = (props) => {
         }
       });
       if (notes.length) {
-        return <ButtonBunch margin={[0, 0, 15, 0]} notes={notes} />;
+        return (
+          <FlexContainer style={{ margin: '0 0 15px 0' }}>
+            {notes.map((value, index) => {
+              return (
+                <Button key={index} style={value.style} click={value.click}>
+                  {value.children}
+                </Button>
+              );
+            })}
+          </FlexContainer>
+        );
       }
       return '';
     }

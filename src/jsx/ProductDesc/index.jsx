@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import $ from 'jquery';
 
 import './style.css';
-import ButtonBunch from '../ButtonBunch';
+import FlexContainer from '../FlexContainer';
+import Button from '../Button';
 
 const ProductDesc = (props) => {
   const { text, limit } = props;
@@ -63,19 +64,18 @@ const ProductDesc = (props) => {
         <p>{textObj.simple}</p>
       )}
       {textObj.detail ? (
-        <ButtonBunch
-          notes={[
-            {
-              style: {
-                backgroundColor: '#f3f5f6',
-                borderLeft: 'none',
-                borderRight: 'none',
-              },
-              click: showMoreDesc,
-              children: isFold ? openText : foldText,
-            },
-          ]}
-        />
+        <FlexContainer>
+          <Button
+            style={{
+              backgroundColor: '#f3f5f6',
+              borderLeft: 'none',
+              borderRight: 'none',
+            }}
+            click={showMoreDesc}
+          >
+            {isFold ? openText : foldText}
+          </Button>
+        </FlexContainer>
       ) : (
         ''
       )}

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 import TabController from '../TabController';
-import ButtonBunch from '../ButtonBunch';
 
 const ProductInfo = (props) => {
   const {

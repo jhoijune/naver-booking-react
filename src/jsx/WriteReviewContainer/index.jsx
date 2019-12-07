@@ -18,6 +18,9 @@ const WriteReviewContainer = () => {
       try {
         const { data, status } = await axios.get(
           `/auth/writereview/${productId}`,
+          {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          },
         );
         if (status === 200) {
           setInfo(data);

@@ -10,7 +10,6 @@ import { resizeEnd } from '../../js/common';
 // 화면 전환 간격 (timeInterval) 2초
 
 const PromotionImage = (props) => {
-  // 갑자기 degree가 계속 증가하는 버그가 있음
   const { timeInterval, transitionTime } = props;
   const [degree, setDegree] = useState(0);
   const [scrollable, setScrollable] = useState(true);
@@ -28,7 +27,9 @@ const PromotionImage = (props) => {
       try {
         const {
           data: { items },
-        } = await axios.get('/api/promotions');
+        } = await axios.get('/api/promotions', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         items.push(items[0]); // 처음과 마지막을 동일한 이미지를 두어서 스크롤을 매끄럽게 함
         setImages(items);
       } catch (error) {

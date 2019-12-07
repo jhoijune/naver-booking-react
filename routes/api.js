@@ -90,7 +90,13 @@ const upload = multer({
 router.get('/temp', async (req, res) => {
   // API 테스트용
   try {
-    res.send();
+    const t = await FileInfo.findOne({
+      where: {
+        id: 209,
+      },
+    });
+    console.log(t);
+    res.send(t);
   } catch (error) {
     console.error(error);
   }
@@ -197,7 +203,7 @@ router.get('/products/:displayInfoId', confirmAPIRequest, async (req, res) => {
   }
 });
 
-router.get('/reservations/date', (req, res) => {
+router.get('/reservations/date', confirmAPIRequest, (req, res) => {
   const diffDays = { reserve: Math.floor(Math.random() * 5 + 1) };
   diffDays.start = diffDays.reserve - Math.floor(Math.random() * 5 + 1);
   diffDays.end = diffDays.reserve + Math.floor(Math.random() * 5 + 1);
@@ -265,7 +271,7 @@ router.get('/reservations/all', confirmAPIRequest, async (req, res) => {
   }
 });
 
-router.get('/reservations', isLoggedIn, async (req, res) => {
+router.get('/reservations', confirmAPIRequest, isLoggedIn, async (req, res) => {
   try {
     const emailId = req.user.id;
     const reservationInfoQuery =
@@ -330,7 +336,7 @@ router.get('/reservations', isLoggedIn, async (req, res) => {
   }
 });
 
-router.post('/reservations', async (req, res) => {
+router.post('/reservations', confirmAPIRequest, async (req, res) => {
   try {
     let postable = true;
     let message;
@@ -455,27 +461,31 @@ router.post('/reservations', async (req, res) => {
   }
 });
 
-router.put('/reservations/:reservationInfoId', async (req, res) => {
-  try {
-    const exReservation = await ReservationInfo.findOne({
-      where: {
-        id: req.params.reservationInfoId,
-        reservation_email_id: req.user.id,
-      },
-    });
-    if (!exReservation) {
-      return res.status(400).send();
-    }
-    await ReservationInfo.update(
-      {
-        cancel_flag: 1,
-        modify_date: sequelize.fn('NOW'),
-      },
-      {
-        where: { id: req.params.reservationInfoId },
-      },
-    );
-    /*
+router.put(
+  '/reservations/:reservationInfoId',
+  confirmAPIRequest,
+  isLoggedIn,
+  async (req, res) => {
+    try {
+      const exReservation = await ReservationInfo.findOne({
+        where: {
+          id: req.params.reservationInfoId,
+          reservation_email_id: req.user.id,
+        },
+      });
+      if (!exReservation) {
+        return res.status(400).send();
+      }
+      await ReservationInfo.update(
+        {
+          cancel_flag: 1,
+          modify_date: sequelize.fn('NOW'),
+        },
+        {
+          where: { id: req.params.reservationInfoId },
+        },
+      );
+      /*
         const reservationInfoQuery = "SELECT cancel_flag as cancelYn,create_date as createDate,display_info_id as displayInfoId," +
             "modify_date as modifyDate,product_id as productId,reservation_date as reservationDate,reservation_email as reservationEmail," +
             "id as reservationInfoId,reservation_name as reservationName,reservation_tel as reservationTelephone from reservation_info " +
@@ -487,14 +497,16 @@ router.put('/reservations/:reservationInfoId', async (req, res) => {
         reservationInfo.prices = reservationInfoPrice;
         res.json(reservationInfo);
         */
-    return res.status(201).send();
-  } catch (err) {
-    console.error(err);
-  }
-});
+      return res.status(201).send();
+    } catch (err) {
+      console.error(err);
+    }
+  },
+);
 
 router.post(
   '/reservations/:reservationInfoId/comments',
+  confirmAPIRequest,
   isLoggedIn,
   upload.single('image'),
   async (req, res) => {
@@ -578,7 +590,6 @@ router.post(
           file_id: fileCreationInfo.id,
         });
       }
-      // TODO:
       const keyName = 'products/id';
       const { display_info_id: displayInfoId } = exReservation;
       if (cache[keyName] && cache.isExist(keyName, displayInfoId)) {
@@ -593,6 +604,7 @@ router.post(
 
 router.delete(
   '/reservations/:reservationInfoId/comments',
+  confirmAPIRequest,
   isLoggedIn,
   async (req, res) => {
     try {
@@ -619,7 +631,7 @@ router.delete(
           },
         },
       );
-      const exFile = await ReservationUserCommentImage.findOne({
+      let exFileIds = await ReservationUserCommentImage.findAll({
         attributes: ['file_id'],
         where: {
           reservation_info_id: Number(req.params.reservationInfoId),
@@ -627,34 +639,37 @@ router.delete(
         },
         raw: true,
       });
-      if (exFile) {
-        const { file_id: imageId } = exFile;
-        const { save_file_name: saveFileName } = await FileInfo.findOne({
-          attributes: ['save_file_name'],
+      if (exFileIds.length) {
+        exFileIds = exFileIds.map((value) => value.file_id);
+        const targetFile = await FileInfo.findOne({
           where: {
             delete_flag: 0,
-            id: imageId,
-          },
-        });
-        FileInfo.update(
-          {
-            delete_flag: 1,
-            modify_date: sequelize.fn('NOW'),
-          },
-          {
-            where: {
-              id: imageId,
+            id: {
+              [Sequelize.Op.in]: exFileIds,
             },
           },
-        );
-        fs.unlink(
-          path.join(__dirname, '..', 'public', saveFileName),
-          (error) => {
-            if (error) {
-              console.error(error);
-            }
-          },
-        );
+        });
+        if (targetFile) {
+          FileInfo.update(
+            {
+              delete_flag: 1,
+              modify_date: sequelize.fn('NOW'),
+            },
+            {
+              where: {
+                id: targetFile.id,
+              },
+            },
+          );
+          fs.unlink(
+            path.join(__dirname, '..', 'public', targetFile.save_file_name),
+            (error) => {
+              if (error) {
+                console.error(error);
+              }
+            },
+          );
+        }
       }
       // 캐시 보정 작업
       const keyName = 'products/id';
@@ -674,9 +689,9 @@ router.delete(
   },
 );
 
-// TODO:
 router.put(
   '/reservations/:reservationInfoId/comments',
+  confirmAPIRequest,
   isLoggedIn,
   upload.single('image'),
   async (req, res) => {
@@ -736,26 +751,45 @@ router.put(
           },
         },
       );
-      if (req.body.exImageSrc) {
+      if (req.body.exImage) {
         // 기존 파일 삭제
-        const { exImageSrc } = req.body;
-        FileInfo.update(
-          {
-            delete_flag: 1,
-            modify_date: sequelize.fn('NOW'),
+        let imageIds = await ReservationUserCommentImage.findAll({
+          attributes: ['file_id'],
+          where: {
+            reservation_info_id: Number(req.params.reservationInfoId),
           },
-          {
-            where: {
-              save_file_name: exImageSrc,
-              delete_flag: 0,
+        });
+        imageIds = imageIds.map((value) => value.file_id);
+        const targetImage = await FileInfo.findOne({
+          where: {
+            delete_flag: 0,
+            id: {
+              [Sequelize.Op.in]: imageIds,
             },
           },
-        );
-        fs.unlink(path.join(__dirname, '..', 'public', exImageSrc), (error) => {
-          if (error) {
-            console.error(error);
-          }
         });
+        if (targetImage) {
+          FileInfo.update(
+            {
+              delete_flag: 1,
+              modify_date: sequelize.fn('NOW'),
+            },
+            {
+              where: {
+                id: targetImage.id,
+                delete_flag: 0,
+              },
+            },
+          );
+          fs.unlink(
+            path.join(__dirname, '..', 'public', targetImage.save_file_name),
+            (error) => {
+              if (error) {
+                console.error(error);
+              }
+            },
+          );
+        }
       }
       if (req.file) {
         const fileCreationInfo = await FileInfo.create({

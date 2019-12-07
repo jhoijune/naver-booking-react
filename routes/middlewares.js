@@ -17,6 +17,7 @@ export const isNotLoggedIn = (req, res, next) => {
 };
 
 export const confirmAPIRequest = (req, res, next) => {
+  console.log(req.xhr);
   const checkIP = () => {
     let { ip } = req;
     if (ip.substr(0, 7) === '::ffff:') {
@@ -27,6 +28,8 @@ export const confirmAPIRequest = (req, res, next) => {
   if (req.xhr || checkIP() || (req.user && req.user.is_admin)) {
     next();
   } else {
-    res.redirect('/');
+    const err = new Error('Request forbidden');
+    err.status = 403;
+    next(err);
   }
 };

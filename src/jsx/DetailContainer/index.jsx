@@ -6,7 +6,8 @@ import { priceTypeMapper } from '../../js/common';
 import DetailImage from '../DetailImage';
 import ProductDesc from '../ProductDesc';
 import EventInfo from '../EventInfo';
-import ButtonBunch from '../ButtonBunch';
+import Button from '../Button';
+import FlexContainer from '../FlexContainer';
 import ReviewContainer from '../ReviewContainer';
 import ProductInfo from '../ProductInfo';
 
@@ -24,7 +25,9 @@ const DetailContainer = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${displayInfoId}`);
+        const { data } = await axios.get(`/api/products/${displayInfoId}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         const modifiedImages = data.productImages.filter(
           (value) => value.type !== 'th',
         );
@@ -64,24 +67,21 @@ const DetailContainer = () => {
         text={productData.displayInfo && productData.displayInfo.productContent}
       />
       {discountInfo.length ? <EventInfo discountInfo={discountInfo} /> : ''}
-      <ButtonBunch
-        notes={[
-          {
-            style: {
-              color: '#fff',
-              backgroundColor: '#1ec800',
-              borderTop: 'none',
-            },
-            click: `/reserve/${displayInfoId}`,
-            children: (
-              <span>
-                <i className="fn fn-nbooking-calender2" />
-                {' 예매하기'}
-              </span>
-            ),
-          },
-        ]}
-      />
+      <FlexContainer>
+        <Button
+          style={{
+            color: '#fff',
+            backgroundColor: '#1ec800',
+            borderTop: 'none',
+          }}
+          click={`/reserve/${displayInfoId}`}
+        >
+          <span>
+            <i className="fn fn-nbooking-calender2" />
+            {' 예매하기'}
+          </span>
+        </Button>
+      </FlexContainer>
       <ReviewContainer
         displayInfoId={displayInfoId}
         reviews={productData.comments}

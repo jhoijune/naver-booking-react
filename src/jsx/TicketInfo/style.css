@@ -39,7 +39,6 @@ li.TicketInfo .tableRow p {
   display: table-cell;
   font-size: 16px;
   padding: 0 10px 10px 0;
-  white-space: nowrap;
 }
 
 li.TicketInfo .tableRow p.ticket {
@@ -48,6 +47,7 @@ li.TicketInfo .tableRow p.ticket {
 
 li.TicketInfo .tableRow p:first-child {
   color: #999;
+  white-space: nowrap;
 }
 
 li.TicketInfo .bottomSection {

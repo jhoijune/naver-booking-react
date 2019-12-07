@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
 import './style.css';
+import { ModalContext } from '../Layout';
 
 // TODO: isTransparent가 false일 때 fixed이므로 style객체가 있어야 됨
 
@@ -11,25 +12,32 @@ const MainNavBar = (props) => {
   const { isTransparent, isLogoutable, style } = props;
   const [email, setEmail] = useState('');
   const history = useHistory();
+  const { alertModal } = useContext(ModalContext);
 
   useEffect(() => {
     const fetchEmail = async () => {
       try {
-        const { data } = await axios.get('/auth/email');
+        const { data } = await axios.get('/auth/email', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         if (data) setEmail(data);
       } catch (error) {
         console.error(error);
       }
     };
     fetchEmail();
-  }, []);
+  });
 
   const handleLogout = async () => {
     try {
-      const { status } = await axios.get('/auth/logout');
+      const { status } = await axios.get('/auth/logout', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      });
       if (status === 200) {
-        setEmail('');
-        history.push('/');
+        alertModal('로그아웃 되었습니다', () => {
+          setEmail('');
+          history.push('/');
+        });
       }
     } catch (error) {
       console.error(error);

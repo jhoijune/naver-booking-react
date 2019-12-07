@@ -1,0 +1,19 @@
+.NotFound {
+  background-color: var(--text-bright-color);
+  background-color: #e9ecef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+}
+
+.NotFound h1 {
+  color: var(--main-color);
+  font-size: 100px;
+}
+
+.NotFound h2 {
+  color: var(--main-color);
+  font-size: 40px;
+}

@@ -18,7 +18,13 @@ const LoginForm = () => {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      const { statusText } = await axios.post('/auth/login', { email });
+      const { statusText } = await axios.post(
+        '/auth/login',
+        { email },
+        {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        },
+      );
       if (statusText === 'OK') {
         history.push('/myreservation');
       }
@@ -49,7 +55,7 @@ const LoginForm = () => {
               setEmail(value);
             }}
             ref={inputRef}
-            placeHolder="xxxxx@naver.com"
+            placeholder="xxxxx@naver.com"
           />
           <input type="submit" value="내 예약 확인" />
         </form>

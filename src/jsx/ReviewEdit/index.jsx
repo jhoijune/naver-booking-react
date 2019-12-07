@@ -7,7 +7,8 @@ import { validImageType } from '../../js/common';
 
 import './style.css';
 import { ModalContext } from '../Layout';
-import ButtonBunch from '../ButtonBunch';
+import FlexContainer from '../FlexContainer';
+import Button from '../Button';
 
 const ReviewEdit = (props) => {
   const {
@@ -32,7 +33,8 @@ const ReviewEdit = (props) => {
   useEffect(() => {
     if (imageSrc) {
       const imageMeasurement = new Image();
-      const revisionSrc = exImageSrc === imageSrc ? `/${imageSrc}` : imageSrc;
+      const revisionSrc =
+        imageSrc.slice(0, 4) === 'blob' ? imageSrc : `/${imageSrc}`;
       imageMeasurement.src = revisionSrc;
       imageMeasurement.onload = function() {
         const ratio = this.height / this.width;
@@ -52,7 +54,6 @@ const ReviewEdit = (props) => {
   }, [imageSrc]);
 
   const handleSubmit = async (event) => {
-    // return을 좀 정의해서 submit이 됐는가를 알아야함
     try {
       if (score <= 0 || score > 5) {
         alertModal('별점 개수가 올바르지 않습니다');
@@ -71,12 +72,13 @@ const ReviewEdit = (props) => {
       }
       const formObj = new FormData(form.current);
       if (!isPost && exImageSrc && (!imageSrc || exImageSrc !== imageSrc)) {
-        formObj.append('exImageSrc', exImageSrc);
+        formObj.append('exImage', true);
       }
       const { status } = await axios({
         method: isPost ? 'POST' : 'PUT',
         url: `/api/reservations/${id}/comments`,
         data: formObj,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
       });
       if (status === 201) {
         if (isPost) {
@@ -189,51 +191,49 @@ const ReviewEdit = (props) => {
           </div>
         </article>
         {isPost ? (
-          <ButtonBunch
-            notes={[
-              {
-                style: {
-                  backgroundColor: '#1EC800',
-                  color: '#fff',
-                  fontSize: '17px',
-                  fontFamily: 'Nanum Gothic Bold',
-                },
-                click: () => {
-                  confirmModal('리뷰를 등록 하시겠습니까?', handleSubmit);
-                },
-                children: '리뷰 등록',
-              },
-            ]}
-            padding={10}
-          />
+          <FlexContainer style={{ padding: '10px' }}>
+            <Button
+              style={{
+                backgroundColor: '#1EC800',
+                color: '#fff',
+                fontSize: '17px',
+                fontFamily: 'Nanum Gothic Bold',
+              }}
+              click={() => {
+                confirmModal('리뷰를 등록 하시겠습니까?', handleSubmit);
+              }}
+            >
+              리뷰 등록
+            </Button>
+          </FlexContainer>
         ) : (
-          <ButtonBunch
-            notes={[
-              {
-                style: {
-                  backgroundColor: '#1EC800',
-                  color: '#fff',
-                  fontSize: '17px',
-                  fontFamily: 'Nanum Gothic Bold',
-                },
-                click: () => {
-                  confirmEdit(handleSubmit, score, comment, imageSrc);
-                },
-                children: '수정',
-              },
-              {
-                style: {
-                  backgroundColor: '#D8DBDE',
-                  fontSize: '17px',
-                  fontFamily: 'Nanum Gothic Bold',
-                },
-                click: () => {
-                  confirmCancel();
-                },
-                children: '취소',
-              },
-            ]}
-          />
+          <FlexContainer>
+            <Button
+              style={{
+                backgroundColor: '#1EC800',
+                color: '#fff',
+                fontSize: '17px',
+                fontFamily: 'Nanum Gothic Bold',
+              }}
+              click={() => {
+                confirmEdit(handleSubmit, score, comment, imageSrc);
+              }}
+            >
+              수정
+            </Button>
+            <Button
+              style={{
+                backgroundColor: '#D8DBDE',
+                fontSize: '17px',
+                fontFamily: 'Nanum Gothic Bold',
+              }}
+              click={() => {
+                confirmCancel();
+              }}
+            >
+              취소
+            </Button>
+          </FlexContainer>
         )}
       </form>
     </section>

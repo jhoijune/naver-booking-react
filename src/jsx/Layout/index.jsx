@@ -2,7 +2,8 @@ import React, { useState, useEffect, createContext } from 'react';
 import PropTypes from 'prop-types';
 
 import Modal from '../Modal';
-import ButtonBunch from '../ButtonBunch';
+import Button from '../Button';
+import FlexContainer from '../FlexContainer';
 
 const ModalContext = createContext({
   setIsModal: () => {},
@@ -21,19 +22,18 @@ const Layout = (props) => {
     setModalChildren(
       <div className="modalText">
         <h1>{text}</h1>
-        <ButtonBunch
-          notes={[
-            {
-              click: () => {
-                setIsModal(false);
-                if (action) {
-                  action();
-                }
-              },
-              children: '확인',
-            },
-          ]}
-        />
+        <FlexContainer>
+          <Button
+            click={() => {
+              setIsModal(false);
+              if (action) {
+                action();
+              }
+            }}
+          >
+            확인
+          </Button>
+        </FlexContainer>
       </div>,
     );
     setIsModal(true);
@@ -43,27 +43,27 @@ const Layout = (props) => {
     setModalChildren(
       <div className="modalText">
         <h1>{text}</h1>
-        <ButtonBunch
-          notes={[
-            {
-              style: {
-                backgroundColor: '#288FEB',
-                color: '#fff',
-              },
-              click: () => {
-                action();
-                setIsModal(false);
-              },
-              children: '확인',
-            },
-            {
-              click: () => {
-                setIsModal(false);
-              },
-              children: '취소',
-            },
-          ]}
-        />
+        <FlexContainer>
+          <Button
+            style={{
+              backgroundColor: '#288FEB',
+              color: '#fff',
+            }}
+            click={() => {
+              action();
+              setIsModal(false);
+            }}
+          >
+            확인
+          </Button>
+          <Button
+            click={() => {
+              setIsModal(false);
+            }}
+          >
+            취소
+          </Button>
+        </FlexContainer>
       </div>,
     );
     setIsModal(true);

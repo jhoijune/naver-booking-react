@@ -29,7 +29,9 @@ const MainContainer = (props) => {
       try {
         const {
           data: { items },
-        } = await axios.get('/api/products');
+        } = await axios.get('/api/products', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         const modifiedCategory = [...categoryProducts];
         modifiedCategory[0] = items;
         const modifiedViewsArr = [...viewsArr];

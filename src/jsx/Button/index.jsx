@@ -6,25 +6,13 @@ import './style.css';
 
 const Button = (props) => {
   const { style, click, children } = props;
-  const createStyle = () => {
-    return {
-      color: '#000',
-      backgroundColor: '#f4f4f4',
-      ...style,
-    };
-  };
 
   return typeof click === 'function' ? (
-    <button
-      className="Button"
-      type="button"
-      onClick={click}
-      style={createStyle()}
-    >
+    <button className="Button" type="button" onClick={click} style={style}>
       {children}
     </button>
   ) : (
-    <Link className="Button" to={click} style={createStyle()}>
+    <Link className="Button" to={click} style={style}>
       {children}
     </Link>
   );

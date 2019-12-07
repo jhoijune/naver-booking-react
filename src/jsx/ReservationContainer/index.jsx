@@ -7,7 +7,6 @@ import NavBar from '../NavBar';
 // FIXME: cycle 제거
 import Ticket from '../Ticket';
 import ReservationCount from '../ReservationCount';
-import Footer from '../Footer';
 
 const ActionContext = React.createContext({
   confirmCancelReservation: () => {},
@@ -23,11 +22,15 @@ const ReservationContainer = () => {
   const { alertModal, confirmModal } = useContext(ModalContext);
   const history = useHistory();
 
+  const divisions = ['toUsed', 'used', 'canceled'];
+
   useEffect(() => {
     document.title = '예약 확인';
     const fetchData = async () => {
       try {
-        const { data } = await axios.get('/api/reservations');
+        const { data } = await axios.get('/api/reservations', {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        });
         setToUsed(data.toUsed);
         setToUsedLen(data.toUsed.length);
         setUsed(data.used);
@@ -50,7 +53,9 @@ const ReservationContainer = () => {
 
   const cancelReservation = async (id) => {
     try {
-      const { status } = await axios.put(`/api/reservations/${id}`);
+      const { status } = await axios.put(`/api/reservations/${id}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      });
       if (status === 201) {
         const modifiedToUsed = [...toUsed];
         const modifiedCanceled = [...canceled];
@@ -100,10 +105,22 @@ const ReservationContainer = () => {
           toUsedLen={toUsedLen}
           usedLen={usedLen}
           canceledLen={canceledLen}
+          divisions={divisions}
         />
-        <Ticket text="예약 확정" infos={toUsed} actions={['cancel']} isGreen />
-        <Ticket text="이용 완료" infos={used} actions={['writeReview']} />
-        <Ticket text="취소된 예약" infos={canceled} />
+        <Ticket
+          id={divisions[0]}
+          text="예약 확정"
+          infos={toUsed}
+          actions={['cancel']}
+          isGreen
+        />
+        <Ticket
+          id={divisions[1]}
+          text="이용 완료"
+          infos={used}
+          actions={['writeReview']}
+        />
+        <Ticket id={divisions[2]} text="취소된 예약" infos={canceled} />
       </div>
     </ActionContext.Provider>
   );
