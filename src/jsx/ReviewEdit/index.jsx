@@ -10,17 +10,16 @@ import { ModalContext } from '../Layout';
 import FlexContainer from '../FlexContainer';
 import Button from '../Button';
 
-const ReviewEdit = (props) => {
-  const {
-    id,
-    thumbnailWidth,
-    exScore,
-    exComment,
-    exImageSrc,
-    isPost,
-    confirmEdit,
-    confirmCancel,
-  } = props;
+const ReviewEdit = ({
+  id,
+  thumbnailWidth,
+  exScore,
+  exComment,
+  exImageSrc,
+  isPost,
+  confirmEdit,
+  confirmCancel,
+}) => {
   const [score, setScore] = useState(exScore);
   const [comment, setComment] = useState(exComment);
   const [imageSrc, setImageSrc] = useState(exImageSrc);
@@ -130,8 +129,7 @@ const ReviewEdit = (props) => {
         encType="multipart/form-data"
         name="reviewForm"
         ref={form}
-        onSubmit={handleSubmit}
-      >
+        onSubmit={handleSubmit}>
         <article className="ratingSection">
           <p>별점과 이용 경험을 남겨주세요.</p>
           <div className="ratingStar">
@@ -201,8 +199,7 @@ const ReviewEdit = (props) => {
               }}
               click={() => {
                 confirmModal('리뷰를 등록 하시겠습니까?', handleSubmit);
-              }}
-            >
+              }}>
               리뷰 등록
             </Button>
           </FlexContainer>
@@ -217,8 +214,7 @@ const ReviewEdit = (props) => {
               }}
               click={() => {
                 confirmEdit(handleSubmit, score, comment, imageSrc);
-              }}
-            >
+              }}>
               수정
             </Button>
             <Button
@@ -229,8 +225,7 @@ const ReviewEdit = (props) => {
               }}
               click={() => {
                 confirmCancel();
-              }}
-            >
+              }}>
               취소
             </Button>
           </FlexContainer>

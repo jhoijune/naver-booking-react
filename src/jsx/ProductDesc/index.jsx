@@ -7,8 +7,7 @@ import './style.css';
 import FlexContainer from '../FlexContainer';
 import Button from '../Button';
 
-const ProductDesc = (props) => {
-  const { text, limit } = props;
+const ProductDesc = ({ text, limit }) => {
   const [isFold, setIsFold] = useState(true);
   const [textObj, setTextObj] = useState({ simple: '', detail: '' });
 
@@ -54,8 +53,7 @@ const ProductDesc = (props) => {
           {textObj.simple}
           <span
             className="dots"
-            style={{ display: isFold ? 'inline' : 'none' }}
-          >
+            style={{ display: isFold ? 'inline' : 'none' }}>
             ...
           </span>
           <span className="moreDesc">{textObj.detail}</span>
@@ -71,8 +69,7 @@ const ProductDesc = (props) => {
               borderLeft: 'none',
               borderRight: 'none',
             }}
-            click={showMoreDesc}
-          >
+            click={showMoreDesc}>
             {isFold ? openText : foldText}
           </Button>
         </FlexContainer>

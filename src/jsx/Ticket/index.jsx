@@ -4,15 +4,12 @@ import PropTypes from 'prop-types';
 import TicketHead from '../TicketHead';
 import TicketInfoList from '../TicketInfoList';
 
-const Ticket = (props) => {
-  const { id, infos, text, actions, isGreen } = props;
-  return (
-    <article className="Ticket" id={id}>
-      <TicketHead text={text} isGreen={isGreen} />
-      <TicketInfoList infos={infos} actions={actions} />
-    </article>
-  );
-};
+const Ticket = ({ id, infos, text, actions, isGreen }) => (
+  <article className="Ticket" id={id}>
+    <TicketHead text={text} isGreen={isGreen} />
+    <TicketInfoList infos={infos} actions={actions} />
+  </article>
+);
 
 Ticket.defaultProps = {
   isGreen: false,

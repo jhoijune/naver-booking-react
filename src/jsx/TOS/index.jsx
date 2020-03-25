@@ -4,24 +4,23 @@ import $ from 'jquery';
 
 import './style.css';
 
-const TOS = (props) => {
-  const { isChecked, dispatch } = props;
+const foldText = (
+  <span>
+    {' 접기'}
+    <i className="fn fn-up2" />
+  </span>
+);
+
+const showText = (
+  <span>
+    {' 보기'}
+    <i className="fn fn-down2" />
+  </span>
+);
+
+const TOS = ({ isChecked, dispatch }) => {
   const [isCollectionFold, setIsCollectionFold] = useState(true);
   const [isOfferFold, setIsOfferFold] = useState(true);
-
-  const foldText = (
-    <span>
-      {' 접기'}
-      <i className="fn fn-up2" />
-    </span>
-  );
-
-  const showText = (
-    <span>
-      {' 보기'}
-      <i className="fn fn-down2" />
-    </span>
-  );
 
   const handleCollectionClick = () => {
     if (isCollectionFold) {

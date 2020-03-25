@@ -1,3 +1,3 @@
 {
-  "watch": ["server.js", "routes/"]
+  "watch": ["server.dev.js", "routes/"]
 }

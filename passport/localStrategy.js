@@ -1,7 +1,7 @@
-import LocalStrategy from 'passport-local';
-import { ReservationEmail } from '../models';
+const LocalStrategy = require('passport-local');
+const { ReservationEmail } = require('../models');
 
-export default (passport) => {
+module.exports = (passport) => {
   passport.use(
     new LocalStrategy(
       {

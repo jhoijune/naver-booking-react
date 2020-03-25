@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import './style.css';
 import ProductContainer from '../ProductContainer';
 
-const MainView = (props) => {
-  const { products } = props;
+const MainView = ({ products }) => {
   const leftProducts = products.filter((v, index) => index % 2 === 0);
   const rightProducts = products.filter((v, index) => index % 2 === 1);
 

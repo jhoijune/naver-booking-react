@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import TabUI from '../TabUI';
 import TabView from '../TabView';
 
-const TabController = (props) => {
-  const { labels, views, alarm, top, bottom } = props;
+const TabController = ({ labels, views, alarm, top, bottom }) => {
   // top,bottom은 정적으로 보여줄 뷰
   const [selected, setSelected] = useState(0);
   const [indicatorStyle, setIndicatorStyle] = useState({
@@ -82,7 +81,7 @@ const TabController = (props) => {
   }, [selected]);
 
   return (
-    <div className="TabController">
+    <>
       <TabUI
         ref={uiRef}
         labels={labels}
@@ -97,7 +96,7 @@ const TabController = (props) => {
         style={{ ...viewStyle, height: viewHeight }}
       />
       {bottom}
-    </div>
+    </>
   );
 };
 

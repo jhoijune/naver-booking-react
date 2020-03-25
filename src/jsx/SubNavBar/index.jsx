@@ -1,12 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router';
 import PropTypes from 'prop-types';
 
 import './style.css';
 
-const SubNavBar = (props) => {
-  const { name, style } = props;
+const SubNavBar = ({ name, style }) => {
   const history = useHistory();
   return (
     <div className="SubNavBar" style={style}>

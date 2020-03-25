@@ -3,21 +3,18 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
-const TicketHead = (props) => {
-  const { text, isGreen } = props;
-  return (
-    <div className={`TicketHead ${isGreen ? 'green' : 'grey'}`}>
-      <div className="ticketLeft" />
-      <div className="ticketMiddle">
-        <span>
-          <i className="spr_book2 ico_check2" />
-          {` ${text}`}
-        </span>
-      </div>
-      <div className="ticketRight" />
+const TicketHead = ({ text, isGreen }) => (
+  <div className={`TicketHead ${isGreen ? 'green' : 'grey'}`}>
+    <div className="ticketLeft" />
+    <div className="ticketMiddle">
+      <span>
+        <i className="spr_book2 ico_check2" />
+        {` ${text}`}
+      </span>
     </div>
-  );
-};
+    <div className="ticketRight" />
+  </div>
+);
 
 TicketHead.propTypes = {
   text: PropTypes.string.isRequired,

@@ -1,7 +1,7 @@
-import local from './localStrategy';
-import { ReservationEmail } from '../models';
+const local = require('./localStrategy');
+const { ReservationEmail } = require('../models');
 
-export default (passport) => {
+module.exports = (passport) => {
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });

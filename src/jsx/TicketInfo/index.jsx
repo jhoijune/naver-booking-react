@@ -7,23 +7,21 @@ import { ActionContext } from '../ReservationContainer';
 import FlexContainer from '../FlexContainer';
 import Button from '../Button';
 
-const TicketInfo = (props) => {
-  const {
-    info: {
-      reservationInfoId,
-      description,
-      reservationDate,
-      reservationName,
-      reservationTel,
-      priceInfo,
-      placeName,
-      totalPrice,
-      productId,
-      isCommentExist,
-    },
-    actions,
-  } = props;
-
+const TicketInfo = ({
+  info: {
+    reservationInfoId,
+    description,
+    reservationDate,
+    reservationName,
+    reservationTel,
+    priceInfo,
+    placeName,
+    totalPrice,
+    productId,
+    isCommentExist,
+  },
+  actions,
+}) => {
   const { confirmCancelReservation } = useContext(ActionContext);
   const reservationSummary = priceInfo
     .reduce((accum, current) => {

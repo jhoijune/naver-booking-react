@@ -1,9 +1,10 @@
 module.exports = (api) => {
-  api.cache(true);
-  const presets = ['@babel/preset-env', '@babel/preset-react'];
-  const plugins = ['react-hot-loader/babel', '@babel/transform-runtime'];
-  return {
-    presets,
-    plugins,
+  const setting = {
+    presets: ['@babel/preset-env', '@babel/preset-react'],
   };
+  if (api.env('production')) {
+    return setting;
+  }
+  setting.plugins = ['react-hot-loader/babel', '@babel/transform-runtime'];
+  return setting;
 };

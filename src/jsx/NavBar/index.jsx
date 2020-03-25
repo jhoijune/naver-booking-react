@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import MainNavBar from '../MainNavBar';
 import SubNavBar from '../SubNavBar';
 
-const NavBar = (props) => {
-  const { name, isTransparent, isLogoutable, style } = props;
-  return name ? (
+const NavBar = ({ name, isTransparent, isLogoutable, style }) =>
+  name ? (
     <SubNavBar name={name} style={style} />
   ) : (
     <MainNavBar
@@ -15,7 +14,6 @@ const NavBar = (props) => {
       style={style}
     />
   );
-};
 
 NavBar.defaultProps = {
   name: '',

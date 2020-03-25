@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
-const TabUI = React.forwardRef((props, ref) => {
-  const { labels, selected, handleClick, indicatorStyle } = props;
-
-  return (
+const TabUI = React.forwardRef(
+  ({ labels, selected, handleClick, indicatorStyle }, ref) => (
     <nav className="TabUI">
       <ul ref={ref}>
         <div className="indicator" style={indicatorStyle} />
@@ -15,16 +13,15 @@ const TabUI = React.forwardRef((props, ref) => {
             <li
               key={index}
               className={index === selected ? 'active' : ''}
-              onClick={handleClick(index)}
-            >
+              onClick={handleClick(index)}>
               {label}
             </li>
           );
         })}
       </ul>
     </nav>
-  );
-});
+  ),
+);
 
 TabUI.propTypes = {
   labels: PropTypes.arrayOf(PropTypes.node.isRequired).isRequired,

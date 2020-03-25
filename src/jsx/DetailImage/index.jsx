@@ -9,8 +9,7 @@ import ImageTitle from '../ImageTitle';
 // 스크롤 시간(transitionTime) default 1초
 // 화면 전환 간격 (timeInterval) 2초
 
-const DetailImage = (props) => {
-  const { images, title, transitionTime } = props;
+const DetailImage = ({ images, title, transitionTime }) => {
   const [degree, setDegree] = useState(0);
   const [imageWidth, setImageWidth] = useState(0);
   const [transitionDuration, setTransitionDuration] = useState(transitionTime);
@@ -67,7 +66,7 @@ const DetailImage = (props) => {
   };
   // props 다 넘겨줘야 함
   return (
-    <div className="DetailImage">
+    <>
       <ImageSlider
         ref={imageList}
         degree={degree}
@@ -83,7 +82,7 @@ const DetailImage = (props) => {
         leftScroll={leftScroll}
         rightScroll={rightScroll}
       />
-    </div>
+    </>
   );
 };
 

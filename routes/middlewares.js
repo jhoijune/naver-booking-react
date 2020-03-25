@@ -1,6 +1,4 @@
-// FIXME: res.redirect 제거
-
-export const isLoggedIn = (req, res, next) => {
+exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
@@ -8,7 +6,7 @@ export const isLoggedIn = (req, res, next) => {
   }
 };
 
-export const isNotLoggedIn = (req, res, next) => {
+exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {
@@ -16,16 +14,15 @@ export const isNotLoggedIn = (req, res, next) => {
   }
 };
 
-export const confirmAPIRequest = (req, res, next) => {
-  console.log(req.xhr);
-  const checkIP = () => {
-    let { ip } = req;
+exports.confirmAPIRequest = (req, res, next) => {
+  const isInternalUse = () => {
+    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     if (ip.substr(0, 7) === '::ffff:') {
       ip = ip.substr(7);
     }
     return ip === '::1' || ip === '127.0.0.1';
   };
-  if (req.xhr || checkIP() || (req.user && req.user.is_admin)) {
+  if (req.xhr || isInternalUse() || (req.user && req.user.is_admin)) {
     next();
   } else {
     const err = new Error('Request forbidden');

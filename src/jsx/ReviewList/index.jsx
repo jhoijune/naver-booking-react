@@ -5,18 +5,16 @@ import './style.css';
 import Review from '../Review';
 import ReviewEdit from '../ReviewEdit';
 
-const ReviewList = (props) => {
-  const {
-    reviews,
-    isBrief,
-    isModifiable,
-    editComment,
-    confirmDelete,
-    confirmEdit,
-    confirmCancel,
-    exData: { id, score, comment, imageSrc },
-  } = props;
-
+const ReviewList = ({
+  reviews,
+  isBrief,
+  isModifiable,
+  editComment,
+  confirmDelete,
+  confirmEdit,
+  confirmCancel,
+  exData: { id, score, comment, imageSrc },
+}) => {
   const showReviews = () => {
     const reviewsComp = [];
     [...reviews].reverse().some((review, index) => {
@@ -33,11 +31,11 @@ const ReviewList = (props) => {
       reviewsComp.push(
         <Review
           key={review.commentId}
-          review={review.comment}
+          comment={review.comment}
           imageSrc={revisionImageSrc}
           score={review.score}
-          email={review.reservationEmail}
-          date={review.reservationDate}
+          email={review.email}
+          date={review.date}
           editComment={editComment(review.reservationInfoId)}
           confirmDelete={confirmDelete(review.reservationInfoId)}
         />,
@@ -68,18 +66,20 @@ const ReviewList = (props) => {
 ReviewList.propTypes = {
   reviews: PropTypes.arrayOf(
     PropTypes.shape({
-      commentId: PropTypes.number,
-      comment: PropTypes.string,
       score: PropTypes.string,
-      email: PropTypes.string,
-      date: PropTypes.string,
+      comment: PropTypes.string,
+      commentId: PropTypes.number,
       commentImages: PropTypes.arrayOf(
         PropTypes.shape({
+          deleteFlag: PropTypes.number,
           saveFileName: PropTypes.string,
         }),
       ),
+      date: PropTypes.string,
+      email: PropTypes.string,
+      reservationInfoId: PropTypes.number,
     }),
-  ).isRequired,
+  ),
   isBrief: PropTypes.bool.isRequired,
   isModifiable: PropTypes.bool.isRequired,
   editComment: PropTypes.func.isRequired,

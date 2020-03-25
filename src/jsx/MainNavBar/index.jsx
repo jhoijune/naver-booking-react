@@ -8,8 +8,7 @@ import { ModalContext } from '../Layout';
 
 // TODO: isTransparent가 false일 때 fixed이므로 style객체가 있어야 됨
 
-const MainNavBar = (props) => {
-  const { isTransparent, isLogoutable, style } = props;
+const MainNavBar = ({ isTransparent, isLogoutable, style }) => {
   const [email, setEmail] = useState('');
   const history = useHistory();
   const { alertModal } = useContext(ModalContext);
@@ -47,8 +46,7 @@ const MainNavBar = (props) => {
   return (
     <nav
       className={`MainNavBar ${isTransparent ? 'transparent' : 'fixed'}`}
-      style={style}
-    >
+      style={style}>
       <Link to="/">
         <img src="/images/icon/icon.png" alt="naver icon" />
       </Link>

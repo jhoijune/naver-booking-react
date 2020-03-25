@@ -5,39 +5,31 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import MainImage from '../MainImage';
 
-const ImageSlider = React.forwardRef((props, ref) => {
-  /* init
-   *  degree: 0
-   * transitionTime: 2
-   *  images: []
-   *  imageWidth: 0
-   * isPromotion: true
-   */
-
-  const {
-    degree,
-    transitionTime,
-    images,
-    imageWidth,
-    isPromotion,
-    handleTransitionEnd,
-    handleMouseOver,
-    handleMouseOut,
-  } = props;
-  return (
+const ImageSlider = React.forwardRef(
+  (
+    {
+      degree,
+      transitionTime,
+      images,
+      imageWidth,
+      isPromotion,
+      handleTransitionEnd,
+      handleMouseOver,
+      handleMouseOut,
+    },
+    ref,
+  ) => (
     <section
       className={`ImageSlider ${isPromotion ? 'promotion' : 'detail'}`}
       onTransitionEnd={handleTransitionEnd}
       onMouseOver={handleMouseOver}
-      onMouseOut={handleMouseOut}
-    >
+      onMouseOut={handleMouseOut}>
       <ul
         ref={ref}
         style={{
           transform: `translateX(-${imageWidth * degree}px)`,
           transitionDuration: `${transitionTime}s`,
-        }}
-      >
+        }}>
         {images.map((value, index) => {
           if (value && isPromotion) {
             return (
@@ -58,8 +50,8 @@ const ImageSlider = React.forwardRef((props, ref) => {
         })}
       </ul>
     </section>
-  );
-});
+  ),
+);
 
 ImageSlider.defaultProps = {
   handleTransitionEnd: () => {},

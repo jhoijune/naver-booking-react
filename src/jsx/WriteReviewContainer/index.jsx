@@ -56,11 +56,11 @@ const WriteReviewContainer = () => {
   }, [info]);
 
   return Object.keys(info).length ? (
-    <div className="WriteReviewContainer">
+    <>
       <NavBar name={info.description} />
       <ReviewEdit id={info.reservationInfoId} />
       <Footer />
-    </div>
+    </>
   ) : (
     ''
   );

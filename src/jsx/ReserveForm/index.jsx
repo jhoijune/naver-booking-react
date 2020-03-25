@@ -106,8 +106,12 @@ const reducer = (state, action) => {
   }
 };
 
-const ReserveForm = (props) => {
-  const { productPrices, displayInfoId, productId, reservationDate } = props;
+const ReserveForm = ({
+  productPrices,
+  displayInfoId,
+  productId,
+  reservationDate,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { alertModal, confirmModal } = useContext(ModalContext);
   const history = useHistory();
@@ -198,8 +202,7 @@ const ReserveForm = (props) => {
         <FlexContainer
           style={{
             padding: '0 10px 10px 10px',
-          }}
-        >
+          }}>
           <Button
             style={{
               backgroundColor: state.submit ? '#1EC900' : '#D1D1D1',
@@ -208,8 +211,7 @@ const ReserveForm = (props) => {
               color: '#fff',
               transition: 'background-color 1s',
             }}
-            click={confirmSubmit}
-          >
+            click={confirmSubmit}>
             <span>
               <i
                 className="spr_book ico_naver_s"

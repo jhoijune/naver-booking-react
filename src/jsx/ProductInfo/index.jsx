@@ -4,21 +4,21 @@ import PropTypes from 'prop-types';
 import './style.css';
 import TabController from '../TabController';
 
-const ProductInfo = (props) => {
-  const {
-    displayInfo,
-    displayInfo: {
-      productContent,
-      productDescription,
-      placeLot,
-      placeStreet,
-      placeName,
-      telephone,
-    },
-    locationImgSrc,
-  } = props;
+const labels = ['상세정보', '오시는길'];
+
+const ProductInfo = ({
+  displayInfo,
+  displayInfo: {
+    productContent,
+    productDescription,
+    placeLot,
+    placeStreet,
+    placeName,
+    telephone,
+  },
+  locationImgSrc,
+}) => {
   const [views, setViews] = useState(Array(2).fill(null));
-  const labels = ['상세정보', '오시는길'];
 
   useEffect(() => {
     if (Object.keys(displayInfo).length !== 0) {

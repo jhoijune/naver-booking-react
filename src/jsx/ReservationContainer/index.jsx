@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import { ModalContext } from '../Layout';
-import NavBar from '../NavBar';
 // FIXME: cycle 제거
 import Ticket from '../Ticket';
 import ReservationCount from '../ReservationCount';
@@ -11,6 +10,8 @@ import ReservationCount from '../ReservationCount';
 const ActionContext = React.createContext({
   confirmCancelReservation: () => {},
 });
+
+const divisions = ['toUsed', 'used', 'canceled'];
 
 const ReservationContainer = () => {
   const [toUsed, setToUsed] = useState([]);
@@ -21,8 +22,6 @@ const ReservationContainer = () => {
   const [canceledLen, setCanceledLen] = useState(0);
   const { alertModal, confirmModal } = useContext(ModalContext);
   const history = useHistory();
-
-  const divisions = ['toUsed', 'used', 'canceled'];
 
   useEffect(() => {
     document.title = '예약 확인';
@@ -79,7 +78,7 @@ const ReservationContainer = () => {
       }
     } catch (error) {
       const {
-        response: { data, status },
+        response: { status },
       } = error;
       if (status === 400) {
         alertModal('잘못된 요청입니다');

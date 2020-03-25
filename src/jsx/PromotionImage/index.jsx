@@ -9,8 +9,7 @@ import { resizeEnd } from '../../js/common';
 // 상태로 사용하는 스크롤 시간 (transitionDuration)
 // 화면 전환 간격 (timeInterval) 2초
 
-const PromotionImage = (props) => {
-  const { timeInterval, transitionTime } = props;
+const PromotionImage = ({ timeInterval, transitionTime }) => {
   const [degree, setDegree] = useState(0);
   const [scrollable, setScrollable] = useState(true);
   const [transitionDuration, setTransitionDuration] = useState(transitionTime);

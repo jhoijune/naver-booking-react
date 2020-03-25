@@ -12,10 +12,31 @@ const ReviewProvider = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`/api/products/${displayInfoId}`, {
+        const {
+          data: {
+            displayInfo: { productDescription },
+            averageScore,
+            comments: rawComments,
+          },
+        } = await axios.get(`/api/products/${displayInfoId}`, {
           headers: { 'X-Requested-With': 'XMLHttpRequest' },
         });
-        setProductData(data);
+        const comments = rawComments.map((value) => {
+          return {
+            score: value.score,
+            comment: value.comment,
+            commentId: value.commentId,
+            commentImages: value.commentImages,
+            date: value.reservationDate,
+            email: `${value.reservationEmail.slice(0, 4)}****`,
+            reservationInfoId: value.reservationInfoId,
+          };
+        });
+        setProductData({
+          productDescription,
+          averageScore,
+          comments,
+        });
       } catch (error) {
         console.error(error);
       }
@@ -24,25 +45,21 @@ const ReviewProvider = () => {
   }, []);
 
   useEffect(() => {
-    if (productData.displayInfo) {
-      document.title = `리뷰 : ${productData.displayInfo.productDescription}`;
+    if (productData.productDescription) {
+      document.title = `리뷰 : ${productData.productDescription}`;
     }
   }, [productData]);
 
   return (
-    <div className="ReviewProvider">
-      <NavBar
-        name={
-          productData.displayInfo && productData.displayInfo.productDescription
-        }
-      />
+    <>
+      <NavBar name={productData.productDescription} />
       <ReviewContainer
         displayInfoId={displayInfoId}
         averageScore={productData.averageScore}
         reviews={productData.comments}
         isBrief={false}
       />
-    </div>
+    </>
   );
 };
 

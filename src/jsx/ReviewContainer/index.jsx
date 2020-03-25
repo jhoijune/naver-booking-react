@@ -10,13 +10,12 @@ import { ModalContext } from '../Layout';
 import FlexContainer from '../FlexContainer';
 import Button from '../Button';
 
-const ReviewContainer = (props) => {
-  const {
-    isBrief,
-    displayInfoId,
-    reviews: exReviews,
-    averageScore: exAverageScore,
-  } = props;
+const ReviewContainer = ({
+  isBrief,
+  displayInfoId,
+  reviews: exReviews,
+  averageScore: exAverageScore,
+}) => {
   const [reviews, setReviews] = useState([]);
   const [averageScore, setAverageScore] = useState(0);
   const [isModifiable, setIsModifiable] = useState(false);
@@ -255,8 +254,7 @@ const ReviewContainer = (props) => {
               border: 'none',
               borderTop: '1px solid #c0c0c0',
             }}
-            click={`/review/${displayInfoId}`}
-          >
+            click={`/review/${displayInfoId}`}>
             <span>
               {'예매자 리뷰 더보기 '}
               <i className="fn fn-forward1" />
@@ -281,19 +279,18 @@ ReviewContainer.propTypes = {
   averageScore: PropTypes.string,
   reviews: PropTypes.arrayOf(
     PropTypes.shape({
+      score: PropTypes.string,
       comment: PropTypes.string,
       commentId: PropTypes.number,
-      productId: PropTypes.number,
-      reservationDate: PropTypes.string,
-      reservationEmail: PropTypes.string,
-      reservationInfoId: PropTypes.number,
-      score: PropTypes.string,
       commentImages: PropTypes.arrayOf(
         PropTypes.shape({
           deleteFlag: PropTypes.number,
           saveFileName: PropTypes.string,
         }),
       ),
+      date: PropTypes.string,
+      email: PropTypes.string,
+      reservationInfoId: PropTypes.number,
     }),
   ),
   isBrief: PropTypes.bool,

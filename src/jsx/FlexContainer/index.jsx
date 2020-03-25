@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
-const FlexContainer = (props) => {
-  const { style, children } = props;
-  return (
-    <div className="FlexContainer" style={style}>
-      {children}
-    </div>
-  );
-};
+const FlexContainer = ({ style, children }) => (
+  <div className="FlexContainer" style={style}>
+    {children}
+  </div>
+);
 
 FlexContainer.defaultProps = {
   style: {},

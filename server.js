@@ -1,45 +1,36 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
-import path from 'path';
-import session from 'express-session';
-import flash from 'connect-flash';
-import passport from 'passport';
-import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-import { config } from 'dotenv';
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const morgan = require('morgan');
+const path = require('path');
+const session = require('express-session');
+const redis = require('redis');
+const RedisStore = require('connect-redis')(session);
+const passport = require('passport');
+const helmet = require('helmet');
+const hpp = require('hpp');
 
-import apiRouter from './routes/api';
-import authRouter from './routes/auth';
-import passportConfig from './passport';
-import { sequelize } from './models';
-import webpackConfig from './webpack.config';
-
-config();
+const apiRouter = require('./routes/api');
+const authRouter = require('./routes/auth');
+const passportConfig = require('./passport');
+const { sequelize } = require('./models');
+const logger = require('./logger');
 
 const app = express();
 sequelize.sync();
 passportConfig(passport);
 
-const compiler = webpack(webpackConfig);
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+});
+redisClient.unref();
+redisClient.on('error', console.log);
 
-app.use(
-  webpackDevMiddleware(compiler, {
-    noInfo: true,
-    publicPath: webpackConfig.output.publicPath,
-  }),
-);
-app.use(webpackHotMiddleware(compiler));
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 app.set('port', process.env.PORT || 8001);
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(morgan('combined'));
-} else {
-  app.use(morgan('dev'));
-}
+app.disable('x-powered-by');
+app.use(morgan('combined'));
+app.use(helmet());
+app.use(hpp());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -52,13 +43,12 @@ const sessionOption = {
     httpOnly: true,
     secure: false,
   },
+  store: new RedisStore({
+    client: redisClient,
+    logErrors: true,
+  }),
 };
-if (process.env.NODE_ENV === 'production') {
-  sessionOption.proxy = true;
-  // sessionOption.cookie.secure = true;
-}
 app.use(session(sessionOption));
-app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -71,7 +61,7 @@ app.get('*', (req, res) => {
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
-  next(err);
+  logger.error(err.message);
 });
 
 app.use((err, req, res) => {

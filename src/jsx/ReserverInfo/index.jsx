@@ -4,19 +4,17 @@ import $ from 'jquery';
 
 import './style.css';
 
-const ReserverInfo = (props) => {
-  const {
-    name,
-    telephone,
-    email,
-    reservationDate,
-    totalTicket,
-    dispatch,
-    isVerifiedName,
-    isVerifiedTel,
-    isVerifiedEmail,
-  } = props;
-
+const ReserverInfo = ({
+  name,
+  telephone,
+  email,
+  reservationDate,
+  totalTicket,
+  dispatch,
+  isVerifiedName,
+  isVerifiedTel,
+  isVerifiedEmail,
+}) => {
   const makeAlert = (id, text) => {
     return (
       <div id={id} className="tableRow" style={{ display: 'none' }}>

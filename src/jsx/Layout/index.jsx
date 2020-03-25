@@ -13,8 +13,7 @@ const ModalContext = createContext({
   imageModal: () => {},
 });
 
-const Layout = (props) => {
-  const { children } = props;
+const Layout = ({ children }) => {
   const [isModal, setIsModal] = useState(false);
   const [modalChildren, setModalChildren] = useState('');
 
@@ -29,8 +28,7 @@ const Layout = (props) => {
               if (action) {
                 action();
               }
-            }}
-          >
+            }}>
             확인
           </Button>
         </FlexContainer>
@@ -52,15 +50,13 @@ const Layout = (props) => {
             click={() => {
               action();
               setIsModal(false);
-            }}
-          >
+            }}>
             확인
           </Button>
           <Button
             click={() => {
               setIsModal(false);
-            }}
-          >
+            }}>
             취소
           </Button>
         </FlexContainer>
@@ -95,8 +91,7 @@ const Layout = (props) => {
         alertModal,
         confirmModal,
         imageModal,
-      }}
-    >
+      }}>
       {children}
       {isModal ? <Modal>{modalChildren}</Modal> : ''}
     </ModalContext.Provider>

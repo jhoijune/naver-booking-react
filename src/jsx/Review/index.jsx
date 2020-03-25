@@ -4,16 +4,15 @@ import PropTypes from 'prop-types';
 import { ModalContext } from '../Layout';
 import './style.css';
 
-const Review = (props) => {
-  const {
-    review,
-    imageSrc,
-    score,
-    email,
-    date,
-    editComment,
-    confirmDelete,
-  } = props;
+const Review = ({
+  comment,
+  imageSrc,
+  score,
+  email,
+  date,
+  editComment,
+  confirmDelete,
+}) => {
   const [imgStyle, setImgStyle] = useState({});
   const { imageModal } = useContext(ModalContext);
   const reviewRef = useRef(null);
@@ -37,7 +36,7 @@ const Review = (props) => {
     <article className="Review" ref={reviewRef}>
       <div className="top">
         <div className="left">
-          <p>{review}</p>
+          <p>{comment}</p>
         </div>
         <div className="right">
           {imageSrc ? (
@@ -55,7 +54,7 @@ const Review = (props) => {
       <div className="bottom">
         <div className="left">
           <span className="score">{score}</span>
-          <span className="email">{`${email.slice(0, 4)}****`}</span>
+          <span className="email">{email}</span>
           <span className="visitDate">{`${date.slice(0, 10)} 방문`}</span>
         </div>
         <div className="right">
@@ -72,7 +71,7 @@ const Review = (props) => {
 };
 
 Review.propTypes = {
-  review: PropTypes.string.isRequired,
+  comment: PropTypes.string.isRequired,
   imageSrc: PropTypes.string.isRequired,
   score: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,

@@ -1,4 +1,4 @@
-const transformMoneyUnit = (num) => {
+exports.transformMoneyUnit = (num) => {
   let transformed = '';
   num = num.toString();
   const numLen = num.length;
@@ -11,7 +11,7 @@ const transformMoneyUnit = (num) => {
   return transformed;
 };
 
-const priceTypeMapper = (value) => {
+exports.priceTypeMapper = (value) => {
   const priceType = {
     A: '성인',
     Y: '청소년',
@@ -26,17 +26,15 @@ const priceTypeMapper = (value) => {
   return priceType[value];
 };
 
-const validImageType = (type) => {
+exports.validImageType = (type) => {
   const result = ['image/jpeg', 'image/png', 'image/jpg'].indexOf(type) > -1;
   return result;
 };
 
-const resizeEnd = (func) => {
+exports.resizeEnd = (func) => {
   let timer;
   return (event) => {
     if (timer) clearTimeout(timer);
     timer = setTimeout(func, 100, event);
   };
 };
-
-export { transformMoneyUnit, priceTypeMapper, validImageType, resizeEnd };

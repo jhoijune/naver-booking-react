@@ -5,17 +5,16 @@ import $ from 'jquery';
 
 import './style.css';
 
-const ProductBox = (props) => {
-  const {
-    itemInfo: {
-      displayInfoId,
-      productImageUrl,
-      productDescription,
-      placeName,
-      productContent,
-    },
-    textLimit,
-  } = props;
+const ProductBox = ({
+  itemInfo: {
+    displayInfoId,
+    productImageUrl,
+    productDescription,
+    placeName,
+    productContent,
+  },
+  textLimit,
+}) => {
   const [isFold, setIsFold] = useState(true);
   const [isIconShowing, setIsIconShowing] = useState(false);
   const detailText = useRef(null);
@@ -62,23 +61,20 @@ const ProductBox = (props) => {
           }}
           onMouseOut={() => {
             setIsIconShowing(false);
-          }}
-        >
+          }}>
           {textObj.detail ? (
             <div>
               <p>
                 {textObj.simple}
                 <span
                   className="dots"
-                  style={{ display: isFold ? 'inline' : 'none' }}
-                >
+                  style={{ display: isFold ? 'inline' : 'none' }}>
                   ...
                 </span>
                 <span
                   className="moreDesc"
                   ref={detailText}
-                  style={{ display: 'none' }}
-                >
+                  style={{ display: 'none' }}>
                   {textObj.detail}
                 </span>
               </p>

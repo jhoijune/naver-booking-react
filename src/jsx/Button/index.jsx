@@ -4,10 +4,8 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 
-const Button = (props) => {
-  const { style, click, children } = props;
-
-  return typeof click === 'function' ? (
+const Button = ({ style, click, children }) =>
+  typeof click === 'function' ? (
     <button className="Button" type="button" onClick={click} style={style}>
       {children}
     </button>
@@ -16,7 +14,6 @@ const Button = (props) => {
       {children}
     </Link>
   );
-};
 
 Button.defaultProps = {
   style: {},

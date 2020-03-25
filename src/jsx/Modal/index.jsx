@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 
 import './style.css';
 
-const Modal = (props) => {
-  const { children } = props;
+const Modal = ({ children }) => {
   return (
     <div className="Modal">
       <div className="modalContent">{children}</div>

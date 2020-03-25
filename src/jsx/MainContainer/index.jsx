@@ -8,8 +8,9 @@ import TabController from '../TabController';
 import ProductBox from '../ProductBox';
 import TotalCount from '../TotalCount';
 
-const MainContainer = (props) => {
-  const { basisCount } = props;
+const labels = ['전체', '전시', '뮤지컬', '콘서트', '클래식', '연극'];
+
+const MainContainer = ({ basisCount }) => {
   const [selectedCategory, setSelectedCategory] = useState(0); // 현재 선택된 카테고리 id
   const [productCount, setProductCount] = useState(0); //  카테고리의 제품 개수
   const [views, setViews] = useState(Array(6).fill(<MainView />)); // [<MainView/>,<MainView/>]
@@ -17,8 +18,6 @@ const MainContainer = (props) => {
   const [categoryProducts, setCategoryProducts] = useState(Array(6).fill(null));
   const [showingCount, setShowingCount] = useState(0);
   const [isFetched, setIsFetched] = useState(false);
-
-  const labels = ['전체', '전시', '뮤지컬', '콘서트', '클래식', '연극'];
 
   useEffect(() => {
     document.title = '네이버 예약';

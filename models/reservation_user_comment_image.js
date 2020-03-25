@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
     'reservation_user_comment_image',
     {},

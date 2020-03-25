@@ -1,10 +1,10 @@
-import express from 'express';
-import moment from 'moment-timezone';
-import path from 'path';
-import multer from 'multer';
-import fs from 'fs';
+const express = require('express');
+const moment = require('moment-timezone');
+const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
-import {
+const {
   sequelize,
   Sequelize,
   DisplayInfo,
@@ -15,9 +15,9 @@ import {
   ReservationUserCommentImage,
   ProductPrice,
   FileInfo,
-} from '../models';
-import { validImageType } from '../src/js/common';
-import { confirmAPIRequest, isLoggedIn } from './middlewares';
+} = require('../models');
+const { validImageType } = require('../src/js/common');
+const { confirmAPIRequest, isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 moment.locale('ko');
@@ -862,4 +862,4 @@ router.get('/promotions', confirmAPIRequest, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

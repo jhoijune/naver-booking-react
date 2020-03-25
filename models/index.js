@@ -1,24 +1,10 @@
-import path from 'path';
-import Sequelize from 'sequelize';
+const path = require('path');
+const Sequelize = require('sequelize');
 
-import CategoryConst from './category';
-import DisplayInfoConst from './display_info';
-import DisplayInfoImageConst from './display_info_image';
-import FileInfoConst from './file_info';
-import ProductImageConst from './product_image';
-import ProductPriceConst from './product_price';
-import ProductConst from './product';
-import PromotionConst from './promotion';
-import ReservationInfoPriceConst from './reservation_info_price';
-import ReservationEmailConst from './reservation_email';
-import ReservationInfoConst from './reservation_info';
-import ReservationUserCommentImageConst from './reservation_user_comment_image';
-import ReservationUserCommentConst from './reservation_user_comment';
+require('dotenv').config();
 
 const env = process.env.NODE_ENV || 'development';
-const config = require(path.join(__dirname, '..', 'config', 'config.json'))[
-  env
-];
+const config = require(path.join(__dirname, '..', 'config', 'config.js'))[env];
 const db = {};
 
 const sequelize = new Sequelize(
@@ -28,28 +14,31 @@ const sequelize = new Sequelize(
   config,
 );
 
-db.Category = CategoryConst(sequelize, Sequelize);
-db.DisplayInfo = DisplayInfoConst(sequelize, Sequelize);
-db.DisplayInfoImage = DisplayInfoImageConst(sequelize, Sequelize);
-db.FileInfo = FileInfoConst(sequelize, Sequelize);
-db.ProductImage = ProductImageConst(sequelize, Sequelize);
-db.ProductPrice = ProductPriceConst(sequelize, Sequelize);
-db.Product = ProductConst(sequelize, Sequelize);
-db.Promotion = PromotionConst(sequelize, Sequelize);
-db.ReservationInfoPrice = ReservationInfoPriceConst(sequelize, Sequelize);
-db.ReservationEmail = ReservationEmailConst(sequelize, Sequelize);
-db.ReservationInfo = ReservationInfoConst(sequelize, Sequelize);
-db.ReservationUserCommentImage = ReservationUserCommentImageConst(
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+db.Category = require('./category')(sequelize, Sequelize);
+db.DisplayInfo = require('./display_info')(sequelize, Sequelize);
+db.DisplayInfoImage = require('./display_info_image')(sequelize, Sequelize);
+db.FileInfo = require('./file_info')(sequelize, Sequelize);
+db.ProductImage = require('./product_image')(sequelize, Sequelize);
+db.ProductPrice = require('./product_price')(sequelize, Sequelize);
+db.Product = require('./product')(sequelize, Sequelize);
+db.Promotion = require('./promotion')(sequelize, Sequelize);
+db.ReservationInfoPrice = require('./reservation_info_price')(
   sequelize,
   Sequelize,
 );
-db.ReservationUserComment = ReservationUserCommentConst(sequelize, Sequelize);
-
-db.Category.hasMany(db.Product, { foreignKey: 'category_id', sourceKey: 'id' });
-db.Product.belongsTo(db.Category, {
-  foreignKey: 'category_id',
-  targetKey: 'id',
-});
+db.ReservationEmail = require('./reservation_email')(sequelize, Sequelize);
+db.ReservationInfo = require('./reservation_info')(sequelize, Sequelize);
+db.ReservationUserCommentImage = require('./reservation_user_comment_image')(
+  sequelize,
+  Sequelize,
+);
+db.ReservationUserComment = require('./reservation_user_comment')(
+  sequelize,
+  Sequelize,
+);
 
 db.Product.hasMany(db.Promotion, { foreignKey: 'product_id', sourceKey: 'id' });
 db.Promotion.belongsTo(db.Product, {
@@ -210,19 +199,4 @@ db.ReservationUserComment.belongsTo(db.ReservationEmail, {
   sourceKey: 'id',
 });
 
-export { sequelize, Sequelize };
-export const {
-  Category,
-  DisplayInfo,
-  DisplayInfoImage,
-  FileInfo,
-  ProductImage,
-  ProductPrice,
-  Product,
-  Promotion,
-  ReservationInfoPrice,
-  ReservationEmail,
-  ReservationInfo,
-  ReservationUserCommentImage,
-  ReservationUserComment,
-} = db;
+module.exports = db;

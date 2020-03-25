@@ -1,8 +1,12 @@
-import express from 'express';
-import passport from 'passport';
+const express = require('express');
+const passport = require('passport');
 
-import { isLoggedIn, confirmAPIRequest } from './middlewares';
-import { ReservationUserComment, ReservationInfo, Product } from '../models';
+const { isLoggedIn, confirmAPIRequest } = require('./middlewares');
+const {
+  ReservationUserComment,
+  ReservationInfo,
+  Product,
+} = require('../models');
 
 const router = express.Router();
 
@@ -92,4 +96,4 @@ router.get(
   },
 );
 
-export default router;
+module.exports = router;

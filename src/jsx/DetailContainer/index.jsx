@@ -31,7 +31,19 @@ const DetailContainer = () => {
         const modifiedImages = data.productImages.filter(
           (value) => value.type !== 'th',
         );
-        setProductData({ ...data, productImages: modifiedImages });
+        // TODO: comments에서 민감한거 삭제
+        const comments = data.comments.map((value) => {
+          return {
+            score: value.score,
+            comment: value.comment,
+            commentId: value.commentId,
+            commentImages: value.commentImages,
+            date: value.reservationDate,
+            email: `${value.reservationEmail.slice(0, 4)}****`,
+            reservationInfoId: value.reservationInfoId,
+          };
+        });
+        setProductData({ ...data, comments, productImages: modifiedImages });
       } catch (error) {
         console.error(error);
       }
@@ -56,7 +68,7 @@ const DetailContainer = () => {
   }, [productData]);
 
   return (
-    <div className="DetailContainer">
+    <>
       <DetailImage
         images={productData.productImages}
         title={
@@ -74,8 +86,7 @@ const DetailContainer = () => {
             backgroundColor: '#1ec800',
             borderTop: 'none',
           }}
-          click={`/reserve/${displayInfoId}`}
-        >
+          click={`/reserve/${displayInfoId}`}>
           <span>
             <i className="fn fn-nbooking-calender2" />
             {' 예매하기'}
@@ -94,7 +105,7 @@ const DetailContainer = () => {
           productData.displayInfoImage.saveFileName
         }
       />
-    </div>
+    </>
   );
 };
 

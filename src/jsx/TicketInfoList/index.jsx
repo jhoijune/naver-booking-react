@@ -6,8 +6,7 @@ import TicketInfo from '../TicketInfo';
 import FlexContainer from '../FlexContainer';
 import Button from '../Button';
 
-const TicketInfoList = (props) => {
-  const { infos, actions, basisCount } = props;
+const TicketInfoList = ({ infos, actions, basisCount }) => {
   const [count, setCount] = useState(0);
   const [height, setHeight] = useState(0);
   const containerRef = useRef(null);
@@ -76,7 +75,8 @@ const TicketInfoList = (props) => {
           <Button click={handleFold}>접기</Button>
         </FlexContainer>
       );
-    } if (infos.length === count) {
+    }
+    if (infos.length === count) {
       // 4 최종 단계
       return (
         <FlexContainer>

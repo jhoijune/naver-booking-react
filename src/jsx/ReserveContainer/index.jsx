@@ -60,7 +60,7 @@ const ReserveContainer = () => {
   }, [productData]);
 
   return (
-    <div className="ReserveContainer">
+    <>
       <NavBar
         name={
           productData.displayInfo && productData.displayInfo.productDescription
@@ -82,7 +82,7 @@ const ReserveContainer = () => {
         productId={productData.displayInfo && productData.displayInfo.productId}
         reservationDate={date.reservationDate}
       />
-    </div>
+    </>
   );
 };
 
