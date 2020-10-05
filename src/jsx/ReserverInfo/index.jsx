@@ -129,7 +129,7 @@ const ReserverInfo = ({
         <div className="tableRow" id="overallReservation">
           <p>
             <i className="fn fn-check" style={{ color: 'transparent' }} />
-            {' 예매내용'}
+            {'예매내용'}
           </p>
           <p>{`${reservationDate}, 총 ${totalTicket}매`}</p>
         </div>

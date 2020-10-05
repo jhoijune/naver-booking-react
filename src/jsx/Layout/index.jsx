@@ -66,15 +66,22 @@ const Layout = ({ children }) => {
   };
 
   const imageModal = (src) => {
-    setModalChildren(
-      <img
-        onClick={() => {
-          setIsModal(false);
-        }}
-        src={src}
-      />,
-    );
-    setIsModal(true);
+    const imgRef = document.createElement('img');
+    imgRef.onload = () => {
+      const maxWidth =
+        document.body.offsetWidth >= 414 ? 414 : document.body.offsetWidth;
+      setModalChildren(
+        <img
+          onClick={() => {
+            setIsModal(false);
+          }}
+          src={src}
+          width={imgRef.width >= maxWidth ? maxWidth : imgRef.width}
+        />,
+      );
+      setIsModal(true);
+    };
+    imgRef.src = src;
   };
 
   useEffect(() => {

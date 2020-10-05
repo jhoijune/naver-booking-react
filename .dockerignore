@@ -20,3 +20,4 @@ server.dev.js
 webpack.*.js
 db
 db copy
+assets

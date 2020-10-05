@@ -31,7 +31,6 @@ const DetailContainer = () => {
         const modifiedImages = data.productImages.filter(
           (value) => value.type !== 'th',
         );
-        // TODO: comments에서 민감한거 삭제
         const comments = data.comments.map((value) => {
           return {
             score: value.score,

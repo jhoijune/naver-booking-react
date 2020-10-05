@@ -6,8 +6,6 @@ import axios from 'axios';
 import './style.css';
 import { ModalContext } from '../Layout';
 
-// TODO: isTransparent가 false일 때 fixed이므로 style객체가 있어야 됨
-
 const MainNavBar = ({ isTransparent, isLogoutable, style }) => {
   const [email, setEmail] = useState('');
   const history = useHistory();

@@ -314,7 +314,7 @@ router.get('/reservations', confirmAPIRequest, isLoggedIn, async (req, res) => {
       );
       const modifiedValue = {
         ...value,
-        isCommentExist: !!commentInfo,
+        isCommentExist: commentInfo !== null,
         priceInfo,
         reservationDate,
       };
@@ -340,14 +340,6 @@ router.post('/reservations', confirmAPIRequest, async (req, res) => {
   try {
     let postable = true;
     let message;
-    const refererUrlSeparator = req.headers.referer.split('/');
-    if (
-      req.body.displayInfoId !==
-      refererUrlSeparator[refererUrlSeparator.length - 1]
-    ) {
-      postable = false;
-      message = '상품 전시 정보가 일치하지 않습니다';
-    }
     const { product_id: realProductId } = await DisplayInfo.findOne({
       attributes: ['product_id'],
       where: {

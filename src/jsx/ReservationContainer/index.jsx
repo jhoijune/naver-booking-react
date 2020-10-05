@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import { ModalContext } from '../Layout';
-// FIXME: cycle 제거
 import Ticket from '../Ticket';
 import ReservationCount from '../ReservationCount';
 
