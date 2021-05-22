@@ -1,9 +1,9 @@
-version: "3.7"
+version: '3.7'
 services:
   node:
     build: .
     ports:
-      - "80:80"
+      - '80:80'
     volumes:
       - type: bind
         source: ./public
@@ -26,13 +26,11 @@ services:
   db:
     image: mysql:5.7.31
     environment:
-      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
-      - type: bind
-        source: ./db
-        target: /var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - webnet
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -41,7 +39,7 @@ services:
     volumes:
       - redis:/data/redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     networks:
       - webnet
     restart: always

@@ -9,7 +9,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'public'),
-    filename: '[name].[hash].js',
+    filename: '[name].[fullhash].js',
     publicPath: '/',
   },
   module: {
@@ -21,7 +21,15 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              url: false,
+            },
+          },
+        ],
       },
     ],
   },
@@ -34,11 +42,11 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({ filename: 'style.css' }),
     new HtmlWebpackPlugin({
-      template: 'src/html/index.html',
+      template: path.join(__dirname, 'src', 'html', 'index.html'),
     }),
   ],
   optimization: {
-    moduleIds: 'hashed',
+    moduleIds: 'deterministic',
     runtimeChunk: 'single',
     splitChunks: {
       cacheGroups: {
